@@ -1,7 +1,10 @@
 /*global angular, _, document */
 'use strict';
 angular.module('voyager.search')
-	.controller('SearchCtrl', function ($scope, cartService, searchService, $location, authService, loading, $window, $document, usSpinnerService, configService, localStorageService, config, $analytics, savedSearchService, recentSearchService, filterService, cartItemsQuery, $timeout, inView, $q, $modal, searchScroll, urlUtil, searchViewService, searchModalService) {
+	.controller('SearchCtrl', function ($scope, cartService, searchService, $location, authService, loading, $window, $document,
+										usSpinnerService, configService, localStorageService, config, $analytics, savedSearchService,
+										recentSearchService, filterService, cartItemsQuery, $timeout, inView, $q, $modal, searchScroll,
+										urlUtil, searchViewService, searchModalService) {
 
 		var _busy = true;
 		//var _scrollTimer;
@@ -253,6 +256,7 @@ angular.module('voyager.search')
 		});
 
 		$scope.$on('filterChanged', function (event, args) {
+			searchViewService.setViewChanged(false);
 			$scope.resetTable = false;
 			if(args && args.refresh === false) {
 				return;

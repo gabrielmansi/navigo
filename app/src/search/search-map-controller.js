@@ -1,7 +1,8 @@
 /*global angular, _, L, $ */
 // this controller wraps the search map directive - TODO: refactor - its confusing since the direcive has its own controller method
 angular.module('voyager.search')
-    .controller('SearchMapCtrl', function ($scope, filterService, $location, searchService, $stateParams, mapUtil, usSpinnerService, $compile, $timeout, dialogs, config, leafletData, $analytics, mapServiceFactory, inView, heatmapService, configService) {
+    .controller('SearchMapCtrl', function ($scope, filterService, $location, searchService, $stateParams, mapUtil, usSpinnerService, $compile,
+                                           $timeout, dialogs, config, leafletData, $analytics, mapServiceFactory, inView, heatmapService, configService, searchViewService) {
 
         'use strict';
         var _points;
@@ -17,7 +18,6 @@ angular.module('voyager.search')
         var _cancelledDraw = false;
         var _geoHighlightLayer;
 
-
         $scope.hasMapError = config.hasMapError;
         $scope.$on('drawingTypeChanged', function(event, args){
             $scope.selectedDrawingType = args;
@@ -25,8 +25,23 @@ angular.module('voyager.search')
 
         $scope.selectedDrawingType = ($location.search())['place.op'] === 'intersects' ? 'Intersects' : 'Within';
 
+        function _setCurrentView(local) {
+            var point = $scope.map.getCenter();
+            var vw = point.lng + ' ' + point.lat + ' ' + $scope.map.getZoom();
+            if(angular.isUndefined(local)) {
+                searchService.setMapView(vw);
+            }
+            searchViewService.setUserView({lat: point.lat, lng: point.lng, zoom: $scope.map.getZoom()});
+            return vw;
+        }
+
         leafletData.getMap('search-map').then(function(map) {
             $scope.map = map;
+
+            map.on('moveend', function() {
+                _setCurrentView(true);
+            });
+
         });
 
         function _compileLayersControl() {
@@ -94,7 +109,7 @@ angular.module('voyager.search')
                 _addClickToggleLayersControl(map);
             }
 
-            var template = ' <a class="btn btn-xs" style="cursor: pointer;" ng-click="removeLayer(\'' + mapInfo.mapKey + '\')">X</a>';
+            var template = '<a class="btn btn-xs" style="cursor: pointer;" ng-click="removeLayer(\'' + mapInfo.mapKey + '\')">X</a>';
             if(permanent) {
                 template = '';
             }
@@ -195,6 +210,8 @@ angular.module('voyager.search')
                 } else {
                     _moveToDefaultExtent();
                 }
+            } else if (searchViewService.viewChanged()) {
+                // don't move the map if only changing views
             } else if (angular.isDefined(results['extent.bbox'])) {
                 _resultsBoundary = results['extent.bbox'];
                 mapUtil.fitToBBox($scope.map, _resultsBoundary);
@@ -256,6 +273,7 @@ angular.module('voyager.search')
             });
         };
 
+        // TODO - why not use leafletData.getMap?
         $scope.$watch('map',function(old) {  //fires when map is created in directive
 
             if(angular.isUndefined(old)) {
@@ -295,11 +313,8 @@ angular.module('voyager.search')
                         $location.search('place', $scope._bbox);
                         var placeType = $scope.selectedDrawingType.toLowerCase();
                         $location.search('place.op', placeType);
-                        var point = $scope.map.getCenter();
-                        var vw = point.lng + ' ' + point.lat + ' ' + $scope.map.getZoom();
+                        var vw = _setCurrentView();
                         $location.search('vw', vw);
-                        searchService.setMapView(vw);
-
                         //search controller will capture this event and fire a search
                         $scope.$emit('bboxChangeEvent', {'bbox': $scope._bbox, 'bboxt': placeType, 'vw': vw, 'place':$scope._bbox, 'place.op':placeType});
                     }
@@ -391,4 +406,5 @@ angular.module('voyager.search')
             heatmapService.filter(params);
 
         });
+
     });
