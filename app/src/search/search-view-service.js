@@ -95,4 +95,4 @@ angular.module('voyager.search').
 		}
 	};
 
-	});
+});
