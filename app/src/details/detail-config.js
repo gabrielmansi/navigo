@@ -90,7 +90,8 @@ angular.module('voyager.details').
                         }
                         displayFields = display.detailsTableFields;
                         _showAllFields = display.detailsTableConfig === 'ALL';
-                        _globalEditable = display.detailsTableFieldsAreEditable;
+                        //_globalEditable = display.detailsTableFieldsAreEditable;
+                        _globalEditable = config.editAll;
                         if (display.summaryFields) {
                             _summaryFields = display.summaryFields.fields;
                             _setSummaryInclusions();
