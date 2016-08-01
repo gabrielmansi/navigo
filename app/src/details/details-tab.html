@@ -5,9 +5,10 @@
         <td>
             <div class="formatted_value" ng-show="!field.editing && !field.isHtml && field.style !== 'STRING'">
                 <span ng-if="!field.isArray">
-                    <a href="#/search?fq={{field.key + ':' + field.value}}&disp={{disp}}" ng-if="field.stype != 'date' && field.key != 'bbox'">{{field.formattedValue}}</a>
-                    <a href="#/search?place={{field.value}}&disp={{disp}}" ng-if="field.key == 'bbox'">{{field.formattedValue}}</a>
-                    <a href="#/search?fq={{field.key + ':' + field.value}}&disp={{disp}}" ng-if="field.stype == 'date'">{{field.formattedValue | date:'medium'}}</a>
+                    <a href="#/search?fq={{field.key + ':' + field.value}}&disp={{disp}}" ng-if="field.stype != 'date' && field.key != 'bbox' && field.style != 'HREF'">{{field.formattedValue}}</a>
+                    <a href="#/search?place={{field.value}}&disp={{disp}}" ng-if="field.key == 'bbox' && field.style != 'HREF'">{{field.formattedValue}}</a>
+                    <a href="#/search?fq={{field.key + ':' + field.value}}&disp={{disp}}" ng-if="field.stype == 'date' && field.style != 'HREF'">{{field.formattedValue | date:'medium'}}</a>
+                    <a href="{{field.value}}" ng-if="field.style == 'HREF'">{{field.formattedValue}}</a>
                 </span>
                 <span ng-if="field.isArray" ng-repeat="f in field.value track by $index">
                     <a href="#/search?fq={{field.key + ':' + f}}&disp={{disp}}">{{field.formattedValues[f]}}</a>{{!$last && ', ' || ''}}
