@@ -157,7 +157,7 @@ angular.module('voyager.details')
             detailService.lookup(id, ',*', $stateParams.shard, $stateParams.disp).then(function (data) {
                 var doc = data.data.response.docs[0];
                 $scope.displayFields = detailConfig.getFields(doc, detailService.getFields());
-                $scope.summaryFields = detailConfig.getFields(doc, detailService.getFields());
+                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields());
             });
         }
 
