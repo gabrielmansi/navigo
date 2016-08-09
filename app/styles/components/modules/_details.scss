@@ -13,6 +13,7 @@
 	#detailTopStickyContent {
 		//padding-bottom: 10px;
 		overflow: hidden;
+		//float: none;
 	}
 
 	#detailTabContentNav.sticky, #detailTopStickyContent.sticky {
@@ -173,6 +174,47 @@
 			}
 		}
 	}
+
+    #schema-table {
+      font-size: $smallSize;
+      border-bottom: 2px solid $borderColor;
+      margin-bottom: 2px;
+
+      th {
+        width: 25%;
+        font-family: $semiStrongFont;
+        border-right: 1px solid $borderColor;
+        background-color: $lightestGrey;
+      }
+
+      td {
+        width: 25%;
+      }
+
+      th, td {
+        padding: 5px 5px 5px 5px;
+        border-top: 0;
+        border-bottom: 1px solid $borderColor;
+      }
+
+      tbody {
+        tr {
+          background-color: $white;
+          &:nth-child(2n+2) {
+            background-color: $lightestGrey;
+          }
+        }
+      }
+    }
+
+    .additional-info {
+      background-color: $white;
+      padding: 20px 0 0 5px;
+
+      info-inner {
+        margin-left: 5px;
+      }
+    }
 
 	.formatted_value {
 		width: 80%;

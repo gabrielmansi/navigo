@@ -1,20 +1,18 @@
-<div class="content_inner details_table">
-    <table class="table table-striped table-condensed">
-        <thead>
-        <tr>
-            <th>Field</th><th>Type</th><th>Alias</th><th>Properties</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="field in schema.fields">
-            <td>{{::field.name}}</td>
-            <td>{{::field.type}}</td>
-            <td>{{::field.alias}}</td>
-            <td>{{::field.properties.join(', ')}}</td>
-        </tr>
-        </tbody>
-    </table>
-    <div style="margin-left: 5px;" ng-show="schema.hash">
-        <a href="{{schemaLink}}">See more results with this Schema</a>
-    </div>
+<table class="table table-body-striped table-condensed" id="schema-table">
+    <tbody>
+    <thead>
+        <th>Field</th><th>Type</th><th>Alias</th><th>Properties</th>
+    </thead>
+    <tr ng-repeat="field in schema.fields">
+        <td>{{field.name}}</td>
+        <td>{{::field.type}}</td>
+        <td>{{::field.alias}}</td>
+        <td>{{field.properties.join(', ')}}</td>
+    </tr>
+    </tbody>
+</table>
+<div class="additional-info" ng-show="schema.hash">
+    <span class="info-inner">
+      <a href="{{schemaLink}}">See more results with this Schema</a>
+    </span>
 </div>
