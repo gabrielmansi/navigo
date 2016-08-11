@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('voyager.heatmap')
-    .service('heatmapService', function($q, $timeout, solrUtil, colorizer) {
+    .service('heatmapService', function($q, $timeout, solrUtil, colorizer, $rootScope) {
         var query = {q: '*:*'};
         var blur = 5;
         var offset = 0;
@@ -112,6 +112,8 @@ angular.module('voyager.heatmap')
                 },
 
                 render: function() {
+                    $rootScope.$broadcast('renderHeatmapStarting', {message:'started heatmap rendering'});
+
                     if (throttle !== null) {
                         $timeout.cancel(throttle);
                     }
@@ -177,6 +179,7 @@ angular.module('voyager.heatmap')
                             }
 
                             fire('render', hm);
+                            $rootScope.$broadcast('renderHeatmapEnding', {message:'started heatmap rendering'});
                         });
                     }, 200);
                 }
