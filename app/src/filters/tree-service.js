@@ -46,6 +46,7 @@ angular.module('voyager.filters').
                 queryString += '&voyager.config.id=' + configService.getConfigId();
             }
             queryString += '&wt=json&json.wrf=JSON_CALLBACK';
+            queryString += '&rand=' + Math.random();
             return queryString;
         }
 
