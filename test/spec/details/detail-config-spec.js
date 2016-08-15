@@ -61,6 +61,7 @@ describe('Factory: detailConfig', function () {
 		var fields = {name:{displayable:true, editable:true}, format:{displayable:true}, contains_mime:{displayable:true}, location:{displayable:true}};
 
         var actual = detailConfig.getFields(doc,fields);
+		actual = actual.filter(function(val){return val.formattedValue !== '';});
 
 		expect(actual.length).toBe(Object.keys(fields).length);
 	});
