@@ -106,7 +106,7 @@ angular.module('voyager.details').
 
         function _getFields() {
             if(_.isEmpty(_fields)) {
-                var request = config.root + 'solr/fields/select?fl=name,multivalued,disp:disp_en,stype,displayable' + _type + '&rows=10000';
+                var request = config.root + 'solr/fields/select?fl=name,multivalued,disp:disp_en,stype,displayable' + _type + '&rows=100000';
                 return $http.jsonp(request).then(function(res) {
                     _fields = _.indexBy(res.data.response.docs,'name');
                     return _fields;
