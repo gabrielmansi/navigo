@@ -107,6 +107,7 @@ describe('Filters:', function () {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
     }
 
+
     describe('filtersController functions', function () {
 
         it('should open min date picker', function () {
@@ -302,6 +303,42 @@ describe('Filters:', function () {
             var url = new RegExp(escapeRegExp('root/solr/v0/select?voyager.config.id=default&rows=0&facet=true'));
             httpMock.expectJSONP(url).respond(res);  // solr filter query
             _flushHttp(httpMock);
+        });
+
+
+        it('should append missing OR', function () {
+            var displayFilter = {name: 'facet', field: 'field2', style:'CHECK'};
+
+            cfg.settings.data.filters = [displayFilter];
+
+            scope.filters = [];
+            _filterService.clear();
+
+            controllerService('FiltersCtrl', {$scope: scope, filterService: _filterService});
+            var facet = {isSelected: true, field: 'field2', name: 'facet', style:'CHECK'};
+            scope.filterResults(facet);
+
+            var res = {facet_counts:{facet_fields:{field2:['facet',5]}}};
+
+            var url = new RegExp(escapeRegExp('root/solr/v0/select?voyager.config.id=default&rows=0&facet=true'));
+            httpMock.expectJSONP(url).respond(res);  // solr filter query
+            _flushHttp(httpMock);
+
+            scope.$apply();
+
+            expect(scope.filters.length).toBe(1);
+
+            // TODO - need better way to invoke this test
+            var facet2 = {isSelected: true, filter: 'field2', name:'(facet facet1)', style:'CHECK'};
+            scope.filterOnly(facet2);
+
+            res = {facet_counts:{facet_fields:{field1:['facet2',5]}}};
+            httpMock.expectJSONP(url).respond(res);  // solr filter query
+            _flushHttp(httpMock);
+
+            expect(scope.filters[0].name).toBe(facet.name);
+            expect(scope.filters[0].values[0].name).toBe('facet');
+            expect(scope.filters[0].values[1].name).toBe('facet1');
         });
 
     });

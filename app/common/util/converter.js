@@ -40,7 +40,17 @@ angular.module('voyager.util').
         }
 
         function _solrReady(name) {  //escape lucene special characters
-            if (name.indexOf('\\') === -1) {
+            // escape OR values only
+            if (name.indexOf('(') === 0 && name.indexOf(')') === name.length-1) {
+                name = name.replace(' )',')').replace(')','').replace('(','');
+                var facets = name.split(' ');
+                name = '(';
+                facets.forEach(function(facet) {
+                    name += _solrReady(facet) + ' ';
+                });
+                name += ')';
+                name = name.replace(' )',')');
+            } else if (name.indexOf('\\') === -1) {
                 name = name.replace(/[\s\/\+\-!\(\){}\^"~*?:]|&&|\|\|/g, "\\$&");
             }
             return name;

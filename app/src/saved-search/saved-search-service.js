@@ -193,6 +193,12 @@ angular.module('voyager.search').
                 if(angular.isUndefined(solrParams.view)) {
                     solrParams.view = display.defaultView.toLowerCase();
                 }
+                // these will get applied later to solr call - don't duplicate
+                delete solrParams.facet;
+                delete solrParams['facet.field'];
+                delete solrParams['facet.mincount'];
+                delete solrParams['extent.bbox'];
+
                 $scope.$emit('clearSearchEvent');
 
                 $location.search(solrParams);

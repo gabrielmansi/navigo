@@ -28,7 +28,16 @@ angular.module('voyager.filters')
         function _appendIfMissing(filter, selectedFacet) {
             if (angular.isDefined(filter)) {
                 var facetsMap = _.indexBy(filter.values, 'name');
-                if (angular.isUndefined(facetsMap[selectedFacet.name])) {
+                if (selectedFacet.name.indexOf('(') === 0) {  // OR filter
+                    var facets = selectedFacet.name.replace(' )',')').replace(')','').replace('(','').split(' ');
+                    facets.forEach(function(facet) {
+                        var facetObj = angular.copy(selectedFacet);
+                        facetObj.name = facet;
+                        facetObj.pretty = facet;  // TODO - might need translation
+                        facetObj.humanized = facet;
+                        _appendIfMissing(filter, facetObj);
+                    });
+                } else if (angular.isUndefined(facetsMap[selectedFacet.name])) {
                     filter.values.push({name: selectedFacet.name, display: selectedFacet.humanized, style: selectedFacet.style, filter: selectedFacet.filter, isSelected: true, count: selectedFacet.count});
                 }
             }

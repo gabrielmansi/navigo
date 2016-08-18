@@ -31,10 +31,37 @@ angular.module('voyager.filters').
                 var selectedFilter = selectedFilters[facet.name];
                 if (selectedFilter) {
                     facet.isSelected = true;
+                } else {
+                    // check for OR facets selected
+                    _checkSelectedOr(selectedFilters, facet);
                 }
             }
             return facet;
         };
+
+        function _checkSelectedOr(selectedFilters, facet) {
+            var selectedKeys = Object.keys(selectedFilters);
+            for (var i=0; i<selectedKeys.length; i++) {
+                var selected = selectedFilters[selectedKeys[i]];
+                if (selected.name.indexOf('(') === 0) {
+                    _checkSelectedOrFacet(selected, facet);
+                    if (facet.isSelected) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        function _checkSelectedOrFacet(selected, facet) {
+            var facets = selected.name.replace('(','').replace(' )','').replace(')','');
+            facets = facets.split(' ');
+            for (var i=0; i<facets.length; i++) {
+                if (facets[i] === facet.name) {
+                    facet.isSelected = true;
+                    break;
+                }
+            }
+        }
 
         var _buildFacets = function (rawFacets, filter, selectedFilters) {
             var facets = [];
