@@ -8,7 +8,7 @@ angular.module('voyager.details')
 
         loading.show('#working');
         $scope.imagePrefix = config.root + 'vres/mime/icon/';
-        $scope.showTab = 'summary';
+        $scope.showTab = '';
 
         $scope.demo = config.demo;
         $scope.rate = {};
@@ -449,8 +449,10 @@ angular.module('voyager.details')
         }
 
         function _setSelectedTab() {
-            if (!$scope.displayFields.length) {
-                if ($scope.doc.hasMetadata && $scope.canViewMetadata) {
+            if(!$scope.showTab) {
+                if ($scope.displayFields.length) {
+                    $scope.showTab = 'summary';
+                } else if ($scope.doc.hasMetadata && $scope.canViewMetadata) {
                     $scope.showTab = 'metadata';
                 } else if ($scope.hasRelationships) {
                     $scope.showTab = 'relationship';

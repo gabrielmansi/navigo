@@ -15,7 +15,7 @@
                         <hr style="border-color: lightgrey;" name="divider">
                     </div>
                     <div class="col-md-8">
-                        <nav id="detailTabContentNav" class="tab tab_border clearfix col-xs-12 row" style="width: 100%">
+                        <nav id="detailTabContentNav" class="tab tab_border clearfix col-xs-12" style="width: 100%">
                             <ul>
                                 <li ng-if="displayFields.length && pageFramework.showDetailsTable" ng-class="showTab == 'summary' && 'selected' || ''"><a href="javascript:;" ng-click="changeTab('summary')">Details</a></li>
                                 <li ng-if="doc.hasMetadata && pageFramework.showMetadataTable && canViewMetadata" ng-class="showTab == 'metadata' && 'selected' || ''"><a href="javascript:;" ng-click="changeTab('metadata')">Metadata</a></li>
@@ -35,18 +35,7 @@
                             <section class="tab_content" ng-show="showTab == 'summary' && pageFramework.showDetailsTable" ng-include="'src/details/details-tab.html'">
                             </section>
 
-                            <section class="tab_content" ng-show="showTab == 'metadata' && pageFramework.showMetadataTable">
-                                <div class="content_inner">
-                                    <select ui-select2="{dropdownAutoWidth: 'true', minimumResultsForSearch: -1}" ng-model="theme.selected">
-                                        <option value="FGDC Classic">FGDC Classic</option>
-                                        <option value="FGDC FAQ">FGDC FAQ</option>
-                                        <option value="FGDC Plus">FGDC Plus</option>
-                                        <option value="ISO 19139">ISO 19139</option>
-                                        <option value="ArcGIS">ArcGIS</option>
-                                        <option value="ArcGIS_ItemDescription">ArcGIS_ItemDescription</option>
-                                    </select>
-                                    <iframe ng-src="{{trustSrc(metadataUrl)}}" class="metadata {{frameLoading}}" id="metadataFrame" iframe-load></iframe>
-                                </div>
+                            <section class="tab_content" ng-show="showTab == 'metadata' && pageFramework.showMetadataTable" ng-include="'src/details/metadata-tab.html'">
                             </section>
 
                             <section class="tab_content" ng-show="showTab == 'relationship' && pageFramework.showRelationshipsTable" ng-include="'src/details/relationships-tab.html'">

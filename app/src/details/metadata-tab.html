@@ -1,0 +1,11 @@
+<div id="metadata-tab">
+    <select ui-select2="{dropdownAutoWidth: 'true', minimumResultsForSearch: -1}" ng-model="theme.selected">
+        <option value="FGDC Classic">FGDC Classic</option>
+        <option value="FGDC FAQ">FGDC FAQ</option>
+        <option value="FGDC Plus">FGDC Plus</option>
+        <option value="ISO 19139">ISO 19139</option>
+        <option value="ArcGIS">ArcGIS</option>
+        <option value="ArcGIS_ItemDescription">ArcGIS_ItemDescription</option>
+    </select>
+    <iframe ng-src="{{trustSrc(metadataUrl)}}" class="metadata {{frameLoading}}" id="metadataFrame" iframe-load></iframe>
+</div>

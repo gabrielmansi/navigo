@@ -37,6 +37,11 @@
 		clear: both;
 		overflow: hidden;
 		padding-bottom: 20px;
+		z-index: 500;
+	}
+
+	detailTabContentWrap {
+		z-index: 400;
 	}
 
 	.detail-content-wrap {
@@ -173,6 +178,11 @@
 				}
 			}
 		}
+	}
+
+	#metadata-tab {
+		font-size: $smallSize;
+		background-color: $white;
 	}
 
     #schema-table {
