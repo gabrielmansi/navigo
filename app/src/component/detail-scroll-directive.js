@@ -11,6 +11,7 @@ angular.module('voyager.component')
 				var windowEl;
 				var detailTopStickyContent;
 				var detailTabContentNav;
+				var detailTabContentNavClone;
 				var detailTabContentNavTipPoint;
 				var detailTabContentNavHeight;
 				var detailSecondaryColumn;
@@ -80,12 +81,16 @@ angular.module('voyager.component')
 				function _scroll() {
 
 					var scrollTop = $document.scrollTop();
+					console.log("SCROLLTOP: ", scrollTop);
+					var scrollY = $window.pageYOffset;
+					console.log("SCROLLY: ", scrollY);
 
 					var $nameHeader = angular.element('h1[name=doc-header]');
 					var $floatingNav = angular.element('.floating-nav');
 
 					var floatingNavBottom = $floatingNav.offset().top + $floatingNav.height() + 30;
 					var nameHeaderBottom = $nameHeader.offset().top + $nameHeader.height();
+					console.log("NAME HEADER BOTTOM", nameHeaderBottom);
 					var $floatingHeader = angular.element('.floating-header > h1');
 
 					// show/hide the doc title in the toolbar if its hidden in the summary
@@ -96,15 +101,22 @@ angular.module('voyager.component')
 					}
 
 					// fix the tabs to remain visible if scrolled below
-					if(detailTabContentNav.offset().top < floatingNavBottom) {
+					if((detailTabContentNav.offset().top < floatingNavBottom) && (!detailTabContentNavClone)) {
 						var fixedTop = floatingNavBottom - scrollTop;
-						detailTabContentNav.css({ top: fixedTop + 'px', position: 'fixed'});
+						detailTabContentNavClone = detailTabContentNav.clone().prop('id', detailTabContentNav.prop('id') + '-clone');
+						detailTabContentNavClone = detailTabContentNavClone.insertBefore(detailTabContentNav);
+						detailTabContentNav.addClass('fixed');
+
+						//detailTabContentNav.css({ top: fixedTop + 'px', position: 'fixed'});
 					}
 
 					// remove the fixed tabs if scrolled back up
 					var $divider = angular.element('hr[name=divider]');
-					if($divider.offset().top > detailTabContentNav.offset().top) {
-						detailTabContentNav.css({ top: 'auto', position: 'static'});
+					if(($divider.offset().top > detailTabContentNav.offset().top) && (detailTabContentNavClone)) {
+						detailTabContentNavClone.remove();
+						detailTabContentNavClone = null;
+						detailTabContentNav.removeClass('fixed');
+						//detailTabContentNav.css({ top: 'auto', position: 'static'});
 					}
 				}
 

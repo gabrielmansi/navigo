@@ -40,9 +40,14 @@
 		z-index: 500;
 	}
 
-	detailTabContentWrap {
+	#detailTabContentWrap {
 		z-index: 400;
 	}
+
+    #detailTabContentNav.fixed {
+      position: fixed;
+      top: 135px;
+    }
 
 	.detail-content-wrap {
 		> .col-lg-8 {
@@ -395,6 +400,11 @@
 		float: left;
 		margin-bottom: -5px;
 	}
+}
+
+#detailSecondaryColumnWrap {
+	margin-top: 5px;
+	z-index: 600;
 }
 
 .util_list {
