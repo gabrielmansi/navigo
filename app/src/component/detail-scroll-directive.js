@@ -106,8 +106,6 @@ angular.module('voyager.component')
 						detailTabContentNavClone = detailTabContentNav.clone().prop('id', detailTabContentNav.prop('id') + '-clone');
 						detailTabContentNavClone = detailTabContentNavClone.insertBefore(detailTabContentNav);
 						detailTabContentNav.addClass('fixed');
-
-						//detailTabContentNav.css({ top: fixedTop + 'px', position: 'fixed'});
 					}
 
 					// remove the fixed tabs if scrolled back up
@@ -116,7 +114,6 @@ angular.module('voyager.component')
 						detailTabContentNavClone.remove();
 						detailTabContentNavClone = null;
 						detailTabContentNav.removeClass('fixed');
-						//detailTabContentNav.css({ top: 'auto', position: 'static'});
 					}
 				}
 
