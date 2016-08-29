@@ -22,6 +22,12 @@ angular.module('voyager.home')
             }
             return configService.setFilterConfig(config).then(function() {
                 var solrParams = querystring.parse(sugar.trim(savedSearch.query,'&'));
+                // these will get applied later to solr call - don't duplicate
+                delete solrParams.facet;
+                delete solrParams['facet.field'];
+                delete solrParams['facet.mincount'];
+                delete solrParams['extent.bbox'];
+
                 sugar.decodeParams(solrParams);  //workaround - seems the params get encoded twice
                 var queryString = _getQueryString();
                 queryString += '&' + querystring.stringify(solrParams);

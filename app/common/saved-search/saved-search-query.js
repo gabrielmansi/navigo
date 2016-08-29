@@ -26,6 +26,13 @@ var SavedSearchQuery = (function () {
 
     function _getSavedSearchParams(savedSearch) {
         var solrParams = querystring.parse(_sugar.trim(savedSearch.query,'&'));
+
+        // these will get applied later to solr call - don't duplicate
+        delete solrParams.facet;
+        delete solrParams['facet.field'];
+        delete solrParams['facet.mincount'];
+        delete solrParams['extent.bbox'];
+
         if(angular.isUndefined(solrParams.shards) && savedSearch.path.indexOf('catalog=') !== -1) {
             //workaround - query is missing the shards
             var voyagerParams = querystring.parse(_sugar.trim(savedSearch.path.replace(/\//g,'&'),'&'));
