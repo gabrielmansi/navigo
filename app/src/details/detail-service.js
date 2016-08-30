@@ -1,7 +1,7 @@
 /*global angular */
 
 angular.module('voyager.details').
-    factory('detailService', function($http, config, $q, resultsDecorator) {
+    factory('detailService', function($http, config, $q, resultsDecorator, solrUtil) {
 
         'use strict';
 
@@ -12,7 +12,7 @@ angular.module('voyager.details').
 
         var buildRequest = function(id, displayFields, shard, disp) {
             var service = config.root + 'solr/v0/select?q=id:' + id;
-            var fields = '&fl=id,name:[name],fullpath:[absolute],thumb:[thumbURL],preview:[previewURL],download:[downloadURL],bbox,format,hasMetadata,root,tree,tag_tags,links,geo:[geo],hasMissingData,schema,layerURL:[lyrURL]';
+            var fields = '&fl=id,name:[name],fullpath:[absolute],absolute_path:[absolute],thumb:[thumbURL],preview:[previewURL],download:[downloadURL],bbox,format,hasMetadata,root,tree,tag_tags,links,geo:[geo],hasMissingData,schema,layerURL:[lyrURL]';
             fields += displayFields;
             var shards = '';
             if (angular.isDefined(shard)) {
@@ -108,7 +108,9 @@ angular.module('voyager.details').
             if(_.isEmpty(_fields)) {
                 var request = config.root + 'solr/fields/select?fl=name,multivalued,disp:disp_en,stype,displayable' + _type + '&rows=100000';
                 return $http.jsonp(request).then(function(res) {
-                    _fields = _.indexBy(res.data.response.docs,'name');
+                    _fields = _.indexBy(res.data.response.docs, function(key) {
+                        return solrUtil.stripAugmented(key.name);
+                    });
                     return _fields;
                 });
             } else {

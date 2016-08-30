@@ -44,6 +44,17 @@ angular.module('voyager.util').
             return config.root + url + '?' + $.param(qs, true);
         }
 
+        function _stripAugmented(value) {
+            if (value.indexOf(':[') !== -1) {
+                var name = value.substring(0, value.indexOf(':['));
+                if (name.indexOf('_') === 0) {  // strip leading _ so its not excluded as admin field
+                    name = name.replace('_','');
+                }
+                return name;
+            }
+            return value;
+        }
+
         return {
 
             toSolrFilters: function (params, $scope) {
@@ -127,7 +138,9 @@ angular.module('voyager.util').
                 return $http({
                     url: _toSolrQuery('solr/v0/select', params)
                 });
-            }
+            },
+
+            stripAugmented: _stripAugmented
         };
 
     });

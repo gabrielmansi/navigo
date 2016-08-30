@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('voyager.details').
-    factory('detailConfig', function(config, $q, configService, translateService, configLoader) {
+    factory('detailConfig', function(config, $q, configService, translateService, configLoader, solrUtil) {
 
         var displayFields;
         if(config.settings) {
@@ -37,6 +37,7 @@ angular.module('voyager.details').
 
         function _setInclusions() {
             $.each(displayFields, function (index, value) {
+                value.name = solrUtil.stripAugmented(value.name);
                 inclusions[value.name] = value.name;
                 _styles[value.name] = value.style;
                 _showLabels[value.name] = value.showLabel;
@@ -49,6 +50,7 @@ angular.module('voyager.details').
 
         function _setSummaryInclusions() {
             $.each(_summaryFields, function (index, value) {
+                value.name = solrUtil.stripAugmented(value.name);
                 _summaryInclusions[value.name] = value.name;
                 _summaryStyles[value.name] = value.style;
                 _summaryMaxLines[value.name] = value.maxLines;
