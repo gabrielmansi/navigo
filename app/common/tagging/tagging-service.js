@@ -27,7 +27,7 @@ angular.module('voyager.tagging').
 
         function _fetchTags(field) {
             var deferred = $q.defer();
-            var service = config.root + 'solr/usertags/select?q=*:*&rows=0&facet=true&facet.field=fss_tag_' + field + '&wt=json&facet.limit=1000&wt=json&json.wrf=JSON_CALLBACK&rand=' + Math.random();
+            var service = config.root + 'solr/usertags/select?q=*:*&rows=0&facet=true&facet.field=fss_tag_' + field + '&facet.mincount=1&facet.limit=1000&wt=json&json.wrf=JSON_CALLBACK&rand=' + Math.random();
             $http.jsonp(service).then(function(response) {
                 var tags = response.data.facet_counts.facet_fields['fss_tag_' + field];
                 tags = _.reject(tags, function(val){ return _.isNumber(val);});
