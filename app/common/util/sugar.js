@@ -70,6 +70,7 @@ angular.module('voyager.util').
                 retro = retro.replace('f.path', 'path');
                 retro = retro.replace('f.bbox', 'bbox');
                 retro = retro.replace(/:/g, '=');
+                retro = retro.replace('*=*', '*:*');
                 return retro;
             },
 
