@@ -73,6 +73,8 @@ angular.module('voyager.details')
             }
 
             _doLookup($stateParams.id);
+            $scope.styleSheets = detailService.fetchMetadataStyles($stateParams.id);
+
             _setPermissions();
 
             tagService.fetchTags().then(function(tags) {
