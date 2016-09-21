@@ -197,7 +197,7 @@ angular.module('voyager.details').
             },
 
             fetchMetadataStyles: function(id) {
-                return $http.get(config.root + '/api/rest/appearance/metadata/styles/' + id).then(function(res) {
+                return $http.get(config.root + 'api/rest/appearance/metadata/styles/' + id).then(function(res) {
                     return res.data;
                 });
             }

@@ -1,4 +1,3 @@
-/*global angular, $, _, window, document */
 'use strict';
 angular.module('voyager.details')
     .controller('DetailsCtrl', function ($scope, $stateParams, cartService, translateService, authService, config, detailService, mapServiceFactory, leafletData, usSpinnerService, dialogs, $sce, $q, configService, $timeout, tagService, searchService, $location, $window, urlUtil, resultsDecorator, loading, detailConfig, $analytics, $modal, filterService, detailsActions, $log) {
@@ -73,7 +72,9 @@ angular.module('voyager.details')
             }
 
             _doLookup($stateParams.id);
-            $scope.styleSheets = detailService.fetchMetadataStyles($stateParams.id);
+            detailService.fetchMetadataStyles($stateParams.id).then(function(styleSheets) {
+                $scope.styleSheets = styleSheets;
+            });
 
             _setPermissions();
 
