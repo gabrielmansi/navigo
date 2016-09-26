@@ -156,14 +156,8 @@ angular.module('voyager.details').
                             formattedValue = $('<p>' + value + '</p>').text();
                         }
 
-                        var isHtml = false;
-                        if (typeStyles[name] === 'HTML') {
-                            isHtml = true;
-                        }
-                        var isHref = false;
-                        if (typeStyles[name] === 'HREF') {
-                            isHref = true;
-                        }
+                        var isHtml = typeStyles[name] === 'HTML';
+                        var isHref = typeStyles[name] === 'HREF';
                         if (value.length > 100 && !isHtml && !isHref) {
                             typeStyles[name] = 'STRING'; //so it doesn't become a link
                         }
