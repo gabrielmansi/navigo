@@ -160,7 +160,11 @@ angular.module('voyager.details').
                         if (typeStyles[name] === 'HTML') {
                             isHtml = true;
                         }
-                        if (value.length > 100 && !isHtml) {
+                        var isHref = false;
+                        if (typeStyles[name] === 'HREF') {
+                            isHref = true;
+                        }
+                        if (value.length > 100 && !isHtml && !isHref) {
                             typeStyles[name] = 'STRING'; //so it doesn't become a link
                         }
                         prettyFields.push({
