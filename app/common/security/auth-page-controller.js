@@ -8,7 +8,7 @@ angular.module('voyager.security')
         var successCallback = $scope.authSuccess;
         $scope.authSuccess = function() {
             successCallback();
-            $state.go('search');
+            $state.go('home');
         };
 
         $scope.authPage = true;
