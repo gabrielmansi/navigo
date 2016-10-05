@@ -23,7 +23,9 @@ angular.module('voyager.details')
                         $timeout(function() {
                             map.invalidateSize(false);  //workaround when initially hidden
                             //TODO if we can map it do it by default
-                            geoLayer = mapUtil.drawGeoJson(map, geo, true, undefined, true);
+                            var geoType = angular.isDefined(geo.type) ? geo.type.toLowerCase() : '';
+                            var checkArea = geoType.indexOf('point') === -1;  // don't check area of a Point/MultiPoint
+                            geoLayer = mapUtil.drawGeoJson(map, geo, true, undefined, checkArea);
                         });
                     });
                 }
