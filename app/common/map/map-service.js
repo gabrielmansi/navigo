@@ -355,24 +355,28 @@ angular.module('voyager.map').
                 $.each(layerData.ags, function (index, agsLayer) {
                     var layerUrl = agsLayer.url;
                     var layerType = 'agsDynamic';
+
                     if (layerUrl) {
                         if (agsLayer.cached === true) {
                             layerUrl += 'tile/{z}/{y}/{x}/';
                             layerType = 'ags';
                         }
-                        var layer = new L.TileLayer(layerUrl);
-                        baseLayers.push({name: agsLayer.name, layer: layer});
+
+                        var layerOptions = {
+                            layers: agsLayer.layers,
+                            continuousWorld: false,
+                            showOnSelector: true
+                        };
+
+                        //var layer = L.tileLayer(layerUrl);
+                        baseLayers.push({name: agsLayer.name, type: layerType, url: layerUrl, options: layerOptions});
 
                         if(agsLayer.selected === true) {
                             var defaultBaselayer = {
                                 "name": agsLayer.name,
                                 "type": layerType,
                                 "url": layerUrl,
-                                layerOptions: {
-                                    layers: agsLayer.layers,
-                                    continuousWorld: false,
-                                    showOnSelector: false
-                                }
+                                layerOptions: layerOptions
                             }
                             localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
                         }
@@ -384,19 +388,20 @@ angular.module('voyager.map').
                     var layerUrl = bingLayer.url;
                     var layerType = 'bing';
                     if (layerUrl) {
-                        var layer = new L.TileLayer(layerUrl);
-                        baseLayers.push({name: bingLayer.name, layer: layer});
+                        var layerOptions = {
+                            continuousWorld: false,
+                            showOnSelector: false
+                        };
+
+                        //var layer = L.tileLayer(layerUrl);
+                        baseLayers.push({name: bingLayer.name, type: layerType, url: layerUrl, options: layerOptions});
 
                         if(bingLayer.selected === true) {
                             var defaultBaselayer = {
                                 "name": bingLayer.name,
                                 "type": layerType,
                                 "url": layerUrl,
-                                layerOptions: {
-                                    layers: bingLayer.layers,
-                                    continuousWorld: false,
-                                    showOnSelector: false
-                                }
+                                layerOptions: layerOptions
                             }
                             localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
                         }
@@ -408,19 +413,20 @@ angular.module('voyager.map').
                     var layerUrl = googleLayer.url;
                     var layerType = 'google';
                     if (layerUrl) {
-                        var layer = new L.TileLayer(layerUrl);
-                        baseLayers.push({name: googleLayer.name, layer: layer});
+                        var layerOptions = {
+                            continuousWorld: false,
+                            showOnSelector: false
+                        };
+
+                        //var layer = L.tileLayer(layerUrl);
+                        baseLayers.push({name: googleLayer.name, type: layerType, url: layerUrl, options: layerOptions});
 
                         if(googleLayer.selected === true) {
                             var defaultBaselayer = {
                                 "name": googleLayer.name,
                                 "type": layerType,
                                 "url": layerUrl,
-                                layerOptions: {
-                                    layers: googleLayer.layers,
-                                    continuousWorld: false,
-                                    showOnSelector: false
-                                }
+                                layerOptions: layerOptions
                             }
                             localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
                         }
@@ -432,19 +438,20 @@ angular.module('voyager.map').
                     var layerUrl = mapboxLayer.url;
                     var layerType = 'mapbox';
                     if (layerUrl) {
-                        var layer = new L.TileLayer(layerUrl);
-                        baseLayers.push({name: mapboxLayer.name, ulayer: layer});
+                        var layerOptions = {
+                            continuousWorld: false,
+                            showOnSelector: false
+                        };
+
+                        //var layer = L.tileLayer(layerUrl);
+                        baseLayers.push({name: mapboxLayer.name, type: layerType, url: layerUrl, options: layerOptions});
 
                         if(mapboxLayer.selected === true) {
                             var defaultBaselayer = {
                                 "name": mapboxLayer.name,
                                 "type": layerType,
                                 "url": layerUrl,
-                                layerOptions: {
-                                    layers: mapboxLayer.layers,
-                                    continuousWorld: false,
-                                    showOnSelector: false
-                                }
+                                layerOptions: layerOptions
                             }
                             localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
                         }
@@ -456,25 +463,39 @@ angular.module('voyager.map').
                     var layerUrl = wmsLayer.url;
                     var layerType = 'wms';
                     if (layerUrl) {
-                        var layer = new L.TileLayer(layerUrl);
-                        baseLayers.push({name: wmsLayer.name, layer: layer});
+                        var layerOptions = {
+                            layers: wmsLayer.layers,
+                            continuousWorld: false,
+                            showOnSelector: false,
+                            format: 'image/png',
+                            transparent: true
+                        };
+
+                        if (wmsLayer.layers) {
+                            layerOptions.layers = wmsLayer.layers;
+                        }
+
+                        //var layer = L.tileLayer.wms(layerUrl, layerOptions);
+                        baseLayers.push({name: wmsLayer.name, type: layerType, url: layerUrl, options: layerOptions});
 
                         if(wmsLayer.selected === true) {
                             var defaultBaselayer = {
                                 "name": wmsLayer.name,
                                 "type": layerType,
                                 "url": layerUrl,
-                                layerOptions: {
-                                    layers: wmsLayer.layers,
-                                    continuousWorld: false,
-                                    showOnSelector: false
-                                }
+                                layerOptions: layerOptions
                             }
                             localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
                         }
                     }
                 });
             }
+
+            //baseLayers.push({name: 'OpenStreetMap', layer:new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')});
+            //baseLayers.push({name: 'OpenStreetMap', layer:new L.TileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png')});
+
+            baseLayers.push({name: 'OpenStreetMap', url:'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', type:'xyz', options: { continuousWorld: false, showOnSelector: false}});
+            baseLayers.push({name: 'OpenCycleMap', url:'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', type:'xyz', options: { continuousWorld: false, showOnSelector: false}});
 
             return baseLayers;
         }

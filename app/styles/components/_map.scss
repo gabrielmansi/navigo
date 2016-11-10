@@ -96,7 +96,7 @@
 	bottom: 0;
 	pointer-events: auto;
 
-	.leaflet-control-layers-overlays {
+	.leaflet-control-layers-overlays, .leaflet-control-layers-base{
 		label {
 			border-bottom: 1px solid $ddHoverBg;
 			position: relative;

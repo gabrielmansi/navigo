@@ -61,7 +61,7 @@ angular.module('voyager.map').
                                 url: baseMap,
                                 layerOptions: {
                                     layers: config.map.config.layers,
-                                    showOnSelector: false
+                                    //showOnSelector: false
                                 },
                                 layerParams: {
                                     //                                noWrap: true,
@@ -103,8 +103,8 @@ angular.module('voyager.map').
                                     type: 'agsDynamic',
                                     url: baseMap,
                                     layerOptions: {
-                                        layers: config.map.config.layers,
-                                        showOnSelector: false
+                                            layers: config.map.config.layers,
+                                        //showOnSelector: false
                                     }
                                 }
                             }
@@ -122,9 +122,9 @@ angular.module('voyager.map').
                     // console.log("THE MAP");
                     // console.dir($scope.map);
 
-                    _layers.baselayers = {
-                        "base": mapService.getDefaultBaselayer()
-                    };
+                    // _layers.baselayers = {
+                    //     "base": mapService.getDefaultBaselayer()
+                    // };
                 }
             }
         });

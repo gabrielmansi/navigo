@@ -80,8 +80,6 @@ angular.module('voyager.search')
         // click, first extend it and disable the default behaviour
         function _addClickToggleLayersControl(map) {
 
-            console.log("ADDING LAYER CONTROL");
-
             var LayersControl = L.Control.Layers.extend({
                 _expand: function() {
                 },
@@ -402,8 +400,6 @@ angular.module('voyager.search')
             heatmapService.fetch('-180,-90,180,90', 1).then(function(hm) {
                 if (!_.isEmpty(hm.counts_ints2D)) {
                     _heatmapLayer = heatmapService.init($scope.map);
-                    console.log("HEATMAP LAYER");
-                    console.dir(_heatmapLayer);
                     _addToLayerControl(_heatmapLayer, $scope.map, {
                             mapKey: 'Heatmap',
                             extra: '<slider floor="0" ceiling="100" step="1" ng-model="heatmapOpts.opacity" class="heatmap-opacity-control" ng-click="heatmapOpacityClick($event)"></slider>'
@@ -417,10 +413,37 @@ angular.module('voyager.search')
                     _addClickToggleLayersControl($scope.map);
                 }
 
+                // layersControl.addBaseLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'), 'Open Street Map');
+                // layersControl.addBaseLayer(new L.TileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'), 'Open Cycle Map');
+                // layersControl.addBaseLayer(new L.TileLayer('http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}/'), 'ESRI Street Map');
+                // layersControl.addBaseLayer(new L.TileLayer.WMS('http://vmap0.tiles.osgeo.org/wms/vmap0', {layers: 'basic', format: 'image/png'}), 'OSGeo Basic WMS');
+                 var wmsLayer = L.tileLayer.wms('http://vmap0.tiles.osgeo.org/wms/vmap0', {
+                    layers: 'basic',
+                    format: 'image/png',
+                    transparent: true,
+                     crs: 'EPSG4326'
+                });
+                layersControl.addBaseLayer(wmsLayer, 'OSGeo Basic WMS');
+
+
                 if(baselayers) {
                     $.each(baselayers, function(index, layerInfo) {
-                        console.log("adding layer", layerInfo.name);
-                        layersControl.addBaseLayer(layerInfo.layer, layerInfo.name);
+                        // _addToLayerControl(layerInfo.layer, $scope.map, {
+                        //     mapKey: layerInfo.name
+                        //     //extra: '<slider floor="0" ceiling="100" step="1" ng-model="heatmapOpts.opacity" class="heatmap-opacity-control" ng-click="heatmapOpacityClick($event)"></slider>'
+                        // }, false);
+
+                        console.log(layerInfo.url, layerInfo.name);
+
+                        switch(layerInfo.type) {
+                            case 'wms':
+                                //layersControl.addBaseLayer(new L.TileLayer.WMS(layerInfo.url, layerInfo.options), layerInfo.name);
+                                break;
+                            default:
+                                layersControl.addBaseLayer(new L.TileLayer(layerInfo.url), layerInfo.name);
+                        }
+
+
                     });
                 }
             });
