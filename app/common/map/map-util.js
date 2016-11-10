@@ -1,9 +1,11 @@
 /*global angular, _, L, Wkt, alert, $ */
 
 angular.module('voyager.map').
-    factory('mapUtil', function (leafletData, config, $timeout) {
+    factory('mapUtil', function (leafletData, config, mapService, $timeout) {
 
         'use strict';
+
+        console.log("INIT MAP UTIL");
 
         function _getBounds(bbox) {
             bbox = bbox.replace(/,/g, ' ');
@@ -41,73 +43,91 @@ angular.module('voyager.map').
         };
 
         var baseMap = _.getPath(config, 'map.config.url');
+        console.log("BASEMAP: " + baseMap);
 
-        if(angular.isDefined(baseMap)) {
-            if (config.map.config.proxy) {
-                baseMap = config.root + 'proxy?' + baseMap;
-            }
-            if(config.map.type === 'WMSLayerDefinition') {
-                delete _defaultConfig.tileLayer;
-                _defaultConfig.crs = 'EPSG4326';
-                _layers = {
-                    baselayers: {
-                        base: {
-                            name: config.map.config.name,
-                            type: 'wms',
-                            url: baseMap,
-                            layerOptions: {
-                                layers: config.map.config.layers,
-                                showOnSelector: false
-                            },
-                            layerParams: {
-//                                noWrap: true,
-//                                continuousWorld: false
-                            }
-                        }
-                    }
-                };
-            } else if (config.map.type === 'MapboxLayerDefinition') {
-                _layers.baselayers.base.url = baseMap.replace(/\$/g, '');  //remove $ needed for OL (classic) map
-            } else {  // assumes ArcGIS
-                if(config.map.config.cached === true) {
-                    _layers.baselayers.base.url = baseMap + 'tile/{z}/{y}/{x}/';
-                    if(config.map.config.simpleWGS84) {
-                        // custom crs - snagged from leaflet 1.0 to support 4326 better
-                        var wgs84Proj = L.extend({}, L.Projection.LonLat, {bounds:L.bounds([-180, -90], [180, 90])});
-                        var wgs84 = L.extend({}, L.CRS, {
-                            projection: wgs84Proj,
-                            transformation: new L.Transformation(1 / 180, 1, -1 / 180, 0.5),
-                            getSize: function (zoom) {
-                                var b = this.projection.bounds,
-                                    s = this.scale(zoom),
-                                    min = this.transformation.transform(b.min, s),
-                                    max = this.transformation.transform(b.max, s);
-
-                                return L.point(Math.abs(max.x - min.x), Math.abs(max.y - min.y));
-                            }
-                        });
-                        _defaultConfig.crs = wgs84;
-                    }
-                } else {  // not a cached base map - assume ArcGIS dynamic base // TODO - support other types?  which ones?
+        mapService.getBaselayers().then(function() {
+            if (angular.isDefined(baseMap)) {
+                if (config.map.config.proxy) {
+                    baseMap = config.root + 'proxy?' + baseMap;
+                }
+                if (config.map.type === 'WMSLayerDefinition') {
                     delete _defaultConfig.tileLayer;
-                    // TODO - support other crs/spatial reference?  If not leaflet supported will need proj4j
-                    //_defaultConfig.crs = 'EPSG4326';
+                    _defaultConfig.crs = 'EPSG4326';
                     _layers = {
                         baselayers: {
                             base: {
                                 name: config.map.config.name,
-                                type: 'agsDynamic',
+                                type: 'wms',
                                 url: baseMap,
                                 layerOptions: {
                                     layers: config.map.config.layers,
                                     showOnSelector: false
+                                },
+                                layerParams: {
+                                    //                                noWrap: true,
+                                    //                                continuousWorld: false
                                 }
                             }
                         }
                     };
+                } else if (config.map.type === 'MapboxLayerDefinition') {
+                    _layers.baselayers.base.url = baseMap.replace(/\$/g, '');  //remove $ needed for OL (classic) map
+                } else {  // assumes ArcGIS
+                    if (config.map.config.cached === true) {
+                        _layers.baselayers.base.url = baseMap + 'tile/{z}/{y}/{x}/';
+                        if (config.map.config.simpleWGS84) {
+                            // custom crs - snagged from leaflet 1.0 to support 4326 better
+                            var wgs84Proj = L.extend({}, L.Projection.LonLat, {bounds: L.bounds([-180, -90], [180, 90])});
+                            var wgs84 = L.extend({}, L.CRS, {
+                                projection: wgs84Proj,
+                                transformation: new L.Transformation(1 / 180, 1, -1 / 180, 0.5),
+                                getSize: function (zoom) {
+                                    var b = this.projection.bounds,
+                                        s = this.scale(zoom),
+                                        min = this.transformation.transform(b.min, s),
+                                        max = this.transformation.transform(b.max, s);
+
+                                    return L.point(Math.abs(max.x - min.x), Math.abs(max.y - min.y));
+                                }
+                            });
+                            _defaultConfig.crs = wgs84;
+                        }
+                    } else {  // not a cached base map - assume ArcGIS dynamic base // TODO - support other types?  which ones?
+                        delete _defaultConfig.tileLayer;
+                        // TODO - support other crs/spatial reference?  If not leaflet supported will need proj4j
+                        //_defaultConfig.crs = 'EPSG4326';
+                        _layers = {
+                            baselayers: {
+                                base: {
+                                    name: config.map.config.name,
+                                    type: 'agsDynamic',
+                                    url: baseMap,
+                                    layerOptions: {
+                                        layers: config.map.config.layers,
+                                        showOnSelector: false
+                                    }
+                                }
+                            }
+                        };
+                    }
+
+                    // var osmUrl='http://{s}.tile.osm.org/{z}/{x}/{y}.png';
+                    // var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+                    // var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
+                    //
+                    //
+                    // layersControl.addBaseLayer(osm, "Open Street Map");
+                    // osm.addTo($scope.map);
+                    // //$scope.map.setBasemap("Open Street Map");
+                    // console.log("THE MAP");
+                    // console.dir($scope.map);
+
+                    _layers.baselayers = {
+                        "base": mapService.getDefaultBaselayer()
+                    };
                 }
             }
-        }
+        });
 
         function _getStyle(type, weight) {
             var color = config.searchMap.footprintColor;

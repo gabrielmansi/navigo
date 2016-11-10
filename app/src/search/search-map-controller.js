@@ -2,7 +2,8 @@
 // this controller wraps the search map directive - TODO: refactor - its confusing since the direcive has its own controller method
 angular.module('voyager.search')
     .controller('SearchMapCtrl', function ($scope, filterService, $location, searchService, $stateParams, mapUtil, usSpinnerService, $compile,
-                                           $timeout, dialogs, config, leafletData, $analytics, mapServiceFactory, inView, heatmapService, configService, searchViewService) {
+                                           $timeout, dialogs, config, leafletData, $analytics, mapService, mapServiceFactory, inView, heatmapService,
+                                           configService, searchViewService) {
 
         'use strict';
         var _points;
@@ -78,6 +79,9 @@ angular.module('voyager.search')
         // hack to enable layers control to be toggleable by
         // click, first extend it and disable the default behaviour
         function _addClickToggleLayersControl(map) {
+
+            console.log("ADDING LAYER CONTROL");
+
             var LayersControl = L.Control.Layers.extend({
                 _expand: function() {
                 },
@@ -245,8 +249,8 @@ angular.module('voyager.search')
 
             $scope.map.invalidateSize(false);  //workaround when initially hidden
 
-            var mapService = mapServiceFactory.getMapService($scope.mapInfo);
-            mapService.addToMap($scope.mapInfo, $scope.map).then(function (layer) {
+            var generatedMapService = mapServiceFactory.getMapService($scope.mapInfo);
+            generatedMapService.addToMap($scope.mapInfo, $scope.map).then(function (layer) {
                 $scope.mapInfo.mapKey = $scope.mapInfo.name.replace(/'/g, '');
                 if (layer.isValid !== false) {
                     loaded = false;
@@ -398,10 +402,26 @@ angular.module('voyager.search')
             heatmapService.fetch('-180,-90,180,90', 1).then(function(hm) {
                 if (!_.isEmpty(hm.counts_ints2D)) {
                     _heatmapLayer = heatmapService.init($scope.map);
+                    console.log("HEATMAP LAYER");
+                    console.dir(_heatmapLayer);
                     _addToLayerControl(_heatmapLayer, $scope.map, {
                             mapKey: 'Heatmap',
                             extra: '<slider floor="0" ceiling="100" step="1" ng-model="heatmapOpts.opacity" class="heatmap-opacity-control" ng-click="heatmapOpacityClick($event)"></slider>'
                         }, true);
+                }
+            });
+
+            mapService.getBaselayers().then(function(baselayers) {
+
+                if (layersControl === null) {
+                    _addClickToggleLayersControl($scope.map);
+                }
+
+                if(baselayers) {
+                    $.each(baselayers, function(index, layerInfo) {
+                        console.log("adding layer", layerInfo.name);
+                        layersControl.addBaseLayer(layerInfo.layer, layerInfo.name);
+                    });
                 }
             });
         });

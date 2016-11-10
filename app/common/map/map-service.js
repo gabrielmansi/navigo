@@ -1,11 +1,16 @@
 /*global angular, $, _, alert, L */
 
 angular.module('voyager.map').
-    factory('mapService', function (config, converter, $q, $timeout) {
+    factory('mapService', function (config, converter, localStorageService, $http, $q, $timeout) {
         'use strict';
 
         var loaded = true;
         var mappable = {'application/x-arcgis-image-server': true, 'application/x-arcgis-feature-server': true, 'application/x-arcgis-feature-server-layer': true, 'application/x-arcgis-map-server': true, 'application/x-arcgis-map-server-layer': true, 'application/vnd.ogc.wms_xml': true, 'application/vnd.ogc.wms_layer_xml': true};
+        var BASELAYER_STORAGE_NAME = 'base-layers';
+        var DEFAULT_BASELAYER_STORAGE_NAME = 'default-base-layer';
+
+        localStorageService.remove(BASELAYER_STORAGE_NAME);
+        localStorageService.remove(DEFAULT_BASELAYER_STORAGE_NAME);
 
         function _createDynamicLayer(map, mapInfo, spatialReference) {
             var options = {url: mapInfo.root};
@@ -320,6 +325,176 @@ angular.module('voyager.map').
             return deferred.promise;
         }
 
+        function _fetchBaselayers() {
+            var service = config.root + 'api/rest/display/maps';
+            return $http.get(service).then(function(response) {
+                return response.data;
+            });
+        }
+
+        function _getBaselayers() {
+
+            var baseLayers = localStorageService.get(BASELAYER_STORAGE_NAME);
+
+            if (!baseLayers) {
+                return _fetchBaselayers().then(function (data) {
+                    baseLayers = _processBaseLayerData(data);
+                    localStorageService.set(BASELAYER_STORAGE_NAME, baseLayers);
+                    return baseLayers;
+                });
+            } else {
+                return $q.when(baseLayers);
+            }
+        }
+
+        function _processBaseLayerData(layerData) {
+
+            var baseLayers = [];
+
+            if (layerData.ags) {
+                $.each(layerData.ags, function (index, agsLayer) {
+                    var layerUrl = agsLayer.url;
+                    var layerType = 'agsDynamic';
+                    if (layerUrl) {
+                        if (agsLayer.cached === true) {
+                            layerUrl += 'tile/{z}/{y}/{x}/';
+                            layerType = 'ags';
+                        }
+                        var layer = new L.TileLayer(layerUrl);
+                        baseLayers.push({name: agsLayer.name, layer: layer});
+
+                        if(agsLayer.selected === true) {
+                            var defaultBaselayer = {
+                                "name": agsLayer.name,
+                                "type": layerType,
+                                "url": layerUrl,
+                                layerOptions: {
+                                    layers: agsLayer.layers,
+                                    continuousWorld: false,
+                                    showOnSelector: false
+                                }
+                            }
+                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
+                        }
+                    }
+                });
+            }
+            if (layerData.bing) {
+                $.each(layerData.bing, function (index, bingLayer) {
+                    var layerUrl = bingLayer.url;
+                    var layerType = 'bing';
+                    if (layerUrl) {
+                        var layer = new L.TileLayer(layerUrl);
+                        baseLayers.push({name: bingLayer.name, layer: layer});
+
+                        if(bingLayer.selected === true) {
+                            var defaultBaselayer = {
+                                "name": bingLayer.name,
+                                "type": layerType,
+                                "url": layerUrl,
+                                layerOptions: {
+                                    layers: bingLayer.layers,
+                                    continuousWorld: false,
+                                    showOnSelector: false
+                                }
+                            }
+                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
+                        }
+                    }
+                });
+            }
+            if (layerData.google) {
+                $.each(layerData.google, function (index, googleLayer) {
+                    var layerUrl = googleLayer.url;
+                    var layerType = 'google';
+                    if (layerUrl) {
+                        var layer = new L.TileLayer(layerUrl);
+                        baseLayers.push({name: googleLayer.name, layer: layer});
+
+                        if(googleLayer.selected === true) {
+                            var defaultBaselayer = {
+                                "name": googleLayer.name,
+                                "type": layerType,
+                                "url": layerUrl,
+                                layerOptions: {
+                                    layers: googleLayer.layers,
+                                    continuousWorld: false,
+                                    showOnSelector: false
+                                }
+                            }
+                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
+                        }
+                    }
+                });
+            }
+            if (layerData.mapbox) {
+                $.each(layerData.mapbox, function (index, mapboxLayer) {
+                    var layerUrl = mapboxLayer.url;
+                    var layerType = 'mapbox';
+                    if (layerUrl) {
+                        var layer = new L.TileLayer(layerUrl);
+                        baseLayers.push({name: mapboxLayer.name, ulayer: layer});
+
+                        if(mapboxLayer.selected === true) {
+                            var defaultBaselayer = {
+                                "name": mapboxLayer.name,
+                                "type": layerType,
+                                "url": layerUrl,
+                                layerOptions: {
+                                    layers: mapboxLayer.layers,
+                                    continuousWorld: false,
+                                    showOnSelector: false
+                                }
+                            }
+                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
+                        }
+                    }
+                });
+            }
+            if (layerData.wms) {
+                $.each(layerData.wms, function (index, wmsLayer) {
+                    var layerUrl = wmsLayer.url;
+                    var layerType = 'wms';
+                    if (layerUrl) {
+                        var layer = new L.TileLayer(layerUrl);
+                        baseLayers.push({name: wmsLayer.name, layer: layer});
+
+                        if(wmsLayer.selected === true) {
+                            var defaultBaselayer = {
+                                "name": wmsLayer.name,
+                                "type": layerType,
+                                "url": layerUrl,
+                                layerOptions: {
+                                    layers: wmsLayer.layers,
+                                    continuousWorld: false,
+                                    showOnSelector: false
+                                }
+                            }
+                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
+                        }
+                    }
+                });
+            }
+
+            return baseLayers;
+        }
+
+        function _getDefaultBaselayer() {
+            console.log(typeof localStorageService.get(DEFAULT_BASELAYER_STORAGE_NAME));
+            return {
+                name: 'arcgis',
+                type: 'xyz',
+                url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}/',
+                layerParams: {
+//                        noWrap: true,
+//                        continuousWorld: false
+                },
+                layerOptions: {
+                    showOnSelector: false
+                }
+            };
+        }
+
         return {
             addToMap: function (mapInfo, map) {
                 loaded = false;
@@ -335,6 +510,12 @@ angular.module('voyager.map').
             },
             isMappable: function (format) {
                 return mappable[format];
+            },
+            getBaselayers: function() {
+                return _getBaselayers();
+            },
+            getDefaultBaselayer: function() {
+                return _getDefaultBaselayer();
             }
         };
 
