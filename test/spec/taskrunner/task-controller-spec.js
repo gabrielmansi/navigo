@@ -20,9 +20,9 @@ describe('TaskCtrl', function () {
         });
     });
 
-    var scope, controllerService, q, location, timeout, httpMock, $uibModal, cartService;
+    var scope, controllerService, q, location, timeout, httpMock, $uibModal, cartService, $state;
 
-    beforeEach(inject(function ($rootScope, $controller, $q, $location, $timeout, $httpBackend, _$uibModal_, _cartService_) {
+    beforeEach(inject(function ($rootScope, $controller, $q, $location, $timeout, $httpBackend, _$uibModal_, _cartService_, _$state_) {
         scope = $rootScope.$new();
         q = $q;
         controllerService = $controller;
@@ -31,6 +31,8 @@ describe('TaskCtrl', function () {
         httpMock = $httpBackend;
         $uibModal = _$uibModal_;
         cartService = _cartService_;
+        $state = _$state_;
+        spyOn($state, 'go');
     }));
 
     var inputItemsWithQuery = {name:'input_items', query:{fq:'field:facet', params:{bbox:'',bboxt:''}}, ids:[], type:'VoyagerResults', response:{docs:[]}};
@@ -42,7 +44,7 @@ describe('TaskCtrl', function () {
         httpMock.expectGET(new RegExp('task\/name\/init')).respond({params:[inputItemsWithQuery]});  // check status call
         httpMock.expectGET(new RegExp('display')).respond({params:[inputItemsWithQuery]});  // check status call
         var stateParams = {task:{name:'name'}};
-        controllerService('TaskCtrl', {$scope: scope, $stateParams:stateParams});
+        controllerService('TaskCtrl', {$scope: scope, $stateParams:stateParams, $state: $state});
 
         httpMock.flush();
     }
@@ -71,7 +73,7 @@ describe('TaskCtrl', function () {
 
             httpMock.flush();
 
-            expect(location.path()).toBe('/status?id=id');
+            expect($state.go).toHaveBeenCalledWith('status', {id: 'id'});
         });
 
         it('should exec using filters and bbox', function () {
@@ -88,7 +90,7 @@ describe('TaskCtrl', function () {
 
             httpMock.flush();
 
-            expect(location.path()).toBe('/status?id=id');
+            expect($state.go).toHaveBeenCalledWith('status', {id: 'id'});
         });
 
         it('should exec using filters', function () {
@@ -105,7 +107,7 @@ describe('TaskCtrl', function () {
 
             httpMock.flush();
 
-            expect(location.path()).toBe('/status?id=id');
+            expect($state.go).toHaveBeenCalledWith('status', {id: 'id'});
         });
 
         it('should fail validation', function () {

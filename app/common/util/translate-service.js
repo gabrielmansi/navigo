@@ -11,7 +11,7 @@ angular.module('voyager.util').
         var inverse = {"properties": {"hasMetadata": "No Metadata", "spatial": "No Spatial Data", "hyperLinks": "No Hyper Link Support", "hotLinks": "No Hot Links", "pyramids": "No Pyramids", "hasMissingData": "Not Missing Data", "rasterized": "Not Rasterized", "indexingError": "No Indexing Error", "mapTips": "No Map Tips", "absolutePaths": "Relative Paths", "misingThumbnail": "Has Thumbnail", "hasBrightness": "No Brightness Settings"}};
         var locations;
 
-        var removePrefixList = ['fs_','ft_','fh_','fi_','fl_','fd_','ff_','fu_','fp_','fy_','fm_','fb_', 'tag_','meta_','fss_','lgrp_'];
+        var removePrefixList = ['fs_','ft_','fh_','fi_','fl_','fd_','ff_','fu_','fp_','fy_','fm_','fb_', 'tag_','meta_','fss_','grp_'];
         var removePrefixHash = {};
 
         var humanize = function (value) {

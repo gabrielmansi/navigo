@@ -116,7 +116,7 @@ angular.module('voyager.search').
                     solrParams.disp = voyagerParams.disp;
                 }
 
-                var view = _getView(voyagerParams, saved.display.defaultView);
+                var view = _getView(voyagerParams, ((saved.display) ? saved.display.defaultView : undefined));
                 solrParams.view = view.type;
                 if (angular.isDefined(solrParams.sort)) {
                     var sort = solrParams.sort.split(' ');
