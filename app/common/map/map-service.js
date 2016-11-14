@@ -1,16 +1,23 @@
 /*global angular, $, _, alert, L */
 
 angular.module('voyager.map').
-    factory('mapService', function (config, converter, localStorageService, $http, $q, $timeout) {
+    factory('mapService', function (config, converter, $http, $q, $timeout) {
         'use strict';
 
         var loaded = true;
         var mappable = {'application/x-arcgis-image-server': true, 'application/x-arcgis-feature-server': true, 'application/x-arcgis-feature-server-layer': true, 'application/x-arcgis-map-server': true, 'application/x-arcgis-map-server-layer': true, 'application/vnd.ogc.wms_xml': true, 'application/vnd.ogc.wms_layer_xml': true};
-        var BASELAYER_STORAGE_NAME = 'base-layers';
-        var DEFAULT_BASELAYER_STORAGE_NAME = 'default-base-layer';
 
-        localStorageService.remove(BASELAYER_STORAGE_NAME);
-        localStorageService.remove(DEFAULT_BASELAYER_STORAGE_NAME);
+        //todo: use var for baselayer/default baselayer cache and use localstorage to store user selection (check if user selection still exists)
+        var _baselayers;
+        var _defaultBaselayer = {
+            name: 'arcgis',
+            type: 'xyz',
+            url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}/',
+            layerOptions: {
+                 showOnSelector: false
+            }
+        };
+
 
         function _createDynamicLayer(map, mapInfo, spatialReference) {
             var options = {url: mapInfo.root};
@@ -333,187 +340,102 @@ angular.module('voyager.map').
         }
 
         function _getBaselayers() {
-
-            var baseLayers = localStorageService.get(BASELAYER_STORAGE_NAME);
-
-            if (!baseLayers) {
+            if (!_baselayers) {
                 return _fetchBaselayers().then(function (data) {
-                    baseLayers = _processBaseLayerData(data);
-                    localStorageService.set(BASELAYER_STORAGE_NAME, baseLayers);
-                    return baseLayers;
+                    _baselayers = _processBaselayerData(data);
+                    return _baselayers;
                 });
             } else {
-                return $q.when(baseLayers);
+                return $q.when(_baselayers);
             }
         }
 
-        function _processBaseLayerData(layerData) {
-
-            var baseLayers = [];
+        function _processBaselayerData(layerData) {
+            var baselayers = [];
 
             if (layerData.ags) {
-                $.each(layerData.ags, function (index, agsLayer) {
-                    var layerUrl = agsLayer.url;
-                    var layerType = 'agsDynamic';
-
-                    if (layerUrl) {
-                        if (agsLayer.cached === true) {
-                            layerUrl += 'tile/{z}/{y}/{x}/';
-                            layerType = 'ags';
-                        }
-
-                        var layerOptions = {
-                            layers: agsLayer.layers,
-                            continuousWorld: false,
-                            showOnSelector: true
-                        };
-
-                        //var layer = L.tileLayer(layerUrl);
-                        baseLayers.push({name: agsLayer.name, type: layerType, url: layerUrl, options: layerOptions});
-
-                        if(agsLayer.selected === true) {
-                            var defaultBaselayer = {
-                                "name": agsLayer.name,
-                                "type": layerType,
-                                "url": layerUrl,
-                                layerOptions: layerOptions
-                            }
-                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
-                        }
-                    }
-                });
+                baselayers = baselayers.concat(_processBaselayers(layerData.ags, 'ags'));
             }
             if (layerData.bing) {
-                $.each(layerData.bing, function (index, bingLayer) {
-                    var layerUrl = bingLayer.url;
-                    var layerType = 'bing';
-                    if (layerUrl) {
-                        var layerOptions = {
-                            continuousWorld: false,
-                            showOnSelector: false
-                        };
-
-                        //var layer = L.tileLayer(layerUrl);
-                        baseLayers.push({name: bingLayer.name, type: layerType, url: layerUrl, options: layerOptions});
-
-                        if(bingLayer.selected === true) {
-                            var defaultBaselayer = {
-                                "name": bingLayer.name,
-                                "type": layerType,
-                                "url": layerUrl,
-                                layerOptions: layerOptions
-                            }
-                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
-                        }
-                    }
-                });
+                baselayers = baselayers.concat(_processBaselayers(layerData.bing, 'bing'));
             }
             if (layerData.google) {
-                $.each(layerData.google, function (index, googleLayer) {
-                    var layerUrl = googleLayer.url;
-                    var layerType = 'google';
-                    if (layerUrl) {
-                        var layerOptions = {
-                            continuousWorld: false,
-                            showOnSelector: false
-                        };
-
-                        //var layer = L.tileLayer(layerUrl);
-                        baseLayers.push({name: googleLayer.name, type: layerType, url: layerUrl, options: layerOptions});
-
-                        if(googleLayer.selected === true) {
-                            var defaultBaselayer = {
-                                "name": googleLayer.name,
-                                "type": layerType,
-                                "url": layerUrl,
-                                layerOptions: layerOptions
-                            }
-                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
-                        }
-                    }
-                });
+                baselayers = baselayers.concat(_processBaselayers(layerData.google, 'google'));
             }
             if (layerData.mapbox) {
-                $.each(layerData.mapbox, function (index, mapboxLayer) {
-                    var layerUrl = mapboxLayer.url;
-                    var layerType = 'mapbox';
-                    if (layerUrl) {
-                        var layerOptions = {
-                            continuousWorld: false,
-                            showOnSelector: false
-                        };
-
-                        //var layer = L.tileLayer(layerUrl);
-                        baseLayers.push({name: mapboxLayer.name, type: layerType, url: layerUrl, options: layerOptions});
-
-                        if(mapboxLayer.selected === true) {
-                            var defaultBaselayer = {
-                                "name": mapboxLayer.name,
-                                "type": layerType,
-                                "url": layerUrl,
-                                layerOptions: layerOptions
-                            }
-                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
-                        }
-                    }
-                });
+                baselayers = baselayers.concat(_processBaselayers(layerData.mapbox, 'mapbox'));
             }
             if (layerData.wms) {
-                $.each(layerData.wms, function (index, wmsLayer) {
-                    var layerUrl = wmsLayer.url;
-                    var layerType = 'wms';
-                    if (layerUrl) {
-                        var layerOptions = {
-                            layers: wmsLayer.layers,
-                            continuousWorld: false,
-                            showOnSelector: false,
-                            format: 'image/png',
-                            transparent: true
-                        };
-
-                        if (wmsLayer.layers) {
-                            layerOptions.layers = wmsLayer.layers;
-                        }
-
-                        //var layer = L.tileLayer.wms(layerUrl, layerOptions);
-                        baseLayers.push({name: wmsLayer.name, type: layerType, url: layerUrl, options: layerOptions});
-
-                        if(wmsLayer.selected === true) {
-                            var defaultBaselayer = {
-                                "name": wmsLayer.name,
-                                "type": layerType,
-                                "url": layerUrl,
-                                layerOptions: layerOptions
-                            }
-                            localStorageService.set(DEFAULT_BASELAYER_STORAGE_NAME, defaultBaselayer);
-                        }
-                    }
-                });
+                baselayers = baselayers.concat(_processBaselayers(layerData.wms, 'wms'));
             }
 
-            //baseLayers.push({name: 'OpenStreetMap', layer:new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')});
-            //baseLayers.push({name: 'OpenStreetMap', layer:new L.TileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png')});
+            return baselayers;
+        }
 
-            baseLayers.push({name: 'OpenStreetMap', url:'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', type:'xyz', options: { continuousWorld: false, showOnSelector: false}});
-            baseLayers.push({name: 'OpenCycleMap', url:'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', type:'xyz', options: { continuousWorld: false, showOnSelector: false}});
+        function _processBaselayers(layers, type) {
+            var baselayers = [];
 
-            return baseLayers;
+            $.each(layers, function (index, layer) {
+                var layerType = type;
+                var layerUrl = layer.url;
+                var layerOptions = {
+                    continuousWorld: false,
+                    showOnSelector: true
+                };
+                var layerDefault = layer.selected || false;
+
+                if(layerUrl) {
+                    switch (type) {
+                        case 'ags':
+                            if (layer.cached === true) {
+                                layerUrl += 'tile/{z}/{y}/{x}/';
+                                layerType = 'xyz';
+                            } else {
+                                layerType = 'agsDynamic';
+                            }
+                            layerOptions.layers = layer.layers;
+                            break;
+                        case 'mapbox':
+                            layerUrl = layerUrl.replace(/\$/g, '');  //remove $ needed for OL (classic) map
+                            break;
+                        case 'wms':
+                            layerOptions.layers = layer.layers;
+                            layerOptions.format = 'image/png';
+                            layerOptions.transparent = true;
+                            break;
+                        default:
+                            //fall-through for bing, google, etc...
+                    }
+
+                    var layerInfo = {
+                        name: layer.name,
+                        type: layerType,
+                        url: layerUrl,
+                        options: layerOptions,
+                        default: layerDefault
+                    };
+
+                    if(layerDefault)
+                    {
+                        _defaultBaselayer = {
+                            name: layerInfo.name,
+                            type: layerInfo.type,
+                            url: layerInfo.url,
+                            layerOptions: layerInfo.options
+                        };
+
+                        _defaultBaselayer.layerOptions.showOnSelector = false;
+                    }
+
+                    baselayers.push(layerInfo);
+                }
+            });
+
+            return baselayers;
         }
 
         function _getDefaultBaselayer() {
-            console.log(typeof localStorageService.get(DEFAULT_BASELAYER_STORAGE_NAME));
-            return {
-                name: 'arcgis',
-                type: 'xyz',
-                url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}/',
-                layerParams: {
-//                        noWrap: true,
-//                        continuousWorld: false
-                },
-                layerOptions: {
-                    showOnSelector: false
-                }
-            };
+            return _defaultBaselayer;
         }
 
         return {

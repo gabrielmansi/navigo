@@ -1,9 +1,9 @@
 /*global angular, _, L, $ */
 // this controller wraps the search map directive - TODO: refactor - its confusing since the direcive has its own controller method
 angular.module('voyager.search')
-    .controller('SearchMapCtrl', function ($scope, filterService, $location, searchService, $stateParams, mapUtil, usSpinnerService, $compile,
-                                           $timeout, dialogs, config, leafletData, $analytics, mapService, mapServiceFactory, inView, heatmapService,
-                                           configService, searchViewService) {
+    .controller('SearchMapCtrl', function ($scope, filterService, $location, localStorageService, searchService, $stateParams, mapUtil, usSpinnerService,
+                                           $compile, $timeout, dialogs, config, leafletData, $analytics, mapService, mapServiceFactory, inView,
+                                           heatmapService, configService, searchViewService) {
 
         'use strict';
         var _points;
@@ -18,6 +18,7 @@ angular.module('voyager.search')
         var _geoGroup;
         var _cancelledDraw = false;
         var _geoHighlightLayer;
+        var BASELAYER_STORAGE_NAME = 'selected-bas-layer';
 
         $scope.hasMapError = config.hasMapError;
         $scope.$on('drawingTypeChanged', function(event, args){
@@ -108,6 +109,28 @@ angular.module('voyager.search')
                     e.preventDefault();
                     $('.leaflet-control-layers').removeClass('leaflet-control-layers-expanded');
                 });
+
+                $('.leaflet-control-layers-list').on('change', '.leaflet-control-layers-selector:radio', function(e) {
+                    localStorageService.set(BASELAYER_STORAGE_NAME, e.target.nextSibling.innerText.trim());
+                });
+
+                // console.log("RADIO BUTTONS");
+                // console.dir(elems);
+                //
+                // $.each(elems, function(index, rb) {
+                //     console.log(index);
+                //     console.log(rb);
+                //     // rb.onchange(function(e) {
+                //     //     console.log("RADIO BUTTON CHANGED");
+                //     //     console.dir(e);
+                //     // });
+                // });
+
+
+                //     .on('click', function(e) {
+                //     console.log("LEAFLET CLICKED");
+                //     console.dir(e);
+                // });
             });
         }
 
@@ -413,38 +436,40 @@ angular.module('voyager.search')
                     _addClickToggleLayersControl($scope.map);
                 }
 
-                // layersControl.addBaseLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'), 'Open Street Map');
-                // layersControl.addBaseLayer(new L.TileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'), 'Open Cycle Map');
-                // layersControl.addBaseLayer(new L.TileLayer('http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}/'), 'ESRI Street Map');
-                // layersControl.addBaseLayer(new L.TileLayer.WMS('http://vmap0.tiles.osgeo.org/wms/vmap0', {layers: 'basic', format: 'image/png'}), 'OSGeo Basic WMS');
-                 var wmsLayer = L.tileLayer.wms('http://vmap0.tiles.osgeo.org/wms/vmap0', {
-                    layers: 'basic',
-                    format: 'image/png',
-                    transparent: true,
-                     crs: 'EPSG4326'
-                });
-                layersControl.addBaseLayer(wmsLayer, 'OSGeo Basic WMS');
-
-
                 if(baselayers) {
-                    $.each(baselayers, function(index, layerInfo) {
-                        // _addToLayerControl(layerInfo.layer, $scope.map, {
-                        //     mapKey: layerInfo.name
-                        //     //extra: '<slider floor="0" ceiling="100" step="1" ng-model="heatmapOpts.opacity" class="heatmap-opacity-control" ng-click="heatmapOpacityClick($event)"></slider>'
-                        // }, false);
+                    var defaultBaselayer;
+                    var selectedBaselayer;
+                    var selectedBaselayer_Name = localStorageService.get(BASELAYER_STORAGE_NAME);
 
-                        console.log(layerInfo.url, layerInfo.name);
+                    $.each(baselayers, function(index, layerInfo) {
+                        var layer;
 
                         switch(layerInfo.type) {
                             case 'wms':
-                                //layersControl.addBaseLayer(new L.TileLayer.WMS(layerInfo.url, layerInfo.options), layerInfo.name);
+                                layerInfo.options.crs = L.CRS.EPSG4326;
+                                layer = new L.TileLayer.WMS(layerInfo.url, layerInfo.options);
                                 break;
                             default:
-                                layersControl.addBaseLayer(new L.TileLayer(layerInfo.url), layerInfo.name);
+                                layer = new L.TileLayer(layerInfo.url);
                         }
 
+                        layersControl.addBaseLayer(layer, layerInfo.name);
 
+                        if(layerInfo.name === selectedBaselayer_Name) {
+                            selectedBaselayer = layer;
+                        }
+
+                        if(layerInfo.default) {
+                            defaultBaselayer = layer;
+                        }
                     });
+
+                    if(selectedBaselayer)
+                    {
+                        selectedBaselayer.addTo($scope.map);
+                    } else {
+                        defaultBaselayer.addTo($scope.map);
+                    }
                 }
             });
         });
