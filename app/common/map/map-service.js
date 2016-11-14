@@ -434,10 +434,6 @@ angular.module('voyager.map').
             return baselayers;
         }
 
-        function _getDefaultBaselayer() {
-            return _defaultBaselayer;
-        }
-
         return {
             addToMap: function (mapInfo, map) {
                 loaded = false;
@@ -458,7 +454,7 @@ angular.module('voyager.map').
                 return _getBaselayers();
             },
             getDefaultBaselayer: function() {
-                return _getDefaultBaselayer();
+                return _defaultBaselayer;
             }
         };
 

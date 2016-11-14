@@ -18,7 +18,7 @@ angular.module('voyager.search')
         var _geoGroup;
         var _cancelledDraw = false;
         var _geoHighlightLayer;
-        var BASELAYER_STORAGE_NAME = 'selected-bas-layer';
+        var BASELAYER_STORAGE_NAME = 'selected-base-layer';
 
         $scope.hasMapError = config.hasMapError;
         $scope.$on('drawingTypeChanged', function(event, args){
@@ -113,24 +113,6 @@ angular.module('voyager.search')
                 $('.leaflet-control-layers-list').on('change', '.leaflet-control-layers-selector:radio', function(e) {
                     localStorageService.set(BASELAYER_STORAGE_NAME, e.target.nextSibling.innerText.trim());
                 });
-
-                // console.log("RADIO BUTTONS");
-                // console.dir(elems);
-                //
-                // $.each(elems, function(index, rb) {
-                //     console.log(index);
-                //     console.log(rb);
-                //     // rb.onchange(function(e) {
-                //     //     console.log("RADIO BUTTON CHANGED");
-                //     //     console.dir(e);
-                //     // });
-                // });
-
-
-                //     .on('click', function(e) {
-                //     console.log("LEAFLET CLICKED");
-                //     console.dir(e);
-                // });
             });
         }
 
