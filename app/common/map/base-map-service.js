@@ -17,7 +17,7 @@ factory('baseMapService', function (config, converter, $http, $q) {
     }
 
     function _getBaselayers() {
-        if (!_baselayers) {
+        if (!angular.isDefined(_baselayers)) {
             return _fetchBaselayers().then(function (data) {
                 _baselayers = _processBaselayerData(data);
                 return _baselayers;
