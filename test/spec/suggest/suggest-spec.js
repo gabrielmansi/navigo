@@ -16,17 +16,15 @@ describe('Suggest:', function () {
 
     beforeEach(inject(function ($compile, _$rootScope_, $timeout, $httpBackend, _$location_, _$document_){
         scope = _$rootScope_.$new();
+        element = angular.element('<input type="text" vs-suggest>');
+        compiled = $compile(element)(_$rootScope_);
+        element.scope().$apply();
+        controller = element.controller(scope);
         timeout = $timeout;
         httpMock = $httpBackend;
         $location = _$location_;
         $document = _$document_;
         $rootScope = _$rootScope_;
-
-        element = angular.element('<input type="text" vs-suggest>');
-        compiled = $compile(element)(_$rootScope_);
-        httpMock.expectGET(new RegExp('maps')).respond({});
-        element.scope().$apply();
-        controller = element.controller(scope);
     }));
 
     describe('Should Not Suggest', function() {

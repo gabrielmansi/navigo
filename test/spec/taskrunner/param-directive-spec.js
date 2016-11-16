@@ -32,8 +32,6 @@ describe('Param Directive:', function () {
         element = angular.element('<vs-param param="p"></vs-param>');
         compiled = $compile(element)(scope);
 
-        httpMock.expectGET(new RegExp('maps')).respond({});
-
         $(document.body).append(element);
         element.scope().$apply();
 

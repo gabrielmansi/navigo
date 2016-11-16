@@ -35,7 +35,6 @@ describe('DetailsCtrl', function () {
     function expectLoadHttpCalls() {
         // order of http calls (not mocking services here yet)
         //$http.expectGET(new RegExp('auth')).respond({permissions:{manage:true, process:true}});  // auth call
-        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
         $http.expectJSONP(new RegExp('solr\/v0')).respond(lookupResponse.data); // lookup call
         $http.expectGET(new RegExp('metadata')).respond(lookupResponse.data); // stylesheets call
@@ -87,7 +86,6 @@ describe('DetailsCtrl', function () {
             // order of http calls (not mocking services here yet)
 
             //$http.expectGET(new RegExp('auth')).respond({permissions:{manage:true}});  // auth call
-            $http.expectGET(new RegExp('maps')).respond({});
             $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
             $http.expectJSONP(new RegExp('solr\/v0')).respond(lookupResponse.data); // lookup call
             $http.expectGET(new RegExp('metadata')).respond(lookupResponse.data); // stylesheets call

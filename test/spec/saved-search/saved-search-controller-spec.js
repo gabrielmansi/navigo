@@ -37,7 +37,6 @@ describe('Controller: SavedSearchCtrl', function () {
             $scope: $scope
         });
 
-        $http.expectGET(new RegExp('maps')).respond({});
         //$http.expectGET(new RegExp('auth')).respond({response: {docs: []}}); //auth call
 
         //TODO are observers causing multiple to fire?

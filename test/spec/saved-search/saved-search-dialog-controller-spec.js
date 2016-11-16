@@ -38,7 +38,6 @@ describe('Controller: SavedSearchDialogCtrl', function () {
             searchItem:{query:{}}
         });
 
-        $http.expectGET(new RegExp('maps')).respond({});
         //TODO why twice??
         $http.expectGET(new RegExp('auth\/info')).respond({permissions:permission, user:{groups:[]}}); //auth call
 

@@ -17,7 +17,6 @@ describe('Search Map Directive:', function () {
     function initDirective() {
         element = angular.element('<div vs-search-map></div>');
         compiled = compile(element)(scope);
-        httpMock.expectGET(new RegExp('maps')).respond({});
         element.scope().$apply();
         controller = element.controller(scope);
         $(document.body).append(element);
