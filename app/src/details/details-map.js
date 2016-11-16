@@ -1,7 +1,7 @@
 /*global angular, $, L */
 
 angular.module('voyager.details')
-    .directive('vsDetailsMap', function ($compile, config, mapUtil, mapControls, $timeout) {
+    .directive('vsDetailsMap', function ($compile, config, mapUtil, baseMapService, mapControls, $timeout) {
         'use strict';
 
         //var extent = $.extend({}, config.mapDefault); //copy mapDefault so it doesn't get modified
@@ -37,8 +37,8 @@ angular.module('voyager.details')
                     });
                 }
 
-                $scope.defaults = mapUtil.getDefaultConfig();
-                $scope.layers = mapUtil.getLayers();
+                $scope.defaults = baseMapService.getDefaultConfig();
+                $scope.layers = baseMapService.getLayers();
 
                 var spinControl = L.control();
                 spinControl.setPosition('topright');

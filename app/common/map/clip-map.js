@@ -1,7 +1,7 @@
 /*global angular, $, _, L, Wkt */
 
 angular.module('voyager.map')
-    .directive('vsClipMap', function (config, mapUtil, searchService, $timeout) {
+    .directive('vsClipMap', function (config, mapUtil, baseMapService, searchService, $timeout) {
         'use strict';
 
         var extent = $.extend({}, config.mapDefault); //copy mapDefault so it doesn't get modified
@@ -39,8 +39,8 @@ angular.module('voyager.map')
 
                 mapControls.init($scope, 'clip-map');
 
-                $scope.defaults = $.extend({zoomControl:false}, mapUtil.getDefaultConfig());
-                $scope.layers = mapUtil.getLayers();
+                $scope.defaults = $.extend({zoomControl:false}, baseMapService.getDefaultConfig());
+                $scope.layers = baseMapService.getLayers();
 
                 var withPolygon = $scope.param && $scope.param.extentParam !== true;
                 $scope.controls = {

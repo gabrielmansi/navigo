@@ -1,7 +1,7 @@
 /*global angular, $, L */
 
 angular.module('voyager.search')
-	.directive('vsSearchMap', function ($compile, config, mapUtil, $timeout, mapControls, configService, $window, $http, sugar, $rootScope, mapCustomControls, searchViewService) {
+	.directive('vsSearchMap', function ($compile, config, mapUtil, baseMapService, $timeout, mapControls, configService, $window, $http, sugar, $rootScope, mapCustomControls, searchViewService) {
 		'use strict';
 
 		function getMapSizeTemplate() {
@@ -77,8 +77,8 @@ angular.module('voyager.search')
 				$scope._drawing = false;
 				$scope.toolType = 'rectangle';
 				$scope.clientDefault = getExtent($stateParams, config);
-				$scope.defaults = mapUtil.getDefaultConfig();
-				$scope.layers = mapUtil.getLayers($attrs.origin);
+				$scope.defaults = baseMapService.getDefaultConfig();
+				$scope.layers = baseMapService.getLayers($attrs.origin);
 				$scope.controls = {
 					custom: []
 				};
