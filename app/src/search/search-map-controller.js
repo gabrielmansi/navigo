@@ -2,8 +2,8 @@
 // this controller wraps the search map directive - TODO: refactor - its confusing since the direcive has its own controller method
 angular.module('voyager.search')
     .controller('SearchMapCtrl', function ($scope, filterService, $location, localStorageService, searchService, $stateParams, mapUtil, usSpinnerService,
-                                           $compile, $timeout, dialogs, config, leafletData, $analytics, mapService, mapServiceFactory, baseMapService,
-                                           inView, heatmapService, configService, searchViewService) {
+                                           $compile, $timeout, dialogs, config, leafletData, $analytics, mapServiceFactory, baseMapService, inView,
+                                           heatmapService, configService, searchViewService) {
 
         'use strict';
         var _points;
