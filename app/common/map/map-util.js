@@ -1,7 +1,7 @@
 /*global angular, _, L, Wkt, alert, $ */
 
 angular.module('voyager.map').
-    factory('mapUtil', function (leafletData, config, baseMapService, $timeout) {
+    factory('mapUtil', function (leafletData, config, $timeout) {
 
         'use strict';
 
@@ -40,17 +40,40 @@ angular.module('voyager.map').
             }
         };
 
-        baseMapService.getBaselayers().then(function() {
-            var defaultBaselayer = baseMapService.getDefaultBaselayer();
+        var baseMap = _.getPath(config, 'map.config.url');
 
-            if (angular.isDefined(defaultBaselayer)) {
-                if (defaultBaselayer.type === 'wms') {
-                    delete _defaultConfig.tileLayer;
-                    _defaultConfig.crs = 'EPSG4326';
-                    defaultBaselayer.layerOptions.crs = L.CRS.EPSG4326;
-                } else if (defaultBaselayer.type === 'ags') {  // assumes ArcGIS cached
-                    if (config.map.config.simpleWGS84) {// custom crs - snagged from leaflet 1.0 to support 4326 better
-                        var wgs84Proj = L.extend({}, L.Projection.LonLat, {bounds: L.bounds([-180, -90], [180, 90])});
+        if(angular.isDefined(baseMap)) {
+            if (config.map.config.proxy) {
+                baseMap = config.root + 'proxy?' + baseMap;
+            }
+            if(config.map.type === 'WMSLayerDefinition') {
+                delete _defaultConfig.tileLayer;
+                _defaultConfig.crs = 'EPSG4326';
+                _layers = {
+                    baselayers: {
+                        base: {
+                            name: config.map.config.name,
+                            type: 'wms',
+                            url: baseMap,
+                            layerOptions: {
+                                layers: config.map.config.layers,
+                                showOnSelector: false
+                            },
+                            layerParams: {
+//                                noWrap: true,
+//                                continuousWorld: false
+                            }
+                        }
+                    }
+                };
+            } else if (config.map.type === 'MapboxLayerDefinition') {
+                _layers.baselayers.base.url = baseMap.replace(/\$/g, '');  //remove $ needed for OL (classic) map
+            } else {  // assumes ArcGIS
+                if(config.map.config.cached === true) {
+                    _layers.baselayers.base.url = baseMap + 'tile/{z}/{y}/{x}/';
+                    if(config.map.config.simpleWGS84) {
+                        // custom crs - snagged from leaflet 1.0 to support 4326 better
+                        var wgs84Proj = L.extend({}, L.Projection.LonLat, {bounds:L.bounds([-180, -90], [180, 90])});
                         var wgs84 = L.extend({}, L.CRS, {
                             projection: wgs84Proj,
                             transformation: new L.Transformation(1 / 180, 1, -1 / 180, 0.5),
@@ -65,98 +88,26 @@ angular.module('voyager.map').
                         });
                         _defaultConfig.crs = wgs84;
                     }
-                } else if(!(defaultBaselayer.cached === true)) {  // non-cached ArcGIS (dynamic base) // TODO - support other types?  which ones?
+                } else {  // not a cached base map - assume ArcGIS dynamic base // TODO - support other types?  which ones?
                     delete _defaultConfig.tileLayer;
                     // TODO - support other crs/spatial reference?  If not leaflet supported will need proj4j
                     //_defaultConfig.crs = 'EPSG4326';
-                }
-
-
-                _layers = {
-                    baselayers: {
-                        base: {
-                            name: defaultBaselayer.name,
-                            type: defaultBaselayer.type,
-                            url: defaultBaselayer.url,
-                            layerOptions: defaultBaselayer.layerOptions,
-                            layerParams: {
-        //                      noWrap: true,
-        //                      continuousWorld: false
-                            }
-                        }
-                    }
-                };
-            } else {
-
-                var baseMap = _.getPath(config, 'map.config.url');
-                if (angular.isDefined(baseMap)) {
-                    if (config.map.config.proxy) {
-                        defaultBaselayer.url = config.root + 'proxy?' + defaultBaselayer.url;
-                    }
-                    if (config.map.type === 'WMSLayerDefinition') {
-                        delete _defaultConfig.tileLayer;
-                        _defaultConfig.crs = 'EPSG4326';
-                        _layers = {
-                            baselayers: {
-                                base: {
-                                    name: config.map.config.name,
-                                    type: 'wms',
-                                    url: baseMap,
-                                    layerOptions: {
-                                        layers: config.map.config.layers,
-                                        showOnSelector: false
-                                    },
-                                    layerParams: {
-//                                        noWrap: true,
-//                                        continuousWorld: false
-                                    }
+                    _layers = {
+                        baselayers: {
+                            base: {
+                                name: config.map.config.name,
+                                type: 'agsDynamic',
+                                url: baseMap,
+                                layerOptions: {
+                                    layers: config.map.config.layers,
+                                    showOnSelector: false
                                 }
                             }
-                        };
-                    } else if (config.map.type === 'MapboxLayerDefinition') {
-                        _layers.baselayers.base.url = baseMap.replace(/\$/g, ''); //remove $ needed for OL (classic) map
-                    } else {  //assumes ArcGIS
-                        if (config.map.config.cached === true) {
-                            _layers.baselayers.base.url = baseMap + 'tile/{z}/{y}/{x}/';
-                            if(config.map.config.simpleWGS84) {
-                                //custom crs - snagged from leaflet 1.0 to support 4326 better
-                                var wgs84Proj = L.extend({}, L.Projection.LonLat, {bounds:L.bounds([-180, -90], [180, 90])});
-                                var wgs84 = L.extend({}, L.CRS, {
-                                    projection: wgs84Proj,
-                                    transformation: new L.Transformation(1 / 180, 1, -1 / 180, 0.5),
-                                    getSize: function (zoom) {
-                                        var b = this.projection.bounds,
-                                            s = this.scale(zoom),
-                                            min = this.transformation.transform(b.min, s),
-                                            max = this.transformation.transform(b.max, s);
-
-                                        return L.point(Math.abs(max.x - min.x), Math.abs(max.y - min.y));
-                                    }
-                                });
-                                _defaultConfig.crs = wgs84;
-                            }
-                        } else {  // not a cached base map - assume non-cached ArcGIS (dynamic base) // TODO - support other types?  which ones?
-                            delete _defaultConfig.tileLayer;
-                            // TODO - support other crs/spatial reference?  If not leaflet supported will need proj4j
-                            //_defaultConfig.crs = 'EPSG4326';
-                            _layers = {
-                                baselayers: {
-                                    base: {
-                                        name: config.map.config.name,
-                                        type: 'agsDynamic',
-                                        url: baseMap,
-                                        layerOptions: {
-                                            layers: config.map.config.layers,
-                                            showOnSelector: false
-                                        }
-                                    }
-                                }
-                            };
                         }
-                    }
+                    };
                 }
             }
-        });
+        }
 
         function _getStyle(type, weight) {
             var color = config.searchMap.footprintColor;
