@@ -77,6 +77,7 @@ describe('Controller: HeaderCtrl', function () {
 
         sut.login();
 
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectGET(new RegExp('auth')).respond({permissions:{use_voyager:false}});
 
         $http.flush();
@@ -90,6 +91,7 @@ describe('Controller: HeaderCtrl', function () {
 
         sut.logout();
 
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectPOST(new RegExp('logout')).respond({permissions:{use_voyager:false}});
 
         $http.flush();

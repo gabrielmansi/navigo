@@ -31,6 +31,7 @@ describe('Preview Directive:', function () {
         $(document.body).append(element);
         var preview = angular.element('<div id="preview" ui-view="preview"></div>');
         $(document.body).append(preview);
+        httpMock.expectGET(new RegExp('maps')).respond({});
         element.scope().$apply();
     }
 

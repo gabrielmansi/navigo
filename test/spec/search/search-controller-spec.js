@@ -48,6 +48,7 @@ describe('SearchCtrl', function () {
         }
         controllerService('SearchCtrl', {$scope: scope});
 
+        $http.expectGET(new RegExp('maps')).respond({});
         //$http.expectGET(new RegExp('auth')).respond(authResponse); //auth info call
         if (search) {
             $http.expectJSONP(new RegExp('solr\/v0')).respond(response);  //search call
@@ -86,6 +87,7 @@ describe('SearchCtrl', function () {
 
             controllerService('SearchCtrl', {$scope: scope});
 
+            $http.expectGET(new RegExp('maps')).respond({});
             //$http.expectGET(new RegExp('auth')).respond({}); //auth info call
             $http.expectJSONP(new RegExp('solr\/v0')).respond(500,'');  //search call
 
@@ -151,6 +153,7 @@ describe('SearchCtrl', function () {
             scope.pageFramework = { showHeaderInfo: false };
 
             controllerService('SearchCtrl', {$scope: scope, 'cartService': $s.cartService, 'searchService': $s.searchService, 'translateService': translateServiceMock, 'detailService': detailServiceMock, 'configService':$s.configService, 'tagService':tagServiceMock});
+            $http.expectGET(new RegExp('maps')).respond({});
             $http.expectGET(new RegExp('auth')).respond({});
 
             scope.$apply();
@@ -170,6 +173,7 @@ describe('SearchCtrl', function () {
             $s.configService.getPageFramework.and.returnValue({showHeaderInfo: true});
 
             controllerService('SearchCtrl', {$scope: scope, 'cartService': $s.cartService, 'searchService': $s.searchService, 'translateService': translateServiceMock, 'detailService': detailServiceMock, 'configService':$s.configService, 'tagService':tagServiceMock});
+            $http.expectGET(new RegExp('maps')).respond({});
             $http.expectGET(new RegExp('auth')).respond({});
 
             scope.$apply();
@@ -192,6 +196,7 @@ describe('SearchCtrl', function () {
             $s.searchService.doSearch2.and.returnValue(q.when({data:{response:response}}));
             $s.configService.getPageFramework.and.returnValue({showHeaderInfo: true});
 
+            $http.expectGET(new RegExp('maps')).respond({});
             controllerService('SearchCtrl', {$scope: scope, 'cartService': $s.cartService, 'searchService': $s.searchService, 'translateService': translateServiceMock, 'detailService': detailServiceMock, 'configService':$s.configService, 'tagService':tagServiceMock});
             $http.expectGET(new RegExp('auth')).respond({});
 
@@ -219,6 +224,7 @@ describe('SearchCtrl', function () {
             $s.configService.getPageFramework.and.returnValue({showHeaderInfo: true});
 
             controllerService('SearchCtrl', {$scope: scope, 'cartService': $s.cartService, 'searchService': $s.searchService, 'translateService': translateServiceMock, 'detailService': detailServiceMock, 'configService':$s.configService, 'tagService':tagServiceMock});
+            $http.expectGET(new RegExp('maps')).respond({});
             $http.expectGET(new RegExp('auth')).respond({});
 
             scope.$apply();
@@ -348,6 +354,7 @@ describe('SearchCtrl', function () {
             $s.configService.getPageFramework.and.returnValue({showHeaderInfo: true});
 
             controllerService('SearchCtrl', {$scope: scope, 'cartService': $s.cartService, 'searchService': $s.searchService, 'translateService': translateServiceMock, 'detailService': detailServiceMock, 'configService':$s.configService, 'tagService':tagServiceMock});
+            $http.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
             spyOn(scope, 'switchMap').and.callThrough();
 
@@ -367,6 +374,7 @@ describe('SearchCtrl', function () {
             $s.configService.getPageFramework.and.returnValue({showHeaderInfo: true});
 
             controllerService('SearchCtrl', {$scope: scope, 'cartService': $s.cartService, 'searchService': $s.searchService, 'translateService': translateServiceMock, 'detailService': detailServiceMock, 'configService':$s.configService, 'tagService':tagServiceMock, 'searchModalService':$s.searchModalService});
+            $http.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             scope.exportResultsList();

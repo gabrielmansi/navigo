@@ -40,6 +40,7 @@ describe('Saved Content Modal Directive:', function () {
     describe('Functions', function() {
 
         it('should contain request saved searches', function () {
+            httpMock.expectGET(new RegExp('maps')).respond({});
             httpMock.whenJSONP(new RegExp('ssearch\/select')).respond(response);
             httpMock.expectJSONP(new RegExp('ssearch\/select')).respond(response);
             // showModal();
@@ -48,6 +49,7 @@ describe('Saved Content Modal Directive:', function () {
         });
 
         it('should default to anonymous', function(){
+            httpMock.expectGET(new RegExp('maps')).respond({});
             httpMock.whenJSONP(new RegExp('ssearch\/select')).respond(response);
             applyDirective();
             expect(scope.isAnonymous).toBe(true);
@@ -55,6 +57,7 @@ describe('Saved Content Modal Directive:', function () {
         });
 
         it('should show saved searches', function(){
+            httpMock.expectGET(new RegExp('maps')).respond({});
             httpMock.whenJSONP(new RegExp('ssearch\/select')).respond(response);
             applyDirective();
             var evt = scope.$emit('click');
@@ -64,6 +67,7 @@ describe('Saved Content Modal Directive:', function () {
 
         it('should default to suggested searches when has save_search permission', function(){
             spyOn(authService,'hasPermission').and.returnValue(true);
+            httpMock.expectGET(new RegExp('maps')).respond({});
             httpMock.whenJSONP(new RegExp('ssearch\/select')).respond(response);
             httpMock.expectJSONP(new RegExp('slocation\/select')).respond(response);
             //TODO why is this firing again
@@ -76,6 +80,7 @@ describe('Saved Content Modal Directive:', function () {
 
         it('should default to suggested tab when has save_search permission', function(){
             spyOn(authService,'hasPermission').and.returnValue(true);
+            httpMock.expectGET(new RegExp('maps')).respond({});
             httpMock.whenJSONP(new RegExp('ssearch\/select')).respond(response);
             // httpMock.whenJSONP(new RegExp('slocation\/select')).respond(response);
             applyDirective();
@@ -88,6 +93,7 @@ describe('Saved Content Modal Directive:', function () {
 
         it('should change tabs when asked', function(){
             spyOn(authService,'hasPermission').and.returnValue(true);
+            httpMock.expectGET(new RegExp('maps')).respond({});
             httpMock.whenJSONP(new RegExp('ssearch\/select')).respond(response);
             httpMock.whenJSONP(new RegExp('slocation\/select')).respond(response);
             applyDirective();

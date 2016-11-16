@@ -35,6 +35,7 @@ describe('SelectedFilters:', function () {
             $location.search().q = 'text';
             $location.search().place = '1 1 1 1';
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             expect(scope.filters.length).toBe(3);
@@ -43,6 +44,7 @@ describe('SelectedFilters:', function () {
         it('should load with OR filters', function () {
             $location.search().fq = 'filter:(facet1 facet2)';
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             expect(scope.filters.length).toBe(1);
@@ -56,6 +58,7 @@ describe('SelectedFilters:', function () {
             $location.search()['place.id'] = 'id';
 
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             scope.removeFilter({name:'place', humanized:'place: 1 2 3 4'});
@@ -69,6 +72,7 @@ describe('SelectedFilters:', function () {
             $location.search().q = 'text';
 
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             scope.removeFilter({name:'search'});
@@ -80,6 +84,7 @@ describe('SelectedFilters:', function () {
             $location.search().fq = 'filter:facet';
 
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             scope.removeFilter({name:'facet'});
@@ -91,6 +96,7 @@ describe('SelectedFilters:', function () {
             $location.search().fq = 'filter:(facet1 facet2)';
 
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             scope.removeFilter({name:'facet1'});
@@ -106,6 +112,7 @@ describe('SelectedFilters:', function () {
             $location.search()['place.id'] = 'id';
 
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             scope.clearAllFilter({name:'facet'});
@@ -119,6 +126,7 @@ describe('SelectedFilters:', function () {
 
         it('should handle events', function () {
             controllerService('SelectedFiltersCtrl', {$scope: scope});
+            httpMock.expectGET(new RegExp('maps')).respond({});
             scope.$apply();
 
             $location.search().q = 'text';

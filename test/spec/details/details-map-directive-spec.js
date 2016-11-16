@@ -17,6 +17,7 @@ describe('Details Map Directive:', function () {
     function initDirective() {
         element = angular.element('<div vs-details-map></div>');
         compiled = compile(element)(scope);
+        httpMock.expectGET(new RegExp('maps')).respond({});
         element.scope().$apply();
         controller = element.controller(scope);
     }

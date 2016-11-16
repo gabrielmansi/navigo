@@ -2,8 +2,8 @@
 // this controller wraps the search map directive - TODO: refactor - its confusing since the direcive has its own controller method
 angular.module('voyager.search')
     .controller('SearchMapCtrl', function ($scope, filterService, $location, localStorageService, searchService, $stateParams, mapUtil, usSpinnerService,
-                                           $compile, $timeout, dialogs, config, leafletData, $analytics, mapService, mapServiceFactory, inView,
-                                           heatmapService, configService, searchViewService) {
+                                           $compile, $timeout, dialogs, config, leafletData, $analytics, mapService, mapServiceFactory, baseMapService,
+                                           inView, heatmapService, configService, searchViewService) {
 
         'use strict';
         var _points;
@@ -18,7 +18,6 @@ angular.module('voyager.search')
         var _geoGroup;
         var _cancelledDraw = false;
         var _geoHighlightLayer;
-        var BASELAYER_STORAGE_NAME = 'selected-base-layer';
 
         $scope.hasMapError = config.hasMapError;
         $scope.$on('drawingTypeChanged', function(event, args){
@@ -111,7 +110,7 @@ angular.module('voyager.search')
                 });
 
                 $('.leaflet-control-layers-list').on('change', '.leaflet-control-layers-selector:radio', function(e) {
-                    localStorageService.set(BASELAYER_STORAGE_NAME, e.target.nextSibling.innerText.trim());
+                    localStorageService.set(baseMapService.BASELAYER_STORAGE_NAME, e.target.nextSibling.innerText.trim());
                 });
             });
         }
@@ -252,8 +251,8 @@ angular.module('voyager.search')
 
             $scope.map.invalidateSize(false);  //workaround when initially hidden
 
-            var generatedMapService = mapServiceFactory.getMapService($scope.mapInfo);
-            generatedMapService.addToMap($scope.mapInfo, $scope.map).then(function (layer) {
+            var mapService = mapServiceFactory.getMapService($scope.mapInfo);
+            mapService.addToMap($scope.mapInfo, $scope.map).then(function (layer) {
                 $scope.mapInfo.mapKey = $scope.mapInfo.name.replace(/'/g, '');
                 if (layer.isValid !== false) {
                     loaded = false;
@@ -412,16 +411,16 @@ angular.module('voyager.search')
                 }
             });
 
-            mapService.getBaselayers().then(function(baselayers) {
+            baseMapService.getBaselayers().then(function(baselayers) {
 
-                if (layersControl === null) {
+                if(layersControl === null) {
                     _addClickToggleLayersControl($scope.map);
                 }
 
                 if(baselayers) {
                     var defaultBaselayer;
                     var selectedBaselayer;
-                    var selectedBaselayer_Name = localStorageService.get(BASELAYER_STORAGE_NAME);
+                    var selectedBaselayer_Name = localStorageService.get(baseMapService.BASELAYER_STORAGE_NAME);
 
                     $.each(baselayers, function(index, layerInfo) {
                         var layer;
@@ -432,7 +431,12 @@ angular.module('voyager.search')
                                 layer = new L.TileLayer.WMS(layerInfo.url, layerInfo.options);
                                 break;
                             default:
-                                layer = new L.TileLayer(layerInfo.url);
+                                if(layerInfo.cached) {
+                                    layer = new L.TileLayer(layerInfo.url);
+                                } else {
+                                    layerInfo.options.url = layerInfo.url;
+                                    layer = L.esri.dynamicMapLayer(layerInfo.options);
+                                }
                         }
 
                         layersControl.addBaseLayer(layer, layerInfo.name);
@@ -446,10 +450,9 @@ angular.module('voyager.search')
                         }
                     });
 
-                    if(selectedBaselayer)
-                    {
+                    if(selectedBaselayer) {
                         selectedBaselayer.addTo($scope.map);
-                    } else {
+                    } else if(defaultBaselayer) {
                         defaultBaselayer.addTo($scope.map);
                     }
                 }

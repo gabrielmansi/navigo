@@ -1,22 +1,11 @@
 /*global angular, $, _, alert, L */
 
 angular.module('voyager.map').
-    factory('mapService', function (config, converter, $http, $q, $timeout) {
+    factory('mapService', function (config, converter, $q, $timeout) {
         'use strict';
 
         var loaded = true;
         var mappable = {'application/x-arcgis-image-server': true, 'application/x-arcgis-feature-server': true, 'application/x-arcgis-feature-server-layer': true, 'application/x-arcgis-map-server': true, 'application/x-arcgis-map-server-layer': true, 'application/vnd.ogc.wms_xml': true, 'application/vnd.ogc.wms_layer_xml': true};
-
-        //todo: use var for baselayer/default baselayer cache and use localstorage to store user selection (check if user selection still exists)
-        var _baselayers;
-        var _defaultBaselayer = {
-            name: 'arcgis',
-            type: 'xyz',
-            url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}/',
-            layerOptions: {
-                 showOnSelector: false
-            }
-        };
 
 
         function _createDynamicLayer(map, mapInfo, spatialReference) {
@@ -332,108 +321,6 @@ angular.module('voyager.map').
             return deferred.promise;
         }
 
-        function _fetchBaselayers() {
-            var service = config.root + 'api/rest/display/maps';
-            return $http.get(service).then(function(response) {
-                return response.data;
-            });
-        }
-
-        function _getBaselayers() {
-            if (!_baselayers) {
-                return _fetchBaselayers().then(function (data) {
-                    _baselayers = _processBaselayerData(data);
-                    return _baselayers;
-                });
-            } else {
-                return $q.when(_baselayers);
-            }
-        }
-
-        function _processBaselayerData(layerData) {
-            var baselayers = [];
-
-            if (layerData.ags) {
-                baselayers = baselayers.concat(_processBaselayers(layerData.ags, 'ags'));
-            }
-            if (layerData.bing) {
-                baselayers = baselayers.concat(_processBaselayers(layerData.bing, 'bing'));
-            }
-            if (layerData.google) {
-                baselayers = baselayers.concat(_processBaselayers(layerData.google, 'google'));
-            }
-            if (layerData.mapbox) {
-                baselayers = baselayers.concat(_processBaselayers(layerData.mapbox, 'mapbox'));
-            }
-            if (layerData.wms) {
-                baselayers = baselayers.concat(_processBaselayers(layerData.wms, 'wms'));
-            }
-
-            return baselayers;
-        }
-
-        function _processBaselayers(layers, type) {
-            var baselayers = [];
-
-            $.each(layers, function (index, layer) {
-                var layerType = type;
-                var layerUrl = layer.url;
-                var layerOptions = {
-                    continuousWorld: false,
-                    showOnSelector: true
-                };
-                var layerDefault = layer.selected || false;
-
-                if(layerUrl) {
-                    switch (type) {
-                        case 'ags':
-                            if (layer.cached === true) {
-                                layerUrl += 'tile/{z}/{y}/{x}/';
-                                layerType = 'xyz';
-                            } else {
-                                layerType = 'agsDynamic';
-                            }
-                            layerOptions.layers = layer.layers;
-                            break;
-                        case 'mapbox':
-                            layerUrl = layerUrl.replace(/\$/g, '');  //remove $ needed for OL (classic) map
-                            break;
-                        case 'wms':
-                            layerOptions.layers = layer.layers;
-                            layerOptions.format = 'image/png';
-                            layerOptions.transparent = true;
-                            break;
-                        default:
-                            //fall-through for bing, google, etc...
-                    }
-
-                    var layerInfo = {
-                        name: layer.name,
-                        type: layerType,
-                        url: layerUrl,
-                        options: layerOptions,
-                        default: layerDefault
-                    };
-
-                    if(layerDefault)
-                    {
-                        _defaultBaselayer = {
-                            name: layerInfo.name,
-                            type: layerInfo.type,
-                            url: layerInfo.url,
-                            layerOptions: layerInfo.options
-                        };
-
-                        _defaultBaselayer.layerOptions.showOnSelector = false;
-                    }
-
-                    baselayers.push(layerInfo);
-                }
-            });
-
-            return baselayers;
-        }
-
         return {
             addToMap: function (mapInfo, map) {
                 loaded = false;
@@ -449,12 +336,6 @@ angular.module('voyager.map').
             },
             isMappable: function (format) {
                 return mappable[format];
-            },
-            getBaselayers: function() {
-                return _getBaselayers();
-            },
-            getDefaultBaselayer: function() {
-                return _defaultBaselayer;
             }
         };
 

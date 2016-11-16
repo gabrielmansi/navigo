@@ -21,6 +21,7 @@ describe('portalApp', function() {
     });
 
     it('should goto login when no permissions', function() {
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectGET(new RegExp('auth')).respond({});
 
         $state.go('search');
@@ -36,6 +37,7 @@ describe('portalApp', function() {
     });
 
     it('should goto home when view permissions', function() {
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectGET(new RegExp('auth')).respond({});
 
         $state.go('search');
@@ -51,6 +53,7 @@ describe('portalApp', function() {
     });
 
     it('should goto details', function() {
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectGET(new RegExp('auth')).respond({});
 
         $state.go('details');
@@ -67,6 +70,7 @@ describe('portalApp', function() {
 
     it('should not goto queue when no process permission', function() {
         $http.expectGET(new RegExp('auth')).respond({});
+        $http.expectGET(new RegExp('maps')).respond({});
 
         $state.go('queue');
 

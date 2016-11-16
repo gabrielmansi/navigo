@@ -39,6 +39,7 @@ describe('Controller: HomeCtrl', function () {
 
         $controller('HomeCtrl', {$scope: $scope, $uibModalInstance: {}, resultTotalCount: 1, leafletData: leafletData, cartService: cartService});
 
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectJSONP(new RegExp('ssearch')).respond({response:{docs:[]}}); // saved searches
         $http.expectJSONP(new RegExp('ssearch')).respond({response:{docs:[]}}); // get default saved search
         $http.expectJSONP(new RegExp('v0')).respond({response:{docs:[]}}); // featured search
