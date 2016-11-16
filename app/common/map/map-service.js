@@ -7,7 +7,6 @@ angular.module('voyager.map').
         var loaded = true;
         var mappable = {'application/x-arcgis-image-server': true, 'application/x-arcgis-feature-server': true, 'application/x-arcgis-feature-server-layer': true, 'application/x-arcgis-map-server': true, 'application/x-arcgis-map-server-layer': true, 'application/vnd.ogc.wms_xml': true, 'application/vnd.ogc.wms_layer_xml': true};
 
-
         function _createDynamicLayer(map, mapInfo, spatialReference) {
             var options = {url: mapInfo.root};
             if (mapInfo.isLayer) {

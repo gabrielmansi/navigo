@@ -85,7 +85,7 @@ angular.module('voyager.map').
                             }
                         }
                     }
-                };_layers.baselayers.base.layerOptions.showOnSelector = false;
+                };
             } else {
 
                 var baseMap = _.getPath(config, 'map.config.url');

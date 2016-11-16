@@ -79,7 +79,6 @@ angular.module('voyager.search')
         // hack to enable layers control to be toggleable by
         // click, first extend it and disable the default behaviour
         function _addClickToggleLayersControl(map) {
-
             var LayersControl = L.Control.Layers.extend({
                 _expand: function() {
                 },
