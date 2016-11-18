@@ -11,7 +11,7 @@ describe('Run Create GeoPDF Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
-        browser.get(server + '#/queue?disp=default&task=create_geopdf');
+        browser.get(server + '/queue?disp=default&task=create_geopdf');
         Util.waitForSpinner();
     });
 
@@ -74,7 +74,7 @@ describe('Run Create GeoPDF Task', function() {
 
     function verifyStatus() {
         // Verify there are no errors or warnings (warnings may be possible bug and to be investigated)
-        expect(browser.getCurrentUrl()).toMatch(/\/#\/status/);
+        expect(browser.getCurrentUrl()).toMatch(/\/status/);
         expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
         expect(taskStatusPage.getDownloadLink().isPresent()).toBeTruthy();
     }

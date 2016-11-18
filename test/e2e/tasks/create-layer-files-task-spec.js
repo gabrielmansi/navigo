@@ -11,7 +11,7 @@ describe('Run Create Layer Files Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:test_polygon_102100');
-        browser.get(server + '#/queue?disp=default&task=create_layer_files');
+        browser.get(server + '/queue?disp=default&task=create_layer_files');
         Util.waitForSpinner();
     });
 
@@ -45,7 +45,7 @@ describe('Run Create Layer Files Task', function() {
 
     function verifyStatus() {
         // Verify there are no errors or warnings (warnings may be possible bug and to be investigated)
-        expect(browser.getCurrentUrl()).toMatch(/\/#\/status/);
+        expect(browser.getCurrentUrl()).toMatch(/\/status/);
         expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
     }
 });

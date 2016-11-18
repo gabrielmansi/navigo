@@ -11,7 +11,7 @@ describe('Run Export Result List Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
-        browser.get(server + '#/queue?disp=default&task=export_result_list');
+        browser.get(server + '/queue?disp=default&task=export_result_list');
         Util.waitForSpinner();
     });
     
@@ -61,7 +61,7 @@ describe('Run Export Result List Task', function() {
 
     function verifyStatus() {
         // Verify there are no errors or warnings (warnings may be possible bug and to be investigated)
-        expect(browser.getCurrentUrl()).toMatch(/\/#\/status/);
+        expect(browser.getCurrentUrl()).toMatch(/\/status/);
         expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
         expect(taskStatusPage.getDownloadLink().isPresent()).toBeTruthy();
     }

@@ -29,7 +29,7 @@
             <h1 class="semi col-md-6">{{::rel.name}}</h1>
             <div class="pull-right col-md-6" ng-show="rel.numFound > rel.values.length">
                 <span class="semi">showing 1-{{rel.values.length}}</span> of <span class="semi">{{rel.numFound | number}}</span>
-                &nbsp;&nbsp;<a href="search?links.to={{doc.id + ':' + rel.type}}&disp={{disp}}" class="semi">Show all</a>
+                &nbsp;&nbsp;<a href="search?links.to={{doc.id + ':' + rel.type}}&disp={{::disp}}{{::shardParam}}" class="semi">Show all</a>
             </div>
         </header>
         <div class="row">
@@ -44,7 +44,7 @@
             <h1 class="semi col-md-6">{{::fromRel.name}}</h1>
             <div class="pull-right col-md-6" ng-show="fromRel.numFound > fromRel.values.length">
                 <span class="semi">showing 1-{{fromRel.values.length}}</span> of <span class="semi">{{fromRel.numFound | number}}</span>
-                &nbsp;&nbsp;<a href="search?links.from={{doc.id + ':' + fromRel.type}}&disp={{disp}}" class="semi">Show all</a>
+                &nbsp;&nbsp;<a href="search?links.from={{doc.id + ':' + fromRel.type}}&disp={{::disp}}{{::shardParam}}" class="semi">Show all</a>
             </div>
         </header>
         <div class="row">

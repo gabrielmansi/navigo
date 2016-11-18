@@ -11,7 +11,7 @@ describe('Open Publish to ArcGIS Server task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
-        browser.get(server + '#/queue?disp=default&task=publish_to_ags');
+        browser.get(server + '/queue?disp=default&task=publish_to_ags');
         Util.waitForSpinner();
     });
 
@@ -51,6 +51,6 @@ describe('Open Publish to ArcGIS Server task', function() {
 
     function verifyStatus() {
         // Verify an error was returned.
-        expect(taskStatusPage.getError().isPresent()).toBeTruthy();
+        expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
     }
 });

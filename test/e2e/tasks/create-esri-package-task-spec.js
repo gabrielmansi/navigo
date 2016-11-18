@@ -12,7 +12,7 @@ describe('Run Create Esri Map or Layer Package Task', function() {
     beforeEach(function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
         // Open Clip Data by Features task UI
-        browser.get(server + '#/queue?disp=default&task=create_esri_package');
+        browser.get(server + '/queue?disp=default&task=create_esri_package');
         Util.waitForSpinner();
     });
 
@@ -53,7 +53,7 @@ describe('Run Create Esri Map or Layer Package Task', function() {
 
     function verifyStatus() {
         // Verify there are no errors or warnings (warnings may be possible bug and to be investigated)
-        expect(browser.getCurrentUrl()).toMatch(/\/#\/status/);
+        expect(browser.getCurrentUrl()).toMatch(/\/status/);
         expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
         expect(taskStatusPage.getDownloadLink().isPresent()).toBeTruthy();
     }

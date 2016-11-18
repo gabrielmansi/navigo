@@ -10,7 +10,7 @@ describe('Search', function() {
    // browser.manage().window().setSize(1280, 1024);
 
     it('should load search page', function() {
-        browser.get(server + '#/search');
+        browser.get(server + '/search');
 
         var totalAnchor = searchPage.getTotalLink();
 
@@ -25,7 +25,7 @@ describe('Search', function() {
     });
 
     it('should load search page with filter', function() {
-        browser.get(server + '#/search?disp=default&fq=format_type:File');
+        browser.get(server + '/search?disp=default&fq=format_type:File');
 
         var selectedFilters = element.all(by.repeater('selected in filters'));
         expect(selectedFilters.count()).toEqual(1);
@@ -33,7 +33,7 @@ describe('Search', function() {
     });
 
     it('should show filters', function() {
-        browser.get(server + '#/search');
+        browser.get(server + '/search');
 
         // block ui will be shown a couple times here as different ajax calls are made
         Util.waitForSpinner();
@@ -46,7 +46,7 @@ describe('Search', function() {
     });
 
     it('should show facets and select facet', function() {
-        browser.get(server + '#/search');
+        browser.get(server + '/search');
 
         Util.waitForSpinner();
 
@@ -99,7 +99,7 @@ describe('Search', function() {
     });
 
     it('should show table view', function() {
-        browser.get(server + '#/search?view=table&disp=default');
+        browser.get(server + '/search?view=table&disp=default');
 
         //workaround - this test times out for some reason
         browser.sleep(10000);
@@ -114,7 +114,7 @@ describe('Search', function() {
     });
 
     it('should show map view', function() {
-        browser.get(server + '#/search?view=map&disp=default');
+        browser.get(server + '/search?view=map&disp=default');
 
         expect(element(by.css('.alt_list_view')).isPresent()).toBeTruthy();
 

@@ -62,7 +62,14 @@ angular.module('voyager.details')
             }, 250);
         }
 
+        function _hasShard(shard) {
+            return angular.isDefined(shard) && shard !== '[not a shard request]';
+        }
+
         function _activate() {
+            if (_hasShard($stateParams.shard)) {
+                $scope.shardParam = '&shards=' + $stateParams.shard;
+            }
 
             if(!$scope.pageFramework.showHeaderInfo && $location.path().indexOf('/search') > -1){
                 angular.element('body').addClass('no-header');
@@ -277,15 +284,16 @@ angular.module('voyager.details')
         function _setStyle() {
             $scope.theme = {};
             $scope.theme.selected = detailConfig.getDefaultMetadataStylesheet() || config.metadataStyle;
-            $scope.$watch('theme.selected', function(){
-                var shard = $stateParams.shard;
-                var root = config.root;
-                if (angular.isDefined(shard) && shard !== '[not a shard request]') {
-                    root = shard.substring(0,shard.indexOf('solr'));
-                    if (root.indexOf('http') === -1) {  //TODO what if its https? how to determine
-                        root = 'http://' + root;
-                    }
-                }
+            $scope.$watch('theme.selected', function() {
+                // TODO - root was unused below - remove?
+                //var shard = $stateParams.shard;
+                //var root = config.root;
+                //if (_hasShard(shard)) {
+                //    root = shard.substring(0,shard.indexOf('solr'));
+                //    if (root.indexOf('http') === -1) {  //TODO what if its https? how to determine
+                //        root = 'http://' + root;
+                //    }
+                //}
 
                 $scope.metadataUrl = $scope.doc.content;
 
@@ -296,7 +304,7 @@ angular.module('voyager.details')
 
                     $scope.metadataUrl += 'meta.xml?style=' + $scope.theme.selected;
 
-                    if ($scope.doc.shard) {
+                    if (_hasShard($scope.doc.shard)) {
                         $scope.metadataUrl += '&shard=' + $scope.doc.shard;
                     }
                 }
@@ -532,14 +540,14 @@ angular.module('voyager.details')
             return decodeURIComponent(temp[temp.length-1]);
         }
 
-        function _move(direction, id) {
+        function _move(direction, doc) {
             var flag = 'no' + direction;
-            if(id !== null) {
+            if(doc !== null) {
                 $scope[flag] = false;
-                var encodedId = encodeURIComponent(encodeURIComponent(id.id));  // TODO it doesn't work with just 1 encode
+                var encodedId = encodeURIComponent(encodeURIComponent(doc.id));  // TODO it doesn't work with just 1 encode
                 var detailsUrl = 'show?id= ' + encodedId + '&disp=' + configService.getConfigId();
-                if (angular.isDefined(id.shard) && id.shard !== '[not a shard request]') {
-                    detailsUrl += '&shard=' + id.shard;
+                if (_hasShard(doc.shard)) {
+                    detailsUrl += '&shard=' + doc.shard;
                 }
                 $window.location.href = detailsUrl;
                 return true;

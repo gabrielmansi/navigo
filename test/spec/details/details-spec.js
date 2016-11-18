@@ -40,10 +40,15 @@ describe('DetailsCtrl', function () {
         $http.expectGET(new RegExp('metadata')).respond(lookupResponse.data); // stylesheets call
         $http.expectJSONP(new RegExp('solr\/usertags')).respond({facet_counts: {facet_fields:{fss_tag_tags:[]}}}); // tags call
         $http.expectJSONP(new RegExp('tree')).respond(lookupResponse.data); // tree call
-        $http.expectGET(new RegExp('links')).respond(lookupResponse.data); // link types call
-        $http.expectJSONP(new RegExp('links.from')).respond(lookupResponse.data); // links from call
+
+        // called twice since to and from happen in parallel
+        $http.expectGET(new RegExp('links')).respond({from: ['server'], to: ['server']}); // link types call
+        $http.expectGET(new RegExp('links')).respond({from: ['server'], to: ['server']}); // link types call
+
         $http.expectJSONP(new RegExp('fq=id')).respond(lookupResponse.data); // queue call
+
         $http.expectJSONP(new RegExp('links.to')).respond(lookupResponse.data); // links to call
+        $http.expectJSONP(new RegExp('links.from')).respond(lookupResponse.data); // links from call
     }
 
     describe('Load', function () {
@@ -96,8 +101,8 @@ describe('DetailsCtrl', function () {
 
         function expectLinksAndQueue() {
             $http.expectGET(new RegExp('links')).respond(lookupResponse.data); // link types call
-            $http.expectJSONP(new RegExp('fq=id')).respond(lookupResponse.data); // queue call
             $http.expectGET(new RegExp('links')).respond(lookupResponse.data); // link types call
+            $http.expectJSONP(new RegExp('fq=id')).respond(lookupResponse.data); // queue call
         }
 
         it('should get next', function() {
