@@ -455,6 +455,10 @@ angular.module('voyager.search')
                         defaultBaselayer.addTo($scope.map);
                     }
                 }
+
+                $timeout(function() {  //wait for scope to digest so control is added to leaflet
+                    _compileLayersControl();
+                });
             });
         });
 
