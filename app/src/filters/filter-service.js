@@ -125,10 +125,22 @@ angular.module('voyager.filters').
                         } else {
                             name = '[' + facet.model[0] + ' TO ' + facet.model[1] + ']';
                         }
+                        filterList.push(facet.filter + ':' + name);
+                    } else if (facet.style === 'COMPLEX') {
+                        if(facet.name.constructor === Array && facet.filter.constructor === Array) {
+                            //can not apply when lengths are different
+                            if(facet.name.length === facet.filter.length) {
+                                $.each(facet.name, function(index, facetName) {
+                                    filterList.push(facet.filter[index] + ':' + facetName);
+                                });
+                            }
+                        } else {
+                            filterList.push(facet.filter + ':' + facet.name);
+                        }
                     } else {
                         name = converter.solrReady(name);
+                        filterList.push(facet.filter + ':' + name);
                     }
-                    filterList.push(facet.filter + ':' + name);
                 });
                 return filterList;
             },

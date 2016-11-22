@@ -251,6 +251,49 @@ angular.module('voyager.config').
             });
         }
 
+        function _createDiscoveryStatusFilter(discoveryStatusFilter, facetTypes) {
+            if(!discoveryStatusFilter) {
+                discoveryStatusFilter = {
+                    field: 'discoveryStatus',
+                    value: 'Discovery Status',
+                    values: []
+                };
+                facetTypes.unshift(discoveryStatusFilter);
+            }
+            discoveryStatusFilter.value = "Discovery Status";
+            discoveryStatusFilter.values = [
+                {
+                    name: ["(SCAN SCAN_FULL)", "false"],
+                    value: 'First Pass: Scan Complete',
+                    filter: ["_index_reason", "__to_extract"],
+                    humanized: "1st Pass: Scan Complete",
+                    count: 0,
+                    hasCount: false,
+                    display: "1st Pass: Scan Complete",
+                    style: 'COMPLEX'
+                },
+                {
+                    name: "true",
+                    value: 'Second Pass: Read Pending',
+                    filter: "__to_extract",
+                    humanized: "2nd Pass: Read Pending",
+                    count: 0,
+                    hasCount: false,
+                    display: "2nd Pass: Read Pending"
+                },
+                {
+                    name: ["CHECKOUT", "false"],
+                    value: 'Second Pass: Read Complete',
+                    filter: ["_index_reason", "__to_extract"],
+                    humanized: "2nd Pass: Read Complete",
+                    count: 0,
+                    hasCount: false,
+                    display: "2nd Pass: Read Complete",
+                    style: 'COMPLEX'
+                }
+            ];
+        }
+
         return {
 
             getPageFramework: _getPageFramework,
@@ -265,7 +308,7 @@ angular.module('voyager.config').
 
             getDisplayFilters: function () {
                 //facetTypes are filters
-                var facetTypes = config.settings.data.filters, hasShard = false, catalogFilter;
+                var facetTypes = config.settings.data.filters, hasShard = false, catalogFilter, discoveryStatusFilter;
                 $.each(facetTypes, function (index, value) {
                     value.value = '';
                     value.values = [];  //facets
@@ -276,12 +319,18 @@ angular.module('voyager.config').
                         hasShard = true;
                         catalogFilter = value;
                     }
+                    if(value.field === 'discoveryStatus') {
+                        discoveryStatusFilter = value;
+                    }
                 });
 
                 translateService.translateFilterNames(facetTypes);
                 // TODO: federated search? 
                 if(config.settings.data.showFederatedSearch) {
                     _createCatalogFilter(catalogFilter, facetTypes);
+                }
+                if(config.settings.data.showDiscoveryStatus) {
+                    _createDiscoveryStatusFilter(discoveryStatusFilter, facetTypes);
                 }
                 return facetTypes;
             },

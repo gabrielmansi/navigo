@@ -39,6 +39,9 @@ angular.module('voyager.filters').
         return {
 
             execute: function (params, filters, bounds, selectedFilters) {
+
+                //VG4228 - params include discoverystatus
+
                 var paramCopy = _.clone(params);  //params get modified, don't modify location directly
                 return $http.jsonp(_getQueryString(paramCopy, filters, bounds)).then(function(res) {
                     var resultData = res.data.facet_counts.facet_fields;

@@ -287,8 +287,6 @@ angular.module('voyager.filters')
                     filterQuery.execute($location.search(), filterService.getFilterParams(), filterService.getBoundsParams(), filterService.getSelectedFilters()).then(function(res) {
                         $scope.filters = filterStyle.apply(res.filters);
 
-                        //Marker for VG-4228
-
                         if(!_.isEmpty(res.badShards)) {
                             configService.getCatalogs().then(function() { //catalog facets are built
                                 var catalogFilter = _.find($scope.filters, {field:'shards'}), shardUrl;

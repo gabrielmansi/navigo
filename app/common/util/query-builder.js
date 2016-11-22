@@ -5,10 +5,11 @@ angular.module('voyager.util').
 
         var actionFields = null;
         var selectPath = 'solr/v0/select';
+        var customFields = ['shards', 'discoveryStatus']; //all custom fields must be entered here in order to not impact query string
 
         var getFacetParams = function (field) {
             var facetParams = '';
-            if (field && field !== 'shards') {
+            if (field && !($.inArray(field, customFields) >= 0)) {
                 var fieldConfig = _.find(config.settings.data.filters, function(filter) {return filter.field === field;});
                 if(angular.isDefined(fieldConfig.minCount)) {
                     facetParams += '&f.' + fieldConfig.field + '.facet.mincount=' + fieldConfig.minCount;
@@ -26,7 +27,7 @@ angular.module('voyager.util').
             var filters = config.settings.data.filters;
 
             $.each(filters, function (index, filter) {
-                if(filter.field !== 'shards') {
+                if(!($.inArray(filter.field, customFields) >= 0)) {
                     if(filter.style === 'CHECK') {
                         facetParams += '&facet.field={!ex=' + filter.field + '}' + filter.field;
                     } else if(filter.style === 'STATS') {
