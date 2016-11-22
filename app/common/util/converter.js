@@ -60,8 +60,13 @@ angular.module('voyager.util').
             var converted = '';
             if(angular.isDefined(params[from])) {
                 var pArr = sugar.toArray(params[from]), f, filter, filterValue;
+                if (from === 'shards') {
+                    pArr = params[from].split(',');
+                }
                 $.each(pArr, function(index, value) {
-                    if (value.indexOf(':') !== -1) {
+                    if (to.indexOf('links.') > -1) {
+                        converted += '/' + to + '=' + encodeURIComponent(encodeURIComponent(value));
+                    } else if (value.indexOf(':') !== -1) {
                         f = value.split(':');
                         filter = f[0];
                         filterValue = f[1];
@@ -218,7 +223,7 @@ angular.module('voyager.util').
                     }
                 });
                 $.each(orFilters, function (name, orFilter) { //apply OR filters
-                    filterQuery.push('{!tag=' + name + '}' + name + ":(" + orFilter.join(" ") + ")");
+                    filterQuery.push('{!tag=' + name + '}' + name + ':(' + orFilter.join(' ') + ')');
                 });
                 return filterQuery;
             },
@@ -240,6 +245,11 @@ angular.module('voyager.util').
                 voyagerParams += _toClassic(params, 'place.op', 'place.op');
 
                 voyagerParams += _toClassic(params, 'voyager.list', 'voyager.list');
+
+                voyagerParams += _toClassic(params, 'links.to', 'links.to');
+                voyagerParams += _toClassic(params, 'links.from', 'links.from');
+                voyagerParams += _toClassic(params, 'shards', 'catalog');
+
                 if(angular.isDefined(params.view) && params.view !== 'card') {
                     voyagerParams += '/view=' + params.view;
                 }
@@ -251,6 +261,13 @@ angular.module('voyager.util').
                 }
 
                 return voyagerParams;
+            },
+
+            toIdTextArray: function(source) {
+                source = source.replace(/ /g, '').split(',');
+                return _.transform(source, function(arr, val, idx) {
+                    arr[idx] = {id: val, text: val};
+                });
             }
         };
 
