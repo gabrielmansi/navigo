@@ -5,21 +5,13 @@ angular.module('voyager.filters').
 
         function _allFiltersSelected(facet) {
             var selectedFilters = filterService.getSelectedFilters();
-            if(facet.name.constructor === Array && facet.filter.constructor === Array) {
-                //can not apply when lengths are different
-                if (facet.name.length === facet.filter.length) {
-                    var containsAll = true;
-                    $.each(facet.name, function (index, facetName) {
-                        var facetFilter = facet.filter[index];
-                        containsAll = containsAll && (!!selectedFilters[facetName] && selectedFilters[facetName].filter === facetFilter);
-                        //_containsFacet(selectedFilters, facetName, facetFilter);
-                    });
-                    return containsAll;
-                }
-            } else {
-                return (!!selectedFilters[facet.name] && selectedFilters[facet.name].filter === facet.filter);
-            }
-            return false;
+            var containsAll = true;
+            $.each(facet.name, function (index, facetName) {
+                var facetFilter = facet.filter[index];
+                containsAll = containsAll && (!!selectedFilters[facetName] && selectedFilters[facetName].filter === facetFilter);
+                //_containsFacet(selectedFilters, facetName, facetFilter);
+            });
+            return containsAll;
         }
 
         function _containsFacet(facetList, facetName, facetFilter) {

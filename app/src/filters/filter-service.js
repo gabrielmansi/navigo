@@ -129,16 +129,7 @@ angular.module('voyager.filters').
                         }
                         filterList.push(facet.filter + ':' + name);
                     } else if (facet.style === 'COMPLEX') {
-                        if(facet.name.constructor === Array && facet.filter.constructor === Array) {
-                            //can not apply when lengths are different
-                            if(facet.name.length === facet.filter.length) {
-                                $.each(facet.name, function(index, facetName) {
-                                    filterList.push(facet.filter[index] + ':' + facetName);
-                                });
-                            }
-                        } else {
-                            filterList.push(facet.filter + ':' + facet.name);
-                        }
+                        filterList.push(facet.filter + ':' + facet.name);
                     } else {
                         name = converter.solrReady(name);
                         filterList.push(facet.filter + ':' + name);
@@ -169,26 +160,17 @@ angular.module('voyager.filters').
 
             addFilter: function (facet) {
                 if(facet.style === 'COMPLEX') {
-                    if(facet.name.constructor === Array && facet.filter.constructor === Array) {
-                        if(facet.name.length === facet.filter.length) {
-                            $.each(facet.name, function(index, facetName) {
-                                if(!filterMap[facet.name[index]])
-                                {
-                                    var simpleFacet = $.extend({}, facet);
-                                    simpleFacet.name = facet.name[index];
-                                    simpleFacet.filter = facet.filter[index];
+                    $.each(facet.name, function(index, facetName) {
+                        if(!filterMap[facet.name[index]])
+                        {
+                            var simpleFacet = $.extend({}, facet);
+                            simpleFacet.name = facet.name[index];
+                            simpleFacet.filter = facet.filter[index];
 
-                                    filters.push(simpleFacet);
-                                    filterMap[simpleFacet.name] = simpleFacet;
-                                }
-                            });
+                            filters.push(simpleFacet);
+                            filterMap[simpleFacet.name] = simpleFacet;
                         }
-                    } else {
-                        if (!filterMap[facet.name]) {
-                            filters.push(facet);
-                            filterMap[facet.name] = facet;
-                        }
-                    }
+                    });
                 } else if (!filterMap[facet.name]) {
                     filters.push(facet);
                     filterMap[facet.name] = facet;
@@ -229,15 +211,9 @@ angular.module('voyager.filters').
                 if (isCalendar || isRange) {
                     delete filterMap[facet.filter];
                 } else if(isComplex) {
-                    if(facet.name.constructor === Array && facet.filter.constructor === Array) {
-                        if(facet.name.length === facet.filter.length) {
-                            $.each(facet.name, function(index, facetName) {
-                                delete filterMap[facetName];
-                            });
-                        }
-                    } else {
-                        delete filterMap[facet.name];
-                    }
+                    $.each(facet.name, function(index, facetName) {
+                        delete filterMap[facetName];
+                    });
                 } else {
                     delete filterMap[facet.name];
                 }

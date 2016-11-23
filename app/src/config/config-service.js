@@ -274,13 +274,14 @@ angular.module('voyager.config').
                     style: 'COMPLEX'
                 },
                 {
-                    name: "true",
+                    name: ["true"],
                     value: 'Second Pass: Read Pending',
-                    filter: "__to_extract",
+                    filter: ["__to_extract"],
                     humanized: "2nd Pass: Read Pending",
                     count: 0,
                     hasCount: false,
-                    display: "2nd Pass: Read Pending"
+                    display: "2nd Pass: Read Pending",
+                    style: 'COMPLEX'
                 },
                 {
                     name: ["CHECKOUT", "false"],
