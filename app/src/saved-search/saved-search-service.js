@@ -1,7 +1,8 @@
 /*global angular, $, querystring, config */
 
 angular.module('voyager.search').
-    factory('savedSearchService', function (sugar, $http, configService, $q, authService, $uibModal, recentSearchService, $location, filterService, $analytics, converter, displayConfigResource, solrGrunt, $timeout) {
+    factory('savedSearchService', function (
+    sugar, $http, configService, $q, authService, $uibModal, recentSearchService, $location, filterService, $analytics, converter, displayConfigResource, solrGrunt, $timeout, catalogService) {
         'use strict';
 
         var observers = [];
@@ -106,6 +107,10 @@ angular.module('voyager.search').
                 if (angular.isDefined(voyagerParams.catalog) && angular.isUndefined(solrParams.shards)) {
                     // TODO why is shards missing on a federated saved search?
                     solrParams.shards = _.isArray(voyagerParams.catalog) ? voyagerParams.catalog.join(',') : voyagerParams.catalog;
+                }
+
+                if (angular.isDefined(solrParams.shards)) {
+                    solrParams.shards = catalogService.removeInvalid(solrParams.shards);
                 }
 
                 if(angular.isDefined(voyagerParams.bbox)) {

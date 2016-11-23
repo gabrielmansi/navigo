@@ -68,7 +68,9 @@ angular.module('voyager.details')
 
         function _activate() {
             if (_hasShard($stateParams.shard)) {
-                $scope.shardParam = '&shards=' + $stateParams.shard;
+                $scope.shard = $stateParams.shard;
+                $scope.shardParam = '&shard=' + $stateParams.shard;
+                $scope.shardsParam = '&shards=' + $stateParams.shard;
             }
 
             if(!$scope.pageFramework.showHeaderInfo && $location.path().indexOf('/search') > -1){

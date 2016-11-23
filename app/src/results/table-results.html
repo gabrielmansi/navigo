@@ -52,7 +52,7 @@
                             <div class="flyout_arrow"></div>
                             <div class="flyout_inner">
                                 <ul>
-                                    <li><a ng-show="link.visible" ng-click="link.do()" target="_self" style="cursor:pointer">{{link.text}}</a></li>
+                                    <!--<li><a ng-show="link.visible" ng-click="link.do()" target="_self" style="cursor:pointer">{{link.text}}</a></li>-->
                                     <li ng-repeat="action in ::actions"><a href="javascript:;" ng-click="action.do()" target="_self">{{action.display || action.text}}</span></a></li>
                                 </ul>
                             </div>

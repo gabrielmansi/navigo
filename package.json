@@ -56,8 +56,8 @@
     "karma-sinon": "~1.0.4",
     "load-grunt-config": "~0.16.0",
     "load-grunt-tasks": "~0.2.0",
-    "protractor-html-screenshot-reporter": "0.0.21",
     "protractor-jasmine2-html-reporter": "0.0.5",
+    "protractor-jasmine2-screenshot-reporter": "^0.3.2",
     "requirejs": "~2.1.9",
     "time-grunt": "~0.2.1"
   },
