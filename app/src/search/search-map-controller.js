@@ -18,6 +18,8 @@ angular.module('voyager.search')
         var _geoGroup;
         var _cancelledDraw = false;
         var _geoHighlightLayer;
+        var _docs;
+        var _baselayers;
 
         $scope.hasMapError = config.hasMapError;
         $scope.$on('drawingTypeChanged', function(event, args){
@@ -107,11 +109,14 @@ angular.module('voyager.search')
                     e.preventDefault();
                     $('.leaflet-control-layers').removeClass('leaflet-control-layers-expanded');
                 });
-
-                $('.leaflet-control-layers-list').on('change', '.leaflet-control-layers-selector:radio', function(e) {
-                    localStorageService.set(baseMapService.BASELAYER_STORAGE_NAME, e.target.nextSibling.innerText.trim());
-                });
             });
+        }
+
+        function _refreshMap(baselayerType) {
+            var center = $scope.map.getCenter();
+            $scope.map.options.crs = baseMapService.getCRSForLayerType(baselayerType);
+            $scope.map.setView(center);
+            $scope.map._resetView($scope.map.getCenter(), $scope.map.getZoom(), true);
         }
 
         function _addToLayerControl(layer, map, mapInfo, permanent) {
@@ -234,6 +239,7 @@ angular.module('voyager.search')
             }
 
             //TODO only show what is in the viewport?
+            _docs = results.response.docs;
             _addGeoJson(results.response.docs);
         });
 
@@ -334,6 +340,11 @@ angular.module('voyager.search')
 
             });
 
+            $scope.map.on('baselayerchange', function(e) {
+                localStorageService.set(baseMapService.BASELAYER_STORAGE_NAME, e.name);
+                _refreshMap(_baselayers[e.name].type);
+            })
+
             $scope.$on('cancelledDraw', function() {
                 _cancelledDraw = true;
             });
@@ -412,21 +423,26 @@ angular.module('voyager.search')
 
             baseMapService.getBaselayers().then(function(baselayers) {
 
+                _baselayers = baselayers;
+
                 if(layersControl === null) {
                     _addClickToggleLayersControl($scope.map);
                 }
 
                 if(baselayers) {
                     var defaultBaselayer;
+                    var defaultBaselayer_Type;
                     var selectedBaselayer;
+                    var selectedBaselayer_Type;
                     var selectedBaselayer_Name = localStorageService.get(baseMapService.BASELAYER_STORAGE_NAME);
 
                     $.each(baselayers, function(index, layerInfo) {
                         var layer;
 
+                        layerInfo.options.crs = baseMapService.getCRSForLayerType(layerInfo.type);
+
                         switch(layerInfo.type) {
                             case 'wms':
-                                layerInfo.options.crs = L.CRS.EPSG4326;
                                 layer = new L.TileLayer.WMS(layerInfo.url, layerInfo.options);
                                 break;
                             default:
@@ -442,18 +458,24 @@ angular.module('voyager.search')
 
                         if(layerInfo.name === selectedBaselayer_Name) {
                             selectedBaselayer = layer;
+                            selectedBaselayer_Type = layerInfo.type;
                         }
 
                         if(layerInfo.default) {
                             defaultBaselayer = layer;
+                            defaultBaselayer_Type = layerInfo.type;
                         }
                     });
 
                     if(selectedBaselayer) {
                         selectedBaselayer.addTo($scope.map);
+                        _refreshMap(selectedBaselayer_Type);
                     } else if(defaultBaselayer) {
                         defaultBaselayer.addTo($scope.map);
+                        _refreshMap(defaultBaselayer_Type);
                     }
+
+
                 }
 
                 $timeout(function() {  //wait for scope to digest so control is added to leaflet

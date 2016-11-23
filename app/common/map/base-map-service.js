@@ -1,7 +1,7 @@
 /*global angular, $, _, alert, L */
 
 angular.module('voyager.map').
-factory('baseMapService', function (config, converter, $http, $q) {
+factory('baseMapService', function (config, converter, mapUtil, $http, $q) {
     'use strict';
 
     var _baselayerStorageName = 'selected-base-layer';
@@ -67,21 +67,7 @@ factory('baseMapService', function (config, converter, $http, $q) {
             if(config.map.config.cached === true) {
                 _layers.baselayers.base.url = baseMap + 'tile/{z}/{y}/{x}/';
                 if(config.map.config.simpleWGS84) {
-                    // custom crs - snagged from leaflet 1.0 to support 4326 better
-                    var wgs84Proj = L.extend({}, L.Projection.LonLat, {bounds:L.bounds([-180, -90], [180, 90])});
-                    var wgs84 = L.extend({}, L.CRS, {
-                        projection: wgs84Proj,
-                        transformation: new L.Transformation(1 / 180, 1, -1 / 180, 0.5),
-                        getSize: function (zoom) {
-                            var b = this.projection.bounds,
-                                s = this.scale(zoom),
-                                min = this.transformation.transform(b.min, s),
-                                max = this.transformation.transform(b.max, s);
-
-                            return L.point(Math.abs(max.x - min.x), Math.abs(max.y - min.y));
-                        }
-                    });
-                    _defaultConfig.crs = wgs84;
+                    _defaultConfig.crs = mapUtil.getWGS84CRS();
                 }
             } else {  // not a cached base map - assume ArcGIS dynamic base // TODO - support other types?  which ones?
                 delete _defaultConfig.tileLayer;
@@ -124,29 +110,29 @@ factory('baseMapService', function (config, converter, $http, $q) {
     }
 
     function _processBaselayerData(layerData) {
-        var baselayers = [];
+        var baselayers = {};
 
         if (layerData.ags) {
-            baselayers = baselayers.concat(_processBaselayers(layerData.ags, 'ags'));
+            baselayers = _processBaselayers(baselayers, layerData.ags, 'ags');
         }
         if (layerData.bing) {
-            baselayers = baselayers.concat(_processBaselayers(layerData.bing, 'bing'));
+            baselayers = _processBaselayers(baselayers, layerData.bing, 'bing');
         }
         if (layerData.google) {
-            baselayers = baselayers.concat(_processBaselayers(layerData.google, 'google'));
+            baselayers = _processBaselayers(baselayers, layerData.google, 'google');
         }
         if (layerData.mapbox) {
-            baselayers = baselayers.concat(_processBaselayers(layerData.mapbox, 'mapbox'));
+            baselayers = _processBaselayers(baselayers, layerData.mapbox, 'mapbox');
         }
         if (layerData.wms) {
-            baselayers = baselayers.concat(_processBaselayers(layerData.wms, 'wms'));
+            baselayers = _processBaselayers(baselayers, layerData.wms, 'wms');
         }
 
         return baselayers;
     }
 
-    function _processBaselayers(layers, type) {
-        var baselayers = [];
+    function _processBaselayers(baselayers, layers, type) {
+        baselayers = baselayers || {};
 
         $.each(layers, function (index, layer) {
             var layerType = type;
@@ -216,7 +202,7 @@ factory('baseMapService', function (config, converter, $http, $q) {
                     _defaultBaselayer.layerOptions.showOnSelector = false;
                 }
 
-                baselayers.push(layerInfo);
+                baselayers[layerInfo.name] = layerInfo;
             }
         });
 
@@ -247,6 +233,14 @@ factory('baseMapService', function (config, converter, $http, $q) {
 
         getDefaultBaselayer: function() {
             return _defaultBaselayer;
+        },
+
+        getCRSForLayerType: function(type) {
+            if(type === 'wms') {
+                return L.CRS.EPSG4326;
+            } else {
+                return L.CRS.EPSG3857;
+            }
         }
     };
 });

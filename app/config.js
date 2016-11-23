@@ -1,8 +1,8 @@
 // Note: when running in Voyager, this static file is partially overwritten with voyager config settings
 /* jshint ignore:start */
 var config = {
-    'root': 'http://voyagerdemo.com/daily/',
-    //'root': 'http://voyagerdemo.com/198/',
+    //'root': 'http://voyagerdemo.com/daily/',
+    'root': 'http://voyagerdemo.com/198/',
     //'root': 'http://localhost:8888/',
     'explorePath': 'voyager',
     'enableEmail': true,
@@ -31,6 +31,16 @@ var config = {
             'defaultView': '-98, 40.5, 3'
         }
     },
+    // "map": {
+    //     "type": "WMSLayerDefinition",
+    //     "config": {
+    //         "name": "OSGeo Basic WMS",
+    //         "url": "http://vmap0.tiles.osgeo.org/wms/vmap0",
+    //         "layers": "basic",
+    //         "selected": true,
+    //         "defaultView": "-98, 40.5, 3"
+    //     }
+    // },
     mapApp:'http://www.arcgis.com/home/webmap/viewer.html',
     markerLimit:10001,
     proxy:'http://localhost:8888/proxy/jsonp/',

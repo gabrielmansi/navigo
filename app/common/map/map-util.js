@@ -27,6 +27,24 @@ angular.module('voyager.map').
         }
 
         return {
+            getWGS84CRS: function() {
+                // custom crs - snagged from leaflet 1.0 to support 4326 better
+                var _wgs84Proj = L.extend({}, L.Projection.LonLat, {bounds:L.bounds([-180, -90], [180, 90])});
+                var _wgs84 = L.extend({}, L.CRS, {
+                    projection: _wgs84Proj,
+                    transformation: new L.Transformation(1 / 180, 1, -1 / 180, 0.5),
+                    getSize: function (zoom) {
+                        var b = this.projection.bounds,
+                            s = this.scale(zoom),
+                            min = this.transformation.transform(b.min, s),
+                            max = this.transformation.transform(b.max, s);
+
+                        return L.point(Math.abs(max.x - min.x), Math.abs(max.y - min.y));
+                    }
+                });
+                return _wgs84;
+            },
+
             getRectangle: function(bbox, type, weight) {
                 var bounds = _getBounds(bbox), style = _getStyle(type, weight);
                 return L.rectangle(bounds, {color: style.color, weight: style.weight, fill:false});

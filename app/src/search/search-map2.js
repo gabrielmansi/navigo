@@ -78,7 +78,11 @@ angular.module('voyager.search')
 				$scope.toolType = 'rectangle';
 				$scope.clientDefault = getExtent($stateParams, config);
 				$scope.defaults = baseMapService.getDefaultConfig();
-				$scope.layers = baseMapService.getLayers($attrs.origin);
+				if($attrs.basemapvisible !== 'false') {
+                    $scope.layers = baseMapService.getLayers($attrs.origin);
+                } else  {
+					delete $scope.layers;
+				}
 				$scope.controls = {
 					custom: []
 				};

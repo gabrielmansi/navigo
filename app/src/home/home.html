@@ -1,6 +1,6 @@
 <div class="home" ng-controller="HomeCtrl">
 	<section id="searchContainer" style="{{containerStyle}}">
-		<div id="map" class="search-map" vs-search-map togglestyle="true" resize="false" ng-if="!hideMap" cancel="true" origin="home"></div>
+		<div id="map" class="search-map" vs-search-map togglestyle="true" resize="false" ng-if="!hideMap" cancel="true" origin="home" basemapvisible="true"></div>
 		<div class="inner {{displayFormat}}" vs-searchform>
 			<div class="search_wrap">
 				<form name="searchForm" id="searchForm" ng-submit="submitSearch()" class="search_form">
