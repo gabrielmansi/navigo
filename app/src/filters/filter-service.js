@@ -160,6 +160,7 @@ angular.module('voyager.filters').
 
             addFilter: function (facet) {
                 if(facet.style === 'COMPLEX') {
+                    //assume that complex facets have name and filter values that are both arrays of the same length
                     $.each(facet.name, function(index, facetName) {
                         if(!filterMap[facet.name[index]])
                         {
@@ -211,6 +212,7 @@ angular.module('voyager.filters').
                 if (isCalendar || isRange) {
                     delete filterMap[facet.filter];
                 } else if(isComplex) {
+                    //assume that complex facets have name and filter values that are both arrays of the same length
                     $.each(facet.name, function(index, facetName) {
                         delete filterMap[facetName];
                     });

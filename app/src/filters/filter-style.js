@@ -6,6 +6,7 @@ angular.module('voyager.filters').
         function _allFiltersSelected(facet) {
             var selectedFilters = filterService.getSelectedFilters();
             var containsAll = true;
+            //assume that complex facets have name and filter values that are both arrays of the same length
             $.each(facet.name, function (index, facetName) {
                 var facetFilter = facet.filter[index];
                 containsAll = containsAll && (!!selectedFilters[facetName] && selectedFilters[facetName].filter === facetFilter);

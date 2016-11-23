@@ -262,6 +262,8 @@ angular.module('voyager.config').
                 facetTypes.unshift(discoveryStatusFilter);
             }
             discoveryStatusFilter.value = "Discovery Status";
+            
+            //using complex type.  facets with the complex type must have their name and filter values stored in arrays of equal length
             discoveryStatusFilter.values = [
                 {
                     name: ["(SCAN SCAN_FULL)", "false"],
