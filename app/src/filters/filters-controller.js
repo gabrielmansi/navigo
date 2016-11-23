@@ -96,6 +96,7 @@ angular.module('voyager.filters')
                     $scope.removeFilter(facet);
                 } else {
                     filterService.removeFilter(facet);
+                    facet.isSelected = false;
                 }
                 if(forceSelectedParameter) {
                     // force sync with 'show all' modal.

@@ -256,7 +256,8 @@ angular.module('voyager.config').
                 discoveryStatusFilter = {
                     field: 'discoveryStatus',
                     value: 'Discovery Status',
-                    values: []
+                    values: [],
+                    style: 'COMPLEX'
                 };
                 facetTypes.unshift(discoveryStatusFilter);
             }

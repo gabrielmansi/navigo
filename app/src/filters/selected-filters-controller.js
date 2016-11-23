@@ -7,18 +7,15 @@ angular.module('voyager.filters')
             $scope.filters.forEach(function(filter) {
                 filter.isOr = filter.name.indexOf('(') === 0;
                 if (filter.isOr) {
-                    if((filter.name.indexOf(' AND ') < 0) && (filter.name.indexOf(' OR ') < 0)) { //not a complex filter
-                        filter.parts = [];
-                        var parts = filter.name.replace('(', '').replace(')', '').trim().split(' ');
-                        parts.forEach(function (part) {
-                            var facet = {name: part, pretty: part};
-                            filter.parts.push(facet);
-                            if (filter.filter === 'location') {
-                                facet.pretty = translateService.getLocation(part);
-                            }
-                        });
-                    }
-                    filter.isOr = false;
+                    filter.parts = [];
+                    var parts = filter.name.replace('(', '').replace(')', '').trim().split(' ');
+                    parts.forEach(function (part) {
+                        var facet = {name: part, filter: filter.filter, pretty: part};
+                        filter.parts.push(facet);
+                        if (filter.filter === 'location') {
+                            facet.pretty = translateService.getLocation(part);
+                        }
+                    });
                 }
             });
         }
