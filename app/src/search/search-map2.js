@@ -79,8 +79,8 @@ angular.module('voyager.search')
 				$scope.clientDefault = getExtent($stateParams, config);
 				$scope.defaults = baseMapService.getDefaultConfig();
 				if($attrs.basemapvisible !== 'false') {
-                    $scope.layers = baseMapService.getLayers($attrs.origin);
-                } else  {
+					$scope.layers = baseMapService.getLayers($attrs.origin);
+				} else  {
 					delete $scope.layers;
 				}
 				$scope.controls = {
