@@ -5,12 +5,12 @@ angular.module('voyager.details')
 			restrict: 'A',
 			link: function($scope, element) {
 
-				function _lookup(id, el) {
+				function _lookup(id, shard, el) {
 					_positionPreview(el);
 					$scope.previewLoading = true;
 					loading.show('#previewLoading');
 					$scope.node = {};
-					detailService.lookup(id).then(function (data) {
+					detailService.lookup(id, '', shard).then(function (data) {
 						$scope.node = data.data.response.docs[0];
 						if ($scope.node === undefined) {
 							$('#preview').css({'display': 'none'});
@@ -37,7 +37,7 @@ angular.module('voyager.details')
 					$scope.node = {};
 					var el = $(event.currentTarget);
 					this.timeoutPromise = $timeout(function() {
-						_lookup(el.data('id'), el);
+						_lookup(el.data('id'), el.data('shard'), el);
 					}, 100);
 				}).on('mouseleave', '.label a', function(){
 					if (angular.isDefined(this.timeoutPromise)) {

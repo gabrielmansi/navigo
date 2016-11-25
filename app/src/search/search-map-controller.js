@@ -1,8 +1,9 @@
 /*global angular, _, L, $ */
 // this controller wraps the search map directive - TODO: refactor - its confusing since the direcive has its own controller method
 angular.module('voyager.search')
-    .controller('SearchMapCtrl', function ($scope, filterService, $location, searchService, $stateParams, mapUtil, usSpinnerService, $compile,
-                                           $timeout, dialogs, config, leafletData, $analytics, mapServiceFactory, inView, heatmapService, configService, searchViewService) {
+    .controller('SearchMapCtrl', function ($scope, filterService, $location, localStorageService, searchService, $stateParams, mapUtil, usSpinnerService,
+                                           $compile, $timeout, dialogs, config, leafletData, $analytics, mapServiceFactory, baseMapService, inView,
+                                           heatmapService, configService, searchViewService) {
 
         'use strict';
         var _points;
@@ -17,6 +18,8 @@ angular.module('voyager.search')
         var _geoGroup;
         var _cancelledDraw = false;
         var _geoHighlightLayer;
+        var _docs;
+        var _baselayers;
 
         $scope.hasMapError = config.hasMapError;
         $scope.$on('drawingTypeChanged', function(event, args){
@@ -107,6 +110,13 @@ angular.module('voyager.search')
                     $('.leaflet-control-layers').removeClass('leaflet-control-layers-expanded');
                 });
             });
+        }
+
+        function _refreshMap(baselayerType) {
+            var center = $scope.map.getCenter();
+            $scope.map.options.crs = baseMapService.getCRSForLayerType(baselayerType);
+            $scope.map.setView(center);
+            $scope.map._resetView($scope.map.getCenter(), $scope.map.getZoom(), true);
         }
 
         function _addToLayerControl(layer, map, mapInfo, permanent) {
@@ -229,6 +239,7 @@ angular.module('voyager.search')
             }
 
             //TODO only show what is in the viewport?
+            _docs = results.response.docs;
             _addGeoJson(results.response.docs);
         });
 
@@ -329,6 +340,13 @@ angular.module('voyager.search')
 
             });
 
+            $scope.map.on('baselayerchange', function(e) {
+                localStorageService.set(baseMapService.BASELAYER_STORAGE_NAME, e.name);
+                if(_baselayers) {
+                    _refreshMap(_baselayers[e.name].type);
+                }
+            });
+
             $scope.$on('cancelledDraw', function() {
                 _cancelledDraw = true;
             });
@@ -403,6 +421,66 @@ angular.module('voyager.search')
                             extra: '<slider floor="0" ceiling="100" step="1" ng-model="heatmapOpts.opacity" class="heatmap-opacity-control" ng-click="heatmapOpacityClick($event)"></slider>'
                         }, true);
                 }
+            });
+
+            baseMapService.getBaselayers().then(function(baselayers) {
+
+                _baselayers = baselayers;
+
+                if(layersControl === null) {
+                    _addClickToggleLayersControl($scope.map);
+                }
+
+                if(baselayers) {
+                    var defaultBaselayer;
+                    var defaultBaselayer_Type;
+                    var selectedBaselayer;
+                    var selectedBaselayer_Type;
+                    var selectedBaselayer_Name = localStorageService.get(baseMapService.BASELAYER_STORAGE_NAME);
+
+                    $.each(baselayers, function(index, layerInfo) {
+                        var layer;
+
+                        layerInfo.options.crs = baseMapService.getCRSForLayerType(layerInfo.type);
+
+                        switch(layerInfo.type) {
+                            case 'wms':
+                                layer = new L.TileLayer.WMS(layerInfo.url, layerInfo.options);
+                                break;
+                            default:
+                                if(layerInfo.cached) {
+                                    layer = new L.TileLayer(layerInfo.url);
+                                } else {
+                                    layerInfo.options.url = layerInfo.url;
+                                    layer = L.esri.dynamicMapLayer(layerInfo.options);
+                                }
+                        }
+
+                        layersControl.addBaseLayer(layer, layerInfo.name);
+
+                        if(layerInfo.name === selectedBaselayer_Name) {
+                            selectedBaselayer = layer;
+                            selectedBaselayer_Type = layerInfo.type;
+                        }
+
+                        if(layerInfo.default) {
+                            defaultBaselayer = layer;
+                            defaultBaselayer_Type = layerInfo.type;
+                        }
+                    });
+
+                    if(selectedBaselayer) {
+                        selectedBaselayer.addTo($scope.map);
+                        _refreshMap(selectedBaselayer_Type);
+                    } else if(defaultBaselayer) {
+                        defaultBaselayer.addTo($scope.map);
+                        _refreshMap(defaultBaselayer_Type);
+                    }
+                }
+
+                $timeout(function() {  //wait for scope to digest so control is added to leaflet
+                    _compileLayersControl();
+                });
             });
         });
 

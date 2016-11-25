@@ -40,8 +40,7 @@ var searchPage = (function () {
         },
 
         addAllToQueue: function(query) {
-
-            browser.get(Util.getServer() + '#/search?q=' + query + '&disp=default&view=card&debug=true');
+            browser.get(Util.getServer() + '/search?q=' + query + '&disp=default&view=card&debug=true');
 
             // TODO need a better solution here...the spinner can reappear for other ajax calls
             Util.waitForSpinner();

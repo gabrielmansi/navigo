@@ -12,7 +12,7 @@ describe('Run Convert to KML Task', function() {
     it('should run convert_to_kml using default parameter values', function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
 
-        browser.get(server + '#/queue?disp=default&task=convert_to_kml');
+        browser.get(server + '/queue?disp=default&task=convert_to_kml');
         Util.waitForSpinner();
 
         // Get list of parameters
@@ -27,7 +27,7 @@ describe('Run Convert to KML Task', function() {
         browser.waitForAngular();
 
         // Check the status and expect no errors
-        expect(browser.getCurrentUrl()).toMatch(/\/#\/status/);
+        expect(browser.getCurrentUrl()).toMatch(/\/status/);
         expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
         // Expect download link
         expect(taskStatusPage.getDownloadLink().isPresent()).toBeTruthy();

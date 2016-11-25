@@ -1,7 +1,7 @@
 /*global angular, $, _, L, Wkt */
 
 angular.module('voyager.map')
-    .directive('vsReadOnlyMap', function (mapUtil, $timeout, searchService) {
+    .directive('vsReadOnlyMap', function (mapUtil, baseMapService, $timeout, searchService) {
         'use strict';
 
         function _isGeometry($scope) {
@@ -35,11 +35,11 @@ angular.module('voyager.map')
             },
             controller: function ($scope, leafletData) {
 
-                var config = $.extend({}, mapUtil.getDefaultConfig()); //copy config so it doesn't get modified
+                var config = $.extend({}, baseMapService.getDefaultConfig()); //copy config so it doesn't get modified
                 //config.zoomControl = false;
 
                 $scope.defaults = config;
-                $scope.layers = mapUtil.getLayers();
+                $scope.layers = baseMapService.getLayers();
 
                 if($scope.param.wkt) {
                     leafletData.getMap("read-only-map").then(function (map) {

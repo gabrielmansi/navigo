@@ -43,6 +43,7 @@ describe('portalApp', function() {
         $http.expectGET(new RegExp('auth')).respond({permissions:{view:true}});
         $http.expectGET(new RegExp('location')).respond({});
         $http.expectGET(new RegExp('federation')).respond({servers:[]});
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectJSONP(new RegExp('search')).respond({response:{docs:[]}});
 
         $http.flush();
@@ -58,6 +59,7 @@ describe('portalApp', function() {
         $http.expectGET(new RegExp('auth')).respond({permissions:{view:true}});
         $http.expectGET(new RegExp('location')).respond({});
         $http.expectGET(new RegExp('federation')).respond({servers:[]});
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectJSONP(new RegExp('search')).respond({response:{docs:[]}});
 
         $http.flush();
@@ -73,6 +75,7 @@ describe('portalApp', function() {
         $http.expectGET(new RegExp('auth')).respond({permissions:{view:true}});
         $http.expectGET(new RegExp('location')).respond({});
         $http.expectGET(new RegExp('federation')).respond({servers:[]});
+        $http.expectGET(new RegExp('maps')).respond({});
         $http.expectJSONP(new RegExp('search')).respond({response:{docs:[]}});
 
         $http.flush();

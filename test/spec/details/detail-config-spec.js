@@ -42,6 +42,8 @@ describe('Factory: detailConfig', function () {
 		//$http.expectGET(new RegExp('auth')).respond({permissions:{manage:true, process:true}});  // auth call
 		$http.expectGET(new RegExp('root\/api\/rest\/i18n\/field\/location.json')).respond({VALUE:{location:'location'}}); // location call
 		$http.expectGET(new RegExp('federation')).respond({servers:[]});
+
+        $http.expectGET(new RegExp('maps')).respond({});
 		$http.expectGET(new RegExp('root\/api\/rest\/display\/config\/config.json')).respond(res);  // display call
 
 		$http.expectJSONP(new RegExp('fields')).respond({response:{docs:[]}});  // fields call

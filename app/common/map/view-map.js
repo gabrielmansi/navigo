@@ -1,7 +1,7 @@
 /*global angular, $, _, L, Wkt */
 
 angular.module('voyager.map')
-    .directive('vsViewMap', function (config, mapUtil, searchService, $timeout) {
+    .directive('vsViewMap', function (config, mapUtil, baseMapService, searchService, $timeout) {
         'use strict';
 
         var extent = $.extend({}, config.mapDefault); //copy mapDefault so it doesn't get modified
@@ -21,8 +21,8 @@ angular.module('voyager.map')
 
                 mapControls.init($scope, 'view-map');
 
-                $scope.defaults = $.extend({zoomControl: false}, mapUtil.getDefaultConfig());
-                $scope.layers = mapUtil.getLayers();
+                $scope.defaults = $.extend({zoomControl: false}, baseMapService.getDefaultConfig());
+                $scope.layers = baseMapService.getLayers();
 
                 $scope.controls = {
                     custom: [mapControls.getZoomControls($scope)]

@@ -11,7 +11,7 @@ describe('Run Mosaic to Workspace Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:n39w105f2dem and fileExtension:img');
-        browser.get(server + '#/queue?disp=default&task=mosaic_to_workspace');
+        browser.get(server + '/queue?disp=default&task=mosaic_to_workspace');
         Util.waitForSpinner();
     });
 
@@ -69,7 +69,7 @@ describe('Run Mosaic to Workspace Task', function() {
 
     function verifyStatus() {
         // Verify there are no errors or warnings (warnings may be possible bug and to be investigated)
-        expect(browser.getCurrentUrl()).toMatch(/\/#\/status/);
+        expect(browser.getCurrentUrl()).toMatch(/\/status/);
         expect(taskStatusPage.getError().isPresent()).toBeTruthy();
     }
 });

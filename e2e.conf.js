@@ -1,9 +1,9 @@
-var HtmlReporter = require('protractor-html-screenshot-reporter');
+var HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 
-var reporter= new HtmlReporter({
-    baseDirectory: './reports/protractor', // a location to store screen shots.
-    docTitle: 'Navigo Reporter',
-    docName:    'navigo-reports.html'
+var reporter = new HtmlScreenshotReporter({
+    dest: './reports/protractor',
+    reportTitle: 'Navigo Reporter',
+    filename: 'navigo-reports.html'
 });
 
 exports.config = {
@@ -26,8 +26,21 @@ exports.config = {
     // protractor is called.
     specs: ['test/e2e/*/*'],
 
+    // Setup the report before any tests start
+    beforeLaunch: function() {
+        return new Promise(function(resolve){
+            reporter.beforeLaunch(resolve);
+        });
+    },
+
     onPrepare: function() {
         jasmine.getEnv().addReporter(reporter);
+    },
+
+    afterLaunch: function(exitCode) {
+        return new Promise(function(resolve){
+            reporter.afterLaunch(resolve.bind(this, exitCode));
+        });
     },
 
     // Options to be passed to Jasmine-node.

@@ -59,9 +59,18 @@ angular.module('voyager.filters')
             return angular.isDefined(_catalogLookup[catalog]);
         }
 
+        function _removeInvalid(shards) {
+            var arr = shards.split(',');
+            var valid = arr.filter(function(shard) {
+                return _.findIndex(_cachedCatalogs, {id: shard}) !== -1;
+            });
+            return valid.join(',');
+        }
+
         return {
             fetch: _fetch,
             loadRemoteLocations: _loadRemoteLocations,
-            isRemote: _isRemote
+            isRemote: _isRemote,
+            removeInvalid: _removeInvalid
         };
     });

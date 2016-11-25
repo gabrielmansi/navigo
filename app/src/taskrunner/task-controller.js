@@ -1,7 +1,7 @@
 /*global angular, $, _*/
 
 angular.module('taskRunner')
-    .controller('TaskCtrl', function ($scope, taskService, taskModalService, usSpinnerService, paramService, localStorageService, cartService, cartItemsQuery, sugar, $location, $stateParams) {
+    .controller('TaskCtrl', function ($scope, taskService, taskModalService, usSpinnerService, paramService, localStorageService, cartService, cartItemsQuery, sugar, $location, $stateParams, $state) {
         'use strict';
 
         $scope.task = $stateParams.task;
@@ -196,7 +196,7 @@ angular.module('taskRunner')
             inputItems.query = _getQuery(cartService.getQuery(), cartService.getItemIds());
             //console.log('Task ' + request.task + ' Query: ' + JSON.stringify(inputItems.query));
             return taskService.execute(request).then(function (response) {
-                $location.path('/status?id=' + response.data.id);
+                $state.go('status',{id: response.data.id});
             }, function(error) {
                 _errorHandler(error, params);
             });
