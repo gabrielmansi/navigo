@@ -342,8 +342,10 @@ angular.module('voyager.search')
 
             $scope.map.on('baselayerchange', function(e) {
                 localStorageService.set(baseMapService.BASELAYER_STORAGE_NAME, e.name);
-                _refreshMap(_baselayers[e.name].type);
-            })
+                if(_baselayers) {
+                    _refreshMap(_baselayers[e.name].type);
+                }
+            });
 
             $scope.$on('cancelledDraw', function() {
                 _cancelledDraw = true;
@@ -474,8 +476,6 @@ angular.module('voyager.search')
                         defaultBaselayer.addTo($scope.map);
                         _refreshMap(defaultBaselayer_Type);
                     }
-
-
                 }
 
                 $timeout(function() {  //wait for scope to digest so control is added to leaflet

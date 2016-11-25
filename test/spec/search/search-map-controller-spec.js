@@ -63,6 +63,9 @@ describe('Controller: SearchMapCtrl', function () {
                 callback(e);
             }
         };
+        map._resetView = function() {
+            return;
+        };
         return map;
     }
 
@@ -99,6 +102,40 @@ describe('Controller: SearchMapCtrl', function () {
     L.Control.Layers.extend = function(obj) {
         return $.extend(this, obj);
     };
+
+    L.TileLayer = function() {
+        return {
+            addTo: function() {
+
+            }
+        };
+    };
+
+    L.TileLayer.WMS = function() {
+        return {
+            addTo: function() {
+
+            }
+        };
+    };
+
+    L.esri = {
+        dynamicMapLayer: function() {
+            return {
+                addTo: function() {
+
+                }
+            };
+        }
+    };
+
+    // L.esri.dynamicMapLayer = function() {
+    //     return {
+    //         addTo: function() {
+    //
+    //         }
+    //     };
+    // };
 
     it('should handle search event', function () {
 
@@ -321,7 +358,7 @@ describe('Controller: SearchMapCtrl', function () {
         $timeout.flush();
 
         baseMapService.getBaselayers().then(function(data) {
-            expect(data.length).toBe(5);
+            expect(Object.keys(data).length).toBe(5);
             expect(baseMapService.getDefaultBaselayer()).toBeDefined();
             expect(baseMapService.getDefaultBaselayer().name).toBe(mapsResponse.ags[0].name);
         });

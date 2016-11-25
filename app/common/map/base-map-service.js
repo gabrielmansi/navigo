@@ -102,6 +102,15 @@ factory('baseMapService', function (config, converter, mapUtil, $http, $q) {
         if (!angular.isDefined(_baselayers)) {
             return _fetchBaselayers().then(function (data) {
                 _baselayers = _processBaselayerData(data);
+                if(Object.keys(_baselayers).length <= 0) {
+                    var layerData = [{
+                        'name': _layers.baselayers.base.name,
+                        'url': _layers.baselayers.base.url,
+                        'layers': _layers.baselayers.base.layerOptions.layers,
+                        'selected': true
+                    }];
+                    _baselayers = _processBaselayers(_baselayers, layerData, _layers.baselayers.base.type);
+                }
                 return _baselayers;
             });
         } else {
