@@ -261,38 +261,38 @@ angular.module('voyager.config').
                 };
                 facetTypes.unshift(discoveryStatusFilter);
             }
-            discoveryStatusFilter.value = "Discovery Status";
+            discoveryStatusFilter.value = 'Discovery Status';
             
             //using complex type.  facets with the complex type must have their name and filter values stored in arrays of equal length
             discoveryStatusFilter.values = [
                 {
-                    name: ["(SCAN SCAN_FULL)", "false"],
+                    name: ['(SCAN SCAN_FULL)', 'false'],
                     value: 'First Pass: Scan Complete',
-                    filter: ["_index_reason", "__to_extract"],
-                    humanized: "1st Pass: Scan Complete",
+                    filter: ['_index_reason', '__to_extract'],
+                    humanized: '1st Pass: Scan Complete',
                     count: 0,
                     hasCount: false,
-                    display: "1st Pass: Scan Complete",
+                    display: '1st Pass: Scan Complete',
                     style: 'COMPLEX'
                 },
                 {
-                    name: ["true"],
+                    name: ['true'],
                     value: 'Second Pass: Read Pending',
-                    filter: ["__to_extract"],
-                    humanized: "2nd Pass: Read Pending",
+                    filter: ['__to_extract'],
+                    humanized: 'nd Pass: Read Pending',
                     count: 0,
                     hasCount: false,
-                    display: "2nd Pass: Read Pending",
+                    display: '2nd Pass: Read Pending',
                     style: 'COMPLEX'
                 },
                 {
-                    name: ["CHECKOUT", "false"],
+                    name: ['CHECKOUT', 'false'],
                     value: 'Second Pass: Read Complete',
-                    filter: ["_index_reason", "__to_extract"],
-                    humanized: "2nd Pass: Read Complete",
+                    filter: ['_index_reason', '__to_extract'],
+                    humanized: '2nd Pass: Read Complete',
                     count: 0,
                     hasCount: false,
-                    display: "2nd Pass: Read Complete",
+                    display: '2nd Pass: Read Complete',
                     style: 'COMPLEX'
                 }
             ];

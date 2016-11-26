@@ -10,18 +10,8 @@ angular.module('voyager.filters').
             $.each(facet.name, function (index, facetName) {
                 var facetFilter = facet.filter[index];
                 containsAll = containsAll && (!!selectedFilters[facetName] && selectedFilters[facetName].filter === facetFilter);
-                //_containsFacet(selectedFilters, facetName, facetFilter);
             });
             return containsAll;
-        }
-
-        function _containsFacet(facetList, facetName, facetFilter) {
-            for(var i=0; i<facetList.length; i++) {
-                if(facetList[i].name === facetName && facetList[i].filter === facetFilter) {
-                    return true;
-                }
-            };
-            return false;
         }
 
         function _decorateFacets(facetValues, filter) {

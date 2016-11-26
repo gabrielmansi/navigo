@@ -205,6 +205,58 @@ describe('Filters:', function () {
             expect(scope.filters[0].name).toBe(displayFilter.name);
         });
 
+        it('should handle complex filters', function () {
+            var complexFacet = {style: 'COMPLEX', isSelected: false, name: ['facet1', 'facet2'], filter: ['filter1', 'filter2']};
+            var partialFacet = {name: 'facet2', filter: 'filter2'};
+            var complexFilter = {field: 'complexFilter', value: 'Complex Filter', style: 'COMPLEX', values: []};
+            complexFilter.values.push(complexFacet);
+
+            var savedFilters = cfg.settings.data.filters;
+            cfg.settings.data.filters=[complexFilter];
+
+            spyOn(_configService, 'getDisplayFilters').and.returnValue([complexFilter]);
+
+            controllerService('FiltersCtrl', {$scope: scope, filterService: _filterService});
+            scope.$apply();
+
+            scope.filterResults(complexFacet);
+
+            scope.$emit('doSearch');
+
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(_filterService.getFilters().length).toBe(2);
+            expect(scope.filters[0].values[0].isSelected).toBe(true);
+
+            scope.removeFilter(partialFacet);
+
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(scope.filters[0].values[0].isSelected).toBe(false);
+
+            cfg.settings.data.filters = savedFilters;
+        });
+
+        it('should generate discovery status filters', function () {
+
+            cfg.settings.data.showDiscoveryStatus = true;
+
+            controllerService('FiltersCtrl', {$scope: scope, filterService: _filterService});
+
+            var filters = _configService.getDisplayFilters();
+            expect(filters[0].values.length).toBe(3);
+
+            cfg.settings.data.showDiscoveryStatus = false; // set false so it doesn't affect other tests
+        });
+
         it('should filter results with shards', function () {
 
             cfg.settings.data.showFederatedSearch = true;

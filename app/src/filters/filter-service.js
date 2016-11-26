@@ -161,7 +161,7 @@ angular.module('voyager.filters').
             addFilter: function (facet) {
                 if(facet.style === 'COMPLEX') {
                     //assume that complex facets have name and filter values that are both arrays of the same length
-                    $.each(facet.name, function(index, facetName) {
+                    $.each(facet.name, function(index) {
                         if(!filterMap[facet.name[index]])
                         {
                             var simpleFacet = $.extend({}, facet);
