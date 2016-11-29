@@ -99,9 +99,9 @@ angular.module('voyager.filters').
             // TODO - regex
             var name = target.replace('(' + source + ' ', '(')
                              .replace(' ' + source + ')', ')')
-                             .replace(' source ',' ');
+                             .replace(' ' + source + ' ', ' ');
             if (name.indexOf(' ') === -1) {
-                name = name.replace('(','').replace(')','');
+                name = name.replace('(', '').replace(')', '');
             }
             return name;
         }
@@ -159,10 +159,10 @@ angular.module('voyager.filters').
             },
 
             addFilter: function (facet) {
-                if(facet.style === 'COMPLEX') {
+                if (facet.style === 'COMPLEX') {
                     //assume that complex facets have name and filter values that are both arrays of the same length
                     $.each(facet.name, function(index) {
-                        if(!filterMap[facet.name[index]])
+                        if (!filterMap[facet.name[index]])
                         {
                             var simpleFacet = $.extend({}, facet);
                             simpleFacet.name = facet.name[index];
@@ -186,7 +186,7 @@ angular.module('voyager.filters').
                 filters = _.reject(filters, function (el) {
                     if (isCalendar || isRange) {
                         return el.filter === facet.filter;
-                    } else if(isComplex) {
+                    } else if (isComplex) {
                         return ((facet.name.indexOf(el.name) >= 0) && (facet.filter[facet.name.indexOf(el.name)] === el.filter));
                     } else {
                         return el.name === facet.name;
@@ -211,7 +211,7 @@ angular.module('voyager.filters').
 
                 if (isCalendar || isRange) {
                     delete filterMap[facet.filter];
-                } else if(isComplex) {
+                } else if (isComplex) {
                     //assume that complex facets have name and filter values that are both arrays of the same length
                     $.each(facet.name, function(index, facetName) {
                         delete filterMap[facetName];
@@ -282,7 +282,7 @@ angular.module('voyager.filters').
             removeExisting: function(facet) {
                 var self = this;
                 $.each(filters, function (index, selectedFilter) {
-                    if(selectedFilter.filter === facet.filter) {
+                    if (selectedFilter.filter === facet.filter) {
                         self.removeFilter(facet);
                         return false;
                     }

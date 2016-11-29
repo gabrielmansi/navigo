@@ -207,7 +207,7 @@ describe('Filters:', function () {
 
         it('should handle complex filters', function () {
             var complexFacet = {style: 'COMPLEX', isSelected: false, name: ['facet1', 'facet2'], filter: ['filter1', 'filter2']};
-            var partialFacet = {name: 'facet2', filter: 'filter2'};
+            var partialFacet = {style: '', name: 'facet2', filter: 'filter2'};
             var complexFilter = {field: 'complexFilter', value: 'Complex Filter', style: 'COMPLEX', values: []};
             complexFilter.values.push(complexFacet);
 
@@ -220,11 +220,8 @@ describe('Filters:', function () {
             scope.$apply();
 
             scope.filterResults(complexFacet);
-
             scope.$emit('doSearch');
-
             httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
-
             scope.$apply();
 
             _flushHttp(httpMock);
@@ -233,13 +230,28 @@ describe('Filters:', function () {
             expect(scope.filters[0].values[0].isSelected).toBe(true);
 
             scope.removeFilter(partialFacet);
-
             httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
-
             scope.$apply();
 
             _flushHttp(httpMock);
 
+            expect(scope.filters[0].values[0].isSelected).toBe(false);
+
+            scope.filterResults(partialFacet);
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(scope.filters[0].values[0].isSelected).toBe(true);
+
+            scope.removeFilter(complexFacet);
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(_filterService.getFilters().length).toBe(0);
             expect(scope.filters[0].values[0].isSelected).toBe(false);
 
             cfg.settings.data.filters = savedFilters;
