@@ -1,6 +1,6 @@
 'use strict';
 angular.module('voyager.config').
-    factory('configService', function (config, translateService, $http, $q, catalogService, $location, solrUtil) {
+    factory('configService', function (config, translateService, complexFilterService, $http, $q, catalogService, $location, solrUtil) {
         var _configId = null;
         var _systemFilters = null;
         var _systemFilterMap = {};
@@ -251,53 +251,6 @@ angular.module('voyager.config').
             });
         }
 
-        function _createDiscoveryStatusFilter(discoveryStatusFilter, facetTypes) {
-            if(!discoveryStatusFilter) {
-                discoveryStatusFilter = {
-                    field: 'discoveryStatus',
-                    value: 'Discovery Status',
-                    values: [],
-                    style: 'COMPLEX'
-                };
-                facetTypes.unshift(discoveryStatusFilter);
-            }
-            discoveryStatusFilter.value = 'Discovery Status';
-            
-            //using complex type.  facets with the complex type must have their name and filter values stored in arrays of equal length
-            discoveryStatusFilter.values = [
-                {
-                    name: ['(SCAN SCAN_FULL)', 'false'],
-                    value: 'First Pass: Scan Complete',
-                    filter: ['_index_reason', '__to_extract'],
-                    humanized: '1st Pass: Scan Complete',
-                    count: 0,
-                    hasCount: false,
-                    display: '1st Pass: Scan Complete',
-                    style: 'COMPLEX'
-                },
-                {
-                    name: ['true'],
-                    value: 'Second Pass: Read Pending',
-                    filter: ['__to_extract'],
-                    humanized: 'nd Pass: Read Pending',
-                    count: 0,
-                    hasCount: false,
-                    display: '2nd Pass: Read Pending',
-                    style: 'COMPLEX'
-                },
-                {
-                    name: ['CHECKOUT', 'false'],
-                    value: 'Second Pass: Read Complete',
-                    filter: ['_index_reason', '__to_extract'],
-                    humanized: '2nd Pass: Read Complete',
-                    count: 0,
-                    hasCount: false,
-                    display: '2nd Pass: Read Complete',
-                    style: 'COMPLEX'
-                }
-            ];
-        }
-
         return {
 
             getPageFramework: _getPageFramework,
@@ -334,7 +287,7 @@ angular.module('voyager.config').
                     _createCatalogFilter(catalogFilter, facetTypes);
                 }
                 if(config.settings.data.showDiscoveryStatus) {
-                    _createDiscoveryStatusFilter(discoveryStatusFilter, facetTypes);
+                    complexFilterService.createDiscoveryStatusFilter(discoveryStatusFilter, facetTypes);
                 }
                 return facetTypes;
             },
