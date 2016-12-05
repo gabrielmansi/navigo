@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <h3>Confirm Restart</h3>
+</div>
+<div class="alert alert-danger icon-error" style="margin-left:25px" ng-show="vm.hasError()">{{error}}</div>
+<div class="modal-body">
+    <p>This will restart Voyager.</p>
+    <p>Are you sure you want to continue?</p>
+</div>
+<div class="modal-footer">
+    <div class="cta_row">
+        <button class="btn btn-primary" ng-click="vm.confirm()">Confirm</button>
+        <a href="javascript:;" class="link_secondary" ng-click="vm.cancel()">Cancel</a>
+    </div>
+</div>
+<a href="javascript:;" class="modal-close icon-x" ng-click="vm.cancel()"></a>
