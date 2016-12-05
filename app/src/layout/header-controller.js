@@ -160,6 +160,21 @@ angular.module('voyager.layout')
 			$window.open(baseUrl + params, '_blank');
 		};
 
+		vm.restart = function() {
+            var modalInstance = $uibModal.open({
+                templateUrl: 'src/layout/confirm-restart.html',
+                controller: 'ConfirmRestartCtrl',
+				controllerAs: 'vm'
+            });
+
+            modalInstance.result.then(function (result) {
+                //modal closed with result
+				console.log('RESET RESULT: ' + result);
+            }, function () {
+                //$log.info('Modal dismissed at: ' + new Date());
+            });
+		};
+
 		$scope.$on('$destroy', function() {
 			authService.removeObserver(_updateUserInfo);
 			cartService.removeObserver(_updateQueueTotal);
