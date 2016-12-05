@@ -127,7 +127,8 @@ describe('Controller: HeaderCtrl', function () {
 
     it('should goto classic details from details', function () {
         $location.search().view = 'card';
-        $location.path('/show?id=12345');
+        $location.search().id = '12345';
+        $location.path('/show');
 
         initController();
 

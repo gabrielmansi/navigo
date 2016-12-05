@@ -4,12 +4,12 @@
     angular.module('voyager.results')
         .factory('actionManager', actionManager);
 
-    function actionManager($window, $analytics, $uibModal, authService, sugar) {
+    function actionManager($window, $analytics, $uibModal, authService, sugar, config, $location) {
 
         function _isVisible(action, scope) {
             var visible = action.visible;
-            if (visible === true) {
-                return true;
+            if (visible === true || visible === false) {
+                return visible;
             } else if (visible.indexOf('doc.') > -1) {
                 // expression
                 return scope.$eval(visible);
@@ -74,15 +74,14 @@
                     $analytics.eventTrack('openWith', {
                         category: 'results', label: action.url // jshint ignore:line
                     });
-                    var param = 'url'; //default for esri
-                    if(action.param) {
-                        param = action.param;
+                    var param = '';
+                    if (action.url.indexOf('?') === -1) {
+                        param = '?url='; //default for esri if not supplied
                     }
-                    var sep = '?';
-                    if(action.url.indexOf(sep) !== -1) {
-                        sep = '&';
+                    if (action.param) {
+                        param = '?' + action.param + '=';
                     }
-                    $window.open(action.url + sep + param + '=' + encodeURIComponent(scope.doc.fullpath));
+                    $window.open(action.url + param + encodeURIComponent(scope.doc.fullpath));
                 };
             } else if (action.action === 'openArcMap') {
                 action.do = function() {
@@ -112,10 +111,47 @@
             }
         }
 
+        function _initActions(scope, view) {
+            var actionMap = {}, defaultAction = null, displayActions = [], actions = sugar.copy(config.docActions);  //copy so we don't change config and every card has separate instance of actions
+
+            $.each(actions, function(index, action) {
+                action.buttonType = 'btn-primary';
+                _setAction(action, scope);
+                actionMap[action.action] = action;
+
+                if(action.action === 'preview' && $location.path() === '/home') {
+                    action.visible = false;
+                }
+
+                action.display = angular.isDefined(action.display) ? action.display : action.text;
+                action.enabled = angular.isUndefined(action.enabled) ? true : action.enabled;
+                action.visible = action.enabled ? action.visible : false;
+
+                if(action.visible) {
+                    if(defaultAction === null && view !== 'table') {
+                        defaultAction = action;
+                    } else {
+                        displayActions.push(action);
+                    }
+
+                    if(action.action === 'download' && angular.isDefined(scope.doc.download)) {
+                        if(sugar.canOpen(scope.doc)) {
+                            action.text = action.alt;
+                        }
+                    }
+                }
+            });
+            if (displayActions.length > 0 && angular.isDefined(displayActions[0].sort)) {
+                displayActions = _.sortBy(displayActions, 'sort');
+            }
+            return {display:displayActions, defaultAction: defaultAction, types: actionMap};
+        }
+
         //public methods - client interface
         return {
             setAction : _setAction,
-            toggleDisplay : _toggleDisplay
+            toggleDisplay : _toggleDisplay,
+            initActions : _initActions
         };
     }
 

@@ -20,19 +20,19 @@ angular.module('cart')
             });
         };
 
-        var _notifyCount = function (count) {
-            var items = _getItems();
-            observers.forEach(function (entry) {
-                entry(count, items);
-            });
-        };
-
         var _getItems = function () {
             var items = localStorageService.get(CART_STORAGE_NAME);
             if (items) {
                 return items;
             }
             return {};
+        };
+
+        var _notifyCount = function (count) {
+            var items = _getItems();
+            observers.forEach(function (entry) {
+                entry(count, items);
+            });
         };
 
         function _setItems(items) {

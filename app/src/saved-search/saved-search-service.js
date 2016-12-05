@@ -87,11 +87,14 @@ angular.module('voyager.search').
             getParams: function(saved) {
                 var solrParams = querystring.parse(sugar.trim(saved.query,'&'));
 
-                // these will get applied later to solr call - don't duplicate
+                // TODO - why is the backend setting these now?
                 delete solrParams.facet;
                 delete solrParams['facet.field'];
                 delete solrParams['facet.mincount'];
                 delete solrParams['extent.bbox'];
+                delete solrParams['f.format_category.facet.mincount'];
+                delete solrParams['shards.info'];
+                delete solrParams['shards.tolerant'];
 
                 _decode(solrParams);  //workaround - seems the params get encoded twice
 

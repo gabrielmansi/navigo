@@ -73,6 +73,7 @@ angular.module('voyager.search')
 				var _editMarker;
 				var _bufferBoundaryLayer;
 				var _timer;
+				var windowEl = angular.element($window);
 
 				$scope._drawing = false;
 				$scope.toolType = 'rectangle';
@@ -88,6 +89,10 @@ angular.module('voyager.search')
 				};
 
 				mapControls.init($scope, 'search-map');
+
+				var _unbindResize = function() {
+					windowEl.unbind('resize', $scope.resizeMap);
+				};
 
 				function _cancelDraw() {
 					$scope.$emit('cancelledDraw');
@@ -629,7 +634,6 @@ angular.module('voyager.search')
 					});
 				};
 
-				var windowEl = angular.element($window);
 				$scope.resizeMap = function(isFull) {
 					leafletData.getMap('search-map').then(function (map) {
 						if (!map.currentBounds) {
@@ -658,10 +662,6 @@ angular.module('voyager.search')
 							map.invalidateSize();
 						}
 					});
-				};
-
-				var _unbindResize = function() {
-					windowEl.unbind('resize', $scope.resizeMap);
 				};
 
 				//windowEl.bind('resize', $scope.resizeMap);

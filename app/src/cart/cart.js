@@ -17,25 +17,6 @@ angular.module('cart')
             });
         };
 
-        $scope.removeItem = function (id) {
-            cartService.remove(id);
-            $scope.cartItems = _removeValue($scope.cartItems, id);
-            $scope.cartItemCount = cartService.getCount();
-        };
-
-        $scope.removeItemByFormat = function(item) {
-            cartService.removeByFormat(item.key);
-            init();
-        };
-
-        $scope.hasItems = function () {
-            return cartService.getCount() > 0;
-        };
-
-        $scope.clearQueue = function() {
-            cartService.clear();
-        };
-
         function _updateCartCount(length, items, action) {
             if(action === 'clear') {
                 $scope.cartItems = [];
@@ -60,6 +41,25 @@ angular.module('cart')
         };
 
         init();
+
+        $scope.removeItem = function (id) {
+            cartService.remove(id);
+            $scope.cartItems = _removeValue($scope.cartItems, id);
+            $scope.cartItemCount = cartService.getCount();
+        };
+
+        $scope.removeItemByFormat = function(item) {
+            cartService.removeByFormat(item.key);
+            init();
+        };
+
+        $scope.hasItems = function () {
+            return cartService.getCount() > 0;
+        };
+
+        $scope.clearQueue = function() {
+            cartService.clear();
+        };
 
         $scope.$on('$destroy', function() {
             cartService.removeObserver(_updateCartCount);

@@ -16,35 +16,6 @@ angular.module('voyager.results')
     })
     .directive('vsCard', function (authService, cartService, config, $window, $analytics, actionManager, sugar, inView, $document, $location, tagService) {
 
-        function _initActions(scope){
-            var actionMap = {}, defaultAction = null, displayActions = [], actions = sugar.copy(config.docActions);  //copy so we don't change config and every card has separate instance of actions
-
-            $.each(actions, function(index, action) {
-                action.buttonType = 'btn-primary';
-                actionManager.setAction(action, scope);
-                actionMap[action.action] = action;
-
-                if(action.action === 'preview' && $location.path() === '/home') {
-                    action.visible = false;
-                }
-
-                if(action.visible) {
-                    if(defaultAction === null) {
-                        defaultAction = action;
-                    } else {
-                        displayActions.push(action);
-                    }
-
-                    if(action.action === 'download' && angular.isDefined(scope.doc.download)) {
-                        if(sugar.canOpen(scope.doc)) {
-                            action.text = action.alt;
-                        }
-                    }
-                }
-            });
-            return {display:displayActions, defaultAction: defaultAction, types: actionMap};
-        }
-
         return {
             templateUrl: 'src/results/card.html',
             link: function($scope, $element) {
@@ -117,7 +88,7 @@ angular.module('voyager.results')
                     });
                 };
 
-                var actions = _initActions($scope);
+                var actions = actionManager.initActions($scope);
                 $scope.actions = actions.display;
                 $scope.default = actions.defaultAction;
 

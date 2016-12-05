@@ -1,4 +1,5 @@
 var modRewrite = require('connect-modrewrite');
+var serveStatic = require('serve-static');
 
 module.exports = {
     options: {
@@ -11,10 +12,10 @@ module.exports = {
                 middleware = [modRewrite(['^[^\\.]*$ /index.html [L]'])]
                     .concat(optBase.map(function (path) {
                         if (path.indexOf('rewrite|') === -1) {
-                            return connect.static(path);
+                            return serveStatic(path);
                         } else {
                             path = path.replace(/\\/g, '/').split('|');
-                            return  connect().use(path[1], connect.static(path[2]))
+                            return  connect().use(path[1], serveStatic(path[2]));
                         }
                     }));
 

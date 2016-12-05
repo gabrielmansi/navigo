@@ -51,6 +51,7 @@ describe('Open Publish to ArcGIS Server task', function() {
 
     function verifyStatus() {
         // Verify an error was returned.
-        expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
+        //expect(taskStatusPage.getSuccess().isPresent()).toBeTruthy();
+        expect(taskStatusPage.getError().isPresent()).toBeTruthy();
     }
 });

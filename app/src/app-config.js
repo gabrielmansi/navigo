@@ -71,6 +71,7 @@ angular.module('portalApp')
                 }
             })
             .state('details', {
+                reloadOnSearch: true,
                 url: '/show?id&disp&shard',
                 views: {
                     '': {

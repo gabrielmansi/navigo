@@ -167,8 +167,8 @@ angular.module('voyager.details')
         function _doSyncFields(id) {
             detailService.lookup(id, ',*', $stateParams.shard, $stateParams.disp).then(function (data) {
                 var doc = data.data.response.docs[0];
-                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields());
-                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields());
+                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields($stateParams.shard));
+                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields($stateParams.shard));
             });
         }
 
@@ -204,8 +204,8 @@ angular.module('voyager.details')
                     $scope.doc.displayFormat = $scope.format;
                 }
 
-                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields());
-                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields());
+                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields($stateParams.shard));
+                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields($stateParams.shard));
                 $scope.pageFramework = detailConfig.getPageFramework();
                 $scope.summaryFlags = detailConfig.getSummaryFlags();
                 $scope.description = doc.displayDescription;
@@ -538,8 +538,7 @@ angular.module('voyager.details')
         };
 
         function _getId() {
-            var temp = $location.path().split('/');
-            return decodeURIComponent(temp[temp.length-1]);
+            return decodeURIComponent($location.search().id);
         }
 
         function _move(direction, doc) {
@@ -547,11 +546,11 @@ angular.module('voyager.details')
             if(doc !== null) {
                 $scope[flag] = false;
                 var encodedId = encodeURIComponent(encodeURIComponent(doc.id));  // TODO it doesn't work with just 1 encode
-                var detailsUrl = 'show?id= ' + encodedId + '&disp=' + configService.getConfigId();
+                var params = {id: encodedId, disp: configService.getConfigId()};
                 if (_hasShard(doc.shard)) {
-                    detailsUrl += '&shard=' + doc.shard;
+                    params.shard = doc.shard;
                 }
-                $window.location.href = detailsUrl;
+                $location.search(params);
                 return true;
             } else {
                 $scope[flag] = true;

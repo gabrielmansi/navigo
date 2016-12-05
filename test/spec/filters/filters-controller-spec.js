@@ -16,15 +16,14 @@ describe('Filters:', function () {
         module('voyager.security'); //auth service module - apparently this is needed to mock the auth service
         module(function ($provide) {
             $provide.constant('config', cfg);
-            $provide.value('authService',{});  //mock the transitive auth service so it doesn't call the init methods
         });
         module('voyager.filters');
         module('ui.bootstrap');
     });
 
-    var httpMock, _configService, scope, controllerService, _filterService, q, _treeService, $location, $timeout;
+    var httpMock, _configService, scope, controllerService, _filterService, q, _treeService, $location, $timeout, catalogService;
 
-    beforeEach(inject(function ($rootScope, configService, $httpBackend, $controller, filterService, $q, treeService, _$location_, _$timeout_) {
+    beforeEach(inject(function ($rootScope, configService, $httpBackend, $controller, filterService, $q, treeService, _$location_, _$timeout_, _catalogService_) {
         httpMock = $httpBackend;
         _configService = configService;
         scope = $rootScope.$new();
@@ -34,6 +33,10 @@ describe('Filters:', function () {
         _treeService = treeService;
         $location = _$location_;
         $timeout = _$timeout_;
+        catalogService = _catalogService_;
+        spyOn(catalogService,'removeInvalid').and.callFake(function(val) {
+            return val;
+        });
     }));
 
     describe('filtersController events', function () {
@@ -205,13 +208,77 @@ describe('Filters:', function () {
             expect(scope.filters[0].name).toBe(displayFilter.name);
         });
 
+        it('should handle complex filters', function () {
+            var complexFacet = {style: 'COMPLEX', isSelected: false, name: ['facet1', 'facet2'], filter: ['filter1', 'filter2']};
+            var partialFacet = {style: '', name: 'facet2', filter: 'filter2'};
+            var complexFilter = {field: 'complexFilter', value: 'Complex Filter', style: 'COMPLEX', values: []};
+            complexFilter.values.push(complexFacet);
+
+            var savedFilters = cfg.settings.data.filters;
+            cfg.settings.data.filters=[complexFilter];
+
+            spyOn(_configService, 'getDisplayFilters').and.returnValue([complexFilter]);
+
+            controllerService('FiltersCtrl', {$scope: scope, filterService: _filterService});
+            scope.$apply();
+
+            scope.filterResults(complexFacet);
+            scope.$emit('doSearch');
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(_filterService.getFilters().length).toBe(2);
+            expect(scope.filters[0].values[0].isSelected).toBe(true);
+
+            scope.removeFilter(partialFacet);
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(scope.filters[0].values[0].isSelected).toBe(false);
+
+            scope.filterResults(partialFacet);
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(scope.filters[0].values[0].isSelected).toBe(true);
+
+            scope.removeFilter(complexFacet);
+            httpMock.expectJSONP().respond({facet_counts:{facet_fields:{}}});
+            scope.$apply();
+
+            _flushHttp(httpMock);
+
+            expect(_filterService.getFilters().length).toBe(0);
+            expect(scope.filters[0].values[0].isSelected).toBe(false);
+
+            cfg.settings.data.filters = savedFilters;
+        });
+
+        it('should generate discovery status filters', function () {
+
+            cfg.settings.data.showDiscoveryStatus = true;
+
+            controllerService('FiltersCtrl', {$scope: scope, filterService: _filterService});
+
+            var filters = _configService.getDisplayFilters();
+            expect(filters[0].values.length).toBe(3);
+
+            cfg.settings.data.showDiscoveryStatus = false; // set false so it doesn't affect other tests
+        });
+
         it('should filter results with shards', function () {
 
             cfg.settings.data.showFederatedSearch = true;
 
             $location.search('shards','shard');
             $location.path('/search');
-            controllerService('FiltersCtrl', {$scope: scope, filterService: _filterService});
+            controllerService('FiltersCtrl', {$scope: scope, filterService: _filterService, catalogService: catalogService});
             var facet = {isSelected: false, field:'shard', id:'shard'};
 
             spyOn(_configService,'getCatalogs').and.returnValue(q.when());

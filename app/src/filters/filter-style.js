@@ -1,13 +1,15 @@
 'use strict';
 
 angular.module('voyager.filters').
-    factory('filterStyle', function (config, facetService, configService, rangeService, filterService) {
+    factory('filterStyle', function (config, facetService, configService, rangeService, filterService, complexFilterService) {
 
         function _decorateFacets(facetValues, filter) {
             $.each(facetValues, function (i, facet) {
                 facet.style = filter.style;
                 if(filter.style === 'RANGE') {
                     facet.numeric = parseInt(facet.name);
+                } else if(facet.style === 'COMPLEX') {
+                    facet.isSelected = complexFilterService.calculateIsSelected(facet, filterService.getSelectedFilters());
                 }
             });
         }
@@ -15,7 +17,7 @@ angular.module('voyager.filters').
         function _decorateFilters(systemFilters, facets) {
             var selectedFilters = filterService.getFilters();
             $.each(systemFilters, function (index, filter) {
-                var facetValues = facets[filter.field], selectedFilter;
+                var facetValues = facets[filter.field] || filter.values, selectedFilter;
                 if (facetValues && facetValues.length > 0) {
                     facetValues.multivalued = filter.multivalued;
                     facetValues.stype = filter.stype;

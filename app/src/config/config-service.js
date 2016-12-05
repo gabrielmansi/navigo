@@ -1,6 +1,6 @@
 'use strict';
 angular.module('voyager.config').
-    factory('configService', function (config, translateService, $http, $q, catalogService, $location, solrUtil) {
+    factory('configService', function (config, translateService, complexFilterService, $http, $q, catalogService, $location, solrUtil) {
         var _configId = null;
         var _systemFilters = null;
         var _systemFilterMap = {};
@@ -265,7 +265,7 @@ angular.module('voyager.config').
 
             getDisplayFilters: function () {
                 //facetTypes are filters
-                var facetTypes = config.settings.data.filters, hasShard = false, catalogFilter;
+                var facetTypes = config.settings.data.filters, hasShard = false, catalogFilter, discoveryStatusFilter;
                 $.each(facetTypes, function (index, value) {
                     value.value = '';
                     value.values = [];  //facets
@@ -276,12 +276,18 @@ angular.module('voyager.config').
                         hasShard = true;
                         catalogFilter = value;
                     }
+                    if(value.field === 'discoveryStatus') {
+                        discoveryStatusFilter = value;
+                    }
                 });
 
                 translateService.translateFilterNames(facetTypes);
                 // TODO: federated search? 
                 if(config.settings.data.showFederatedSearch) {
                     _createCatalogFilter(catalogFilter, facetTypes);
+                }
+                if(config.settings.data.showDiscoveryStatus) {
+                    complexFilterService.createDiscoveryStatusFilter(discoveryStatusFilter, facetTypes);
                 }
                 return facetTypes;
             },

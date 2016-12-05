@@ -12,9 +12,9 @@ describe('DetailsCtrl', function () {
         module('voyager.details');
     });
 
-    var scope, controller, q, authServiceSpy, $location, $http, detailService, stateParams, $timeout, searchService, filterService;
+    var scope, controller, q, authServiceSpy, $location, $http, detailService, stateParams, $timeout, searchService, filterService, catalogService;
 
-    beforeEach(inject(function ($rootScope, $controller, $q, authService, _$location_, $httpBackend, _detailService_, _$stateParams_, _$timeout_, _searchService_, _filterService_) {
+    beforeEach(inject(function ($rootScope, $controller, $q, authService, _$location_, $httpBackend, _detailService_, _$stateParams_, _$timeout_, _searchService_, _filterService_, _catalogService_) {
         scope = $rootScope.$new();
         controller= $controller;
         q = $q;
@@ -27,18 +27,27 @@ describe('DetailsCtrl', function () {
         $timeout = _$timeout_;
         searchService = _searchService_;
         filterService = _filterService_;
+        spyOn(_catalogService_, 'lookup').and.callFake(function() {
+            return {url: 'url'};
+        });
+        catalogService = _catalogService_;
     }));
 
     var doc = {id:'doc1', format: 'application/x-arcgis-map-server', fullpath:'z:/x/y', folder: 'x/y', bbox:'1 2 3 4', schema:'{"hash":"hash"}', download:'file://junk', layerURL:'bunk', hasMetadata:true, tree:'{"children":[{"mime":"mime"}]}', links:'{"links":[{"relation":"rel"}]}'};
     var lookupResponse = {data:{response: {docs:[doc]}, 'shards.info':[{shardAddress:'localhost/solr'}], to:['to_type'], from: ['from_type']}};
+    var shard = false;
 
     function expectLoadHttpCalls() {
         // order of http calls (not mocking services here yet)
-        //$http.expectGET(new RegExp('auth')).respond({permissions:{manage:true, process:true}});  // auth call
-        $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
+        if (shard) {
+            $http.expectGET(new RegExp('auth')).respond({user:{}, permissions:{manage:true, process:true}});  // auth call
+        }
         $http.expectJSONP(new RegExp('solr\/v0')).respond(lookupResponse.data); // lookup call
         $http.expectGET(new RegExp('metadata')).respond(lookupResponse.data); // stylesheets call
         $http.expectJSONP(new RegExp('solr\/usertags')).respond({facet_counts: {facet_fields:{fss_tag_tags:[]}}}); // tags call
+
+        $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
+
         $http.expectJSONP(new RegExp('tree')).respond(lookupResponse.data); // tree call
 
         // called twice since to and from happen in parallel
@@ -53,21 +62,26 @@ describe('DetailsCtrl', function () {
 
     describe('Load', function () {
 
-        beforeEach(function() {
-            expectLoadHttpCalls();
-        });
+        //beforeEach(function() {
+        //    //$timeout.flush();
+        //    expectLoadHttpCalls();
+        //});
 
         it('should load', function () {
+            expectLoadHttpCalls();
             controller('DetailsCtrl', {$scope: scope});
         });
 
         it('should call detail service with id', function() {
+            expectLoadHttpCalls();
             spyOn(detailService, 'lookup').and.callThrough();
             controller('DetailsCtrl', {$scope: scope, $stateParams: {id: 'foo'}, authService: authServiceSpy});
             expect(detailService.lookup).toHaveBeenCalledWith('foo', ',*', undefined, undefined);
         });
 
         it('should load with shard', function() {
+            shard = true;
+            expectLoadHttpCalls();
             spyOn(detailService, 'lookup').and.callThrough();
             $location.search('shard','shard');
             controller('DetailsCtrl', {$scope: scope, $stateParams: {id: 'foo', shard:'shard'}, authService: authServiceSpy});
@@ -78,6 +92,7 @@ describe('DetailsCtrl', function () {
             scope.$apply();
             $http.flush();
             $timeout.flush();
+            shard = false;
         });
 
     });
@@ -87,17 +102,16 @@ describe('DetailsCtrl', function () {
         var doc = {id:'doc1', format: 'format', fullpath: 'dataset Dataset c:/temp/doc', 'tag_tags': 'tag', thumb: 'vres/mime'};
         var lookupResponse = {data:{response: {docs:[doc]}}};
 
-        beforeEach(function() {
-            // order of http calls (not mocking services here yet)
-
-            //$http.expectGET(new RegExp('auth')).respond({permissions:{manage:true}});  // auth call
-            $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
+        function expectHttp(fields) {
             $http.expectJSONP(new RegExp('solr\/v0')).respond(lookupResponse.data); // lookup call
             $http.expectGET(new RegExp('metadata')).respond(lookupResponse.data); // stylesheets call
             $http.expectJSONP(new RegExp('solr\/usertags')).respond({facet_counts: {facet_fields:{fss_tag_tags:[]}}}); // tags call
 
+            if (fields) {
+                $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
+            }
             $http.expectJSONP(new RegExp('solr\/v0')).respond(lookupResponse.data); // search call
-        });
+        }
 
         function expectLinksAndQueue() {
             $http.expectGET(new RegExp('links')).respond(lookupResponse.data); // link types call
@@ -106,6 +120,8 @@ describe('DetailsCtrl', function () {
         }
 
         it('should get next', function() {
+            expectHttp();
+            $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
             $http.expectJSONP(new RegExp('tree')).respond(lookupResponse.data); // tree call
             expectLinksAndQueue();
             controller('DetailsCtrl', {$scope: scope, $stateParams: {id: 'foo'}, authService: authServiceSpy});
@@ -113,6 +129,8 @@ describe('DetailsCtrl', function () {
         });
 
         it('should get previous', function() {
+            //$http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
+            expectHttp(true);
             expectLinksAndQueue();
 
             spyOn(searchService,'getPreviousId').and.returnValue('id');
@@ -123,6 +141,7 @@ describe('DetailsCtrl', function () {
         });
 
         it('should search flag', function() {
+            expectHttp(true);
             //$http.expectJSONP(new RegExp('tree')).respond(lookupResponse.data); // tree call
             expectLinksAndQueue();
             controller('DetailsCtrl', {$scope: scope, $stateParams: {id: 'foo'}, authService: authServiceSpy});
@@ -135,6 +154,7 @@ describe('DetailsCtrl', function () {
         });
 
         it('should search tag', function() {
+            expectHttp(true);
             //$http.expectJSONP(new RegExp('tree')).respond(lookupResponse.data); // tree call
             expectLinksAndQueue();
             controller('DetailsCtrl', {$scope: scope, $stateParams: {id: 'foo'}, authService: authServiceSpy});
@@ -177,8 +197,8 @@ describe('DetailsCtrl', function () {
 
             $http.flush();
 
-            $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}}); // fields call
             $http.expectJSONP(new RegExp('solr\/v0')).respond(lookupResponse.data); // lookup call
+            $http.expectJSONP(new RegExp('solr\/fields')).respond({response: {docs:[]}});
 
             $timeout.flush();  // sync called firing http calls above
 

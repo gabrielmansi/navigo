@@ -8,9 +8,9 @@ angular.module('voyager.filters')
                 filter.isOr = filter.name.indexOf('(') === 0;
                 if (filter.isOr) {
                     filter.parts = [];
-                    var parts = filter.name.replace('(','').replace(')','').trim().split(' ');
-                    parts.forEach(function(part) {
-                        var facet = {name:part, pretty:part};
+                    var parts = filter.name.replace('(', '').replace(')', '').trim().split(' ');
+                    parts.forEach(function (part) {
+                        var facet = {name: part, filter: filter.filter, pretty: part};
                         filter.parts.push(facet);
                         if (filter.filter === 'location') {
                             facet.pretty = translateService.getLocation(part);

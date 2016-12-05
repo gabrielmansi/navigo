@@ -7,14 +7,18 @@
 
         function _isVisible(action, doc, $scope) {
             var visible = action.visible;
-            if (visible === true) {
-                return true;
+            action.enabled = angular.isUndefined(action.enabled) ? true : action.enabled;
+            visible = action.enabled ? visible : false;
+            if (visible === true || visible === false) {
+                return visible;
             } else if (visible.indexOf('doc.') > -1) {
                 // expression
-                return $scope.$eval(visible) && (action.action !== 'preview' && action.action !== 'tag');
+                visible = $scope.$eval(visible) && (action.action !== 'preview' && action.action !== 'tag');
+            } else {
+                // add has a separate button, preview is automatic when page loads, tag is handled below the actions
+                visible = doc[action.visible] && (action.action !== 'preview' && action.action !== 'tag');
             }
-            // add has a separate button, preview is automatic when page loads, tag is handled below the actions
-            return doc[action.visible] && (action.action !== 'preview' && action.action !== 'tag');
+            return action.enabled ? visible : false;
         }
 
         function _setAction(action, doc, $scope) {
@@ -43,15 +47,14 @@
                     $analytics.eventTrack('openWith', {
                         category: 'results', label: action.url // jshint ignore:line
                     });
-                    var param = 'url'; //default for esri
-                    if(action.param) {
-                        param = action.param;
+                    var param = '';
+                    if (action.url.indexOf('?') === -1) {
+                        param = '?url='; //default for esri if not supplied
                     }
-                    var sep = '?';
-                    if(action.url.indexOf(sep) !== -1) {
-                        sep = '&';
+                    if (action.param) {
+                        param = '?' + action.param + '=';
                     }
-                    $window.open(action.url + sep + param + '=' + encodeURIComponent(doc.fullpath));
+                    $window.open(action.url + param + encodeURIComponent(doc.fullpath));
                 };
             } else if (action.action === 'openArcMap') {
                 action.do = function() {
@@ -67,6 +70,7 @@
             var actions = _.cloneDeep(config.docActions);
             _.each(actions, function(action) {
                 _setAction(action, doc, $scope);
+                action.display = angular.isDefined(action.display) ? action.display : action.text;
             });
             return actions;
         }

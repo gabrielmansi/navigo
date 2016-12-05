@@ -84,6 +84,18 @@ angular.module('taskRunner')
             }
         }
 
+        var updateStatusCallback = function (id) {
+            //console.log($scope.id + ' ' + id);
+            $scope.statusReady = true;
+            usSpinnerService.stop('status-spinner');
+            if(_.isUndefined(id)) {
+                id = $scope.id;
+            }
+            if ($scope.id === id) {
+                taskService.checkProgress(id).then(_self.updateStatus);
+            }
+        };
+
         this.startCheckStatus = function (response) {
             $scope.copyUrl = taskService.getCopyUrl($scope.id);
             //$scope.task = response.data.task;
@@ -239,18 +251,6 @@ angular.module('taskRunner')
                     }
                     _showSuccessInfo(data, statusResponse);
                 }, _self.statusError);
-            }
-        };
-
-        var updateStatusCallback = function (id) {
-            //console.log($scope.id + ' ' + id);
-            $scope.statusReady = true;
-            usSpinnerService.stop('status-spinner');
-            if(_.isUndefined(id)) {
-                id = $scope.id;
-            }
-            if ($scope.id === id) {
-                taskService.checkProgress(id).then(_self.updateStatus);
             }
         };
 

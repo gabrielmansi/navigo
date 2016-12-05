@@ -15,40 +15,7 @@ angular.module('voyager.util').
         };
 
         return {
-            //TODO just store location.search() instead of doing all this?
-            buildSearchUrl: function (config, query, page, mapView, view, sort) {
-                var url = 'search';
-                var sep = '?';
-                if (config) {
-                    url += sep + 'disp=' + config;
-                    sep = '&';
-                }
-                if (query) {
-                    url += sep + 'q=' + query;
-                    sep = '&';
-                }
-                $.each(filterService.getFilters(), function (index, facet) {
-                    url += sep + 'fq=' + facet.filter + ':' + facet.name;
-                    sep = '&';
-                });
-
-                if (!mapView) {
-                    mapView = '0 0 0'; //default TODO get from config
-                }
-                url += getPrefix(url) + 'vw=' + mapView;
-
-                if(view) {
-                    url += getPrefix(url) + 'view=' + view;
-                }
-
-                if(sort) {
-                    url += getPrefix(url) + 'sort=' + sort;
-                }
-
-                lastUrl = url;
-                return url;
-            },
-
+            //TODO pass params as JSON object
             buildSearchUrl2: function (solrParams, page, mapView, view, sort) {
                 var url = 'search';
                 var sep = '?';

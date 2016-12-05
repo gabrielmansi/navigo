@@ -96,6 +96,7 @@ angular.module('voyager.filters')
                     $scope.removeFilter(facet);
                 } else {
                     filterService.removeFilter(facet);
+                    facet.isSelected = false;
                 }
                 if(forceSelectedParameter) {
                     // force sync with 'show all' modal.
@@ -286,6 +287,7 @@ angular.module('voyager.filters')
                 catalogService.loadRemoteLocations().then(function() {
                     filterQuery.execute($location.search(), filterService.getFilterParams(), filterService.getBoundsParams(), filterService.getSelectedFilters()).then(function(res) {
                         $scope.filters = filterStyle.apply(res.filters);
+
                         if(!_.isEmpty(res.badShards)) {
                             configService.getCatalogs().then(function() { //catalog facets are built
                                 var catalogFilter = _.find($scope.filters, {field:'shards'}), shardUrl;

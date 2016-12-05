@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('voyager.filters').
-    factory('treeService', function (config, $http, configService, $q, solrGrunt, sugar, facetService) {
+    factory('treeService', function (config, $http, configService, $q, solrGrunt, sugar, facetService, catalogService) {
 
         var _tree= {};
         var _fields = {};
@@ -36,6 +36,9 @@ angular.module('voyager.filters').
 
         function _getQueryString(params, filterParams, bboxParams) {
             var solrParams = solrGrunt.getSolrParams(params);
+            if (angular.isDefined(solrParams.shards)) {
+                solrParams.shards = catalogService.removeInvalid(solrParams.shards);
+            }
             delete solrParams.fq; //filter service will apply filter params below
             solrParams.q = solrGrunt.getInput(solrParams.q); //default to all if no input filter
             var queryString = config.root + 'solr/v0/select?rows=0&block=false&facet=true' + _getTreeParams();

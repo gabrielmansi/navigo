@@ -3,35 +3,6 @@
 angular.module('voyager.results')
     .directive('vsTableRow', function (inView, $document, sugar, actionManager, config, $location, tagService) {
 
-        function _initActions(scope){
-            var actionMap = {}, defaultAction = null, displayActions = [], actions = sugar.copy(config.docActions);  //copy so we don't change config and every card has separate instance of actions
-
-            $.each(actions, function(index, action) {
-                action.buttonType = 'btn-primary';
-                actionManager.setAction(action, scope);
-                actionMap[action.action] = action;
-
-                if(action.action === 'preview' && $location.path() === '/home') {
-                    action.visible = false;
-                }
-
-                if(action.visible) {
-                    displayActions.push(action);
-
-                    if(action.action === 'download' && angular.isDefined(scope.doc.download)) {
-                        if(sugar.canOpen(scope.doc)) {
-                            action.text = action.alt;
-                        }
-                    } else if (action.action === 'add') {
-                        if (scope.doc.inCart) {
-                            action.display = action.offList;
-                        }
-                    }
-                }
-            });
-            return {display:displayActions, defaultAction: defaultAction, types: actionMap};
-        }
-
         return {
             link: function($scope, $element) {
 
@@ -61,7 +32,6 @@ angular.module('voyager.results')
                 actionManager.setAction($scope.link, $scope);
                 $scope.toggleCart = function(doc) {
                     var action = _.find($scope.actions,{action:'add'});
-
                     if(doc.inCart) {
                         cartService.remove(doc.id);
                         $scope.cartAction = 'Add';
@@ -94,7 +64,7 @@ angular.module('voyager.results')
                     });
                 };
 
-                var actions = _initActions($scope);
+                var actions = actionManager.initActions($scope, 'table');
                 $scope.actions = actions.display;
                 $scope.default = actions.defaultAction;
 

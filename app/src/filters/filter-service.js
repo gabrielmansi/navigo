@@ -97,9 +97,11 @@ angular.module('voyager.filters').
 
         function _replaceName(target, source) {
             // TODO - regex
-            var name = target.replace(source, '').replace('( ', '(').replace(' )',')');
-            if (name.indexOf(' ') !== -1) {
-                name = name.replace('( ', '(').replace(' )',')').replace('(','').replace(')','');
+            var name = target.replace('(' + source + ' ', '(')
+                             .replace(' ' + source + ')', ')')
+                             .replace(' ' + source + ' ', ' ');
+            if (name.indexOf(' ') === -1) {
+                name = name.replace('(', '').replace(')', '');
             }
             return name;
         }
@@ -125,10 +127,13 @@ angular.module('voyager.filters').
                         } else {
                             name = '[' + facet.model[0] + ' TO ' + facet.model[1] + ']';
                         }
+                        filterList.push(facet.filter + ':' + name);
+                    } else if (facet.style === 'COMPLEX') {
+                        filterList.push(facet.filter + ':' + facet.name);
                     } else {
                         name = converter.solrReady(name);
+                        filterList.push(facet.filter + ':' + name);
                     }
-                    filterList.push(facet.filter + ':' + name);
                 });
                 return filterList;
             },
@@ -154,7 +159,20 @@ angular.module('voyager.filters').
             },
 
             addFilter: function (facet) {
-                if (!filterMap[facet.name]) {
+                if (facet.style === 'COMPLEX') {
+                    //assume that complex facets have name and filter values that are both arrays of the same length
+                    $.each(facet.name, function(index) {
+                        if (!filterMap[facet.name[index]])
+                        {
+                            var simpleFacet = $.extend({}, facet);
+                            simpleFacet.name = facet.name[index];
+                            simpleFacet.filter = facet.filter[index];
+
+                            filters.push(simpleFacet);
+                            filterMap[simpleFacet.name] = simpleFacet;
+                        }
+                    });
+                } else if (!filterMap[facet.name]) {
                     filters.push(facet);
                     filterMap[facet.name] = facet;
                 }
@@ -163,10 +181,13 @@ angular.module('voyager.filters').
             removeFilter: function (facet) {
                 var isCalendar = facet.style === 'DATE' || (!angular.isUndefined(facet.stype) && facet.stype === 'date');
                 var isRange = facet.style === 'RANGE';
+                var isComplex = facet.style === 'COMPLEX';
 
                 filters = _.reject(filters, function (el) {
                     if (isCalendar || isRange) {
                         return el.filter === facet.filter;
+                    } else if (isComplex) {
+                        return ((facet.name.indexOf(el.name) >= 0) && (facet.filter[facet.name.indexOf(el.name)] === el.filter));
                     } else {
                         return el.name === facet.name;
                     }
@@ -175,9 +196,11 @@ angular.module('voyager.filters').
                 // remove OR facets
                 filters.forEach(function(filter) {
                     if (filter.name.indexOf('(') === 0 && filter.name.indexOf(facet.name) !== -1) {
+                        delete filterMap[filter.name];
                         filter.name = _replaceName(filter.name, facet.name);
                         filter.pretty = _replaceName(filter.pretty, facet.name);
                         filter.humanized = _replaceName(filter.humanized, facet.name);
+                        filterMap[filter.name] = filter;
                     }
                 });
 
@@ -188,6 +211,11 @@ angular.module('voyager.filters').
 
                 if (isCalendar || isRange) {
                     delete filterMap[facet.filter];
+                } else if (isComplex) {
+                    //assume that complex facets have name and filter values that are both arrays of the same length
+                    $.each(facet.name, function(index, facetName) {
+                        delete filterMap[facetName];
+                    });
                 } else {
                     delete filterMap[facet.name];
                 }
@@ -254,7 +282,7 @@ angular.module('voyager.filters').
             removeExisting: function(facet) {
                 var self = this;
                 $.each(filters, function (index, selectedFilter) {
-                    if(selectedFilter.filter === facet.filter) {
+                    if (selectedFilter.filter === facet.filter) {
                         self.removeFilter(facet);
                         return false;
                     }

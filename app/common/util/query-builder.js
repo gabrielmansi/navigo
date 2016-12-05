@@ -1,14 +1,15 @@
 'use strict';
 
 angular.module('voyager.util').
-    factory('queryBuilder', function (config, filterService, configService, sugar) {
+    factory('queryBuilder', function (config, filterService, configService, sugar, catalogService) {
 
         var actionFields = null;
         var selectPath = 'solr/v0/select';
+        var customFields = ['shards', 'discoveryStatus']; //all custom fields must be entered here in order to not impact query string
 
         var getFacetParams = function (field) {
             var facetParams = '';
-            if (field && field !== 'shards') {
+            if (field && !($.inArray(field, customFields) >= 0)) {
                 var fieldConfig = _.find(config.settings.data.filters, function(filter) {return filter.field === field;});
                 if(angular.isDefined(fieldConfig.minCount)) {
                     facetParams += '&f.' + fieldConfig.field + '.facet.mincount=' + fieldConfig.minCount;
@@ -26,7 +27,7 @@ angular.module('voyager.util').
             var filters = config.settings.data.filters;
 
             $.each(filters, function (index, filter) {
-                if(filter.field !== 'shards') {
+                if(!($.inArray(filter.field, customFields) >= 0)) {
                     if(filter.style === 'CHECK') {
                         facetParams += '&facet.field={!ex=' + filter.field + '}' + filter.field;
                     } else if(filter.style === 'STATS') {
@@ -84,6 +85,9 @@ angular.module('voyager.util').
             } else {
                 solrParams = {};
             }
+            if (angular.isDefined(solrParams.shards)) {
+                solrParams.shards = catalogService.removeInvalid(solrParams.shards);
+            }
             //solrParams.q = getInput(solrParams.q); //default to all if no input filter  //TODO do we need to convert empty to *:* seems to work without it
             var queryString = config.root + selectPath;
             queryString += '?' + sugar.toQueryString(solrParams);
@@ -134,6 +138,9 @@ angular.module('voyager.util').
 
         function _buildIdList(solrParams) {
             delete solrParams.fq; //filter service will apply filter params below
+            if (angular.isDefined(solrParams.shards)) {
+                solrParams.shards = catalogService.removeInvalid(solrParams.shards);
+            }
             solrParams.q = getInput(solrParams.q); //default to all if no input filter
             var queryString = config.root + selectPath;
             queryString += '?' + sugar.toQueryString(solrParams);
@@ -147,6 +154,9 @@ angular.module('voyager.util').
 
         function _buildBboxList(solrParams) {
             delete solrParams.fq; //filter service will apply filter params below
+            if (angular.isDefined(solrParams.shards)) {
+                solrParams.shards = catalogService.removeInvalid(solrParams.shards);
+            }
             solrParams.q = getInput(solrParams.q); //default to all if no input filter
             var queryString = config.root + selectPath;
             queryString += '?' + sugar.toQueryString(solrParams);
@@ -171,6 +181,9 @@ angular.module('voyager.util').
             buildAllFacets: function(params, field) {
                 delete params.fq; //filter service will apply filter params below
                 delete params.sort; //don't sort
+                if (angular.isDefined(params.shards)) {
+                    params.shards = catalogService.removeInvalid(params.shards);
+                }
                 params.q = getInput(params.q); //default to all if no input filter
                 var queryString = config.root + selectPath, facetLimit = -1, rows = 0;
                 queryString += '?' + sugar.toQueryString(params);
@@ -203,6 +216,9 @@ angular.module('voyager.util').
                 delete params.fq; //filter service will apply filter params below
                 delete params.sort; //don't sort
                 delete params.view;
+                if (angular.isDefined(params.shards)) {
+                    params.shards = catalogService.removeInvalid(params.shards);
+                }
                 params.q = getInput(params.q); //default to all if no input filter
                 var queryString = config.root + url, rows = 999999;
                 queryString += '?' + sugar.toQueryString(params);

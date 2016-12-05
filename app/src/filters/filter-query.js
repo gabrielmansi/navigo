@@ -1,11 +1,14 @@
 'use strict';
 
 angular.module('voyager.filters').
-    factory('filterQuery', function (config, facetService, configService, sugar, $http, queryBuilder) {
+    factory('filterQuery', function (config, facetService, configService, sugar, $http, queryBuilder, catalogService) {
 
         function _getQueryString(params, filters, bounds) {
             delete params.fq; //use filter params
             delete params.sort; //don't sort
+            if (angular.isDefined(params.shards)) {
+                params.shards = catalogService.removeInvalid(params.shards);
+            }
             if(angular.isDefined(params.disp) && angular.isUndefined(params['voyager.config.id'])) {
                 params['voyager.config.id'] = params.disp;
             } else if (angular.isUndefined(params.disp) && angular.isDefined(configService.getConfigId())) {

@@ -1,7 +1,7 @@
 /*global angular */
 
 angular.module('voyager.details').
-    factory('detailService', function($http, config, $q, resultsDecorator, solrUtil) {
+    factory('detailService', function($http, config, $q, resultsDecorator, solrUtil, catalogService, authService) {
 
     'use strict';
 
@@ -95,17 +95,35 @@ angular.module('voyager.details').
         return relationship;
     }
 
-    function _getFields() {
-        if(_.isEmpty(_fields)) {
-            var request = config.root + 'solr/fields/select?fl=name,multivalued,disp:disp_en,stype,displayable' + _type + '&rows=100000' + '&r=' + Math.random();
-            return $http.jsonp(request).then(function(res) {
-                _fields = _.indexBy(res.data.response.docs, function(key) {
-                    return solrUtil.stripAugmented(key.name);
-                });
-                return _fields;
+    function _getTokenParam(shard) {
+        if (angular.isDefined(shard)) {
+            return authService.getUserInfo().then(function(user) {
+                return '&_vgp=' + user.exchangeToken;
             });
         } else {
-            return $q.when(_fields);
+            return $q.when('');
+        }
+    }
+
+    function _getFields(shard) {
+        var root = config.root;
+        var catalog = 'local';
+        if (angular.isDefined(shard)) {
+            root = catalogService.lookup(shard).url;
+            catalog = shard;
+        }
+        if(_.isEmpty(_fields[catalog])) {
+            return _getTokenParam(shard).then(function(tokenParam) {
+                var request = root + 'solr/fields/select?fl=name,multivalued,disp:disp_en,stype,displayable' + _type + '&rows=100000' + '&r=' + Math.random() + tokenParam;
+                return $http.jsonp(request).then(function(res) {
+                    _fields[catalog] = _.indexBy(res.data.response.docs, function(key) {
+                        return solrUtil.stripAugmented(key.name);
+                    });
+                    return _fields[catalog];
+                });
+            });
+        } else {
+            return $q.when(_fields[catalog]);
         }
     }
 
@@ -130,7 +148,7 @@ angular.module('voyager.details').
     return {
         lookup: function(id, fields, shard, disp) {
             var promises = [];
-            promises.push(_getFields());
+            promises.push(_getFields(shard));
             var request = buildRequest(id, fields, shard, disp);
             promises.push($http.jsonp(request));
             return $q.all(promises).then(function(result) {
@@ -176,8 +194,11 @@ angular.module('voyager.details').
             return _recentViews.slice();
         },
 
-        getFields: function() {
-            return _fields;
+        getFields: function(shard) {
+            if (angular.isUndefined(shard)) {
+                return _fields.local;
+            }
+            return _fields[shard];
         },
 
         fetchMetadataStyles: function(id) {
