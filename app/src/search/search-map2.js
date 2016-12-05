@@ -82,7 +82,7 @@ angular.module('voyager.search')
 				if($attrs.basemapvisible !== 'false') {
 					$scope.layers = baseMapService.getLayers($attrs.origin);
 				} else  {
-					delete $scope.layers;
+					$scope.layers = {};
 				}
 				$scope.controls = {
 					custom: []

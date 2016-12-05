@@ -167,8 +167,8 @@ angular.module('voyager.details')
         function _doSyncFields(id) {
             detailService.lookup(id, ',*', $stateParams.shard, $stateParams.disp).then(function (data) {
                 var doc = data.data.response.docs[0];
-                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields());
-                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields());
+                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields($stateParams.shard));
+                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields($stateParams.shard));
             });
         }
 
@@ -204,8 +204,8 @@ angular.module('voyager.details')
                     $scope.doc.displayFormat = $scope.format;
                 }
 
-                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields());
-                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields());
+                $scope.displayFields = detailConfig.getFields(doc, detailService.getFields($stateParams.shard));
+                $scope.summaryFields = detailConfig.getSummaryFields(doc, detailService.getFields($stateParams.shard));
                 $scope.pageFramework = detailConfig.getPageFramework();
                 $scope.summaryFlags = detailConfig.getSummaryFlags();
                 $scope.description = doc.displayDescription;

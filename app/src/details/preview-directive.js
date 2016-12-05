@@ -17,7 +17,7 @@ angular.module('voyager.details')
 							return;
 						}
 
-						$scope.previewNodeData = detailConfig.getFields(data.data.response.docs[0], detailService.getFields());
+						$scope.previewNodeData = detailConfig.getFields(data.data.response.docs[0], detailService.getFields(shard));
 						if(angular.isDefined(data.data.response.docs[0].format)) {
 							$scope.node.displayFormat = translateService.getType(data.data.response.docs[0].format);
 						}

@@ -41,8 +41,8 @@ describe('Preview Directive:', function () {
             $(element).find('.label a').trigger('mouseenter');
 
             // details lookup calls
-            httpMock.expectJSONP(new RegExp('solr\/fields')).respond({response:{docs:[]}});
             httpMock.expectJSONP(new RegExp('solr\/v0')).respond({response:{docs:[]}});
+            httpMock.expectJSONP(new RegExp('solr\/fields')).respond({response:{docs:[]}});
 
             timeout.flush();
             httpMock.flush();
@@ -57,8 +57,8 @@ describe('Preview Directive:', function () {
             $(element).find('.label a').trigger('mouseenter');
 
             // details lookup calls
-            httpMock.expectJSONP(new RegExp('solr\/fields')).respond({response:{docs:[{id:'id', format:'format', name: 'name:[name]'}]}});
             httpMock.expectJSONP(new RegExp('solr\/v0')).respond({response:{docs:[{id:'id', format:'format'}]}});
+            httpMock.expectJSONP(new RegExp('solr\/fields')).respond({response:{docs:[{id:'id', format:'format', name: 'name:[name]'}]}});
 
             timeout.flush();
             httpMock.flush();

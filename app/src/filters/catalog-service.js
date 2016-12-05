@@ -12,7 +12,7 @@ angular.module('voyager.filters')
                     var catalogs = res.data.servers;
                     catalogs.forEach(function(catalog) {
                         if (angular.isDefined(catalog.url)) {
-                            _catalogLookup[catalog.url.replace('http://','').replace('https://','')] = true;
+                            _catalogLookup[catalog.url.replace('http://','').replace('https://','')] = catalog;
                         }
                     });
                     _cachedCatalogs = res.data.servers;
@@ -50,13 +50,17 @@ angular.module('voyager.filters')
             }
         }
 
-        function _isRemote(shard) {
+        function _lookup(shard) {
             var catalog = shard.replace('http://','').replace('https://','').toLowerCase();
             var pos = catalog.indexOf('solr');
             if (pos > -1) {
                 catalog = catalog.substring(0, pos);
             }
-            return angular.isDefined(_catalogLookup[catalog]);
+            return _catalogLookup[catalog];
+        }
+
+        function _isRemote(shard) {
+            return angular.isDefined(_lookup(shard));
         }
 
         function _removeInvalid(shards) {
@@ -71,6 +75,7 @@ angular.module('voyager.filters')
             fetch: _fetch,
             loadRemoteLocations: _loadRemoteLocations,
             isRemote: _isRemote,
-            removeInvalid: _removeInvalid
+            removeInvalid: _removeInvalid,
+            lookup: _lookup
         };
     });

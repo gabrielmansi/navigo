@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('voyager.layout')
-	.controller('HeaderCtrl', function(config, $rootScope, $scope, $uibModal, $window, $location, $stateParams, sugar, cartService, authService, savedSearchService, $state) {
+	.controller('HeaderCtrl', function(config, $rootScope, $scope, $uibModal, $window, $location, $stateParams, sugar, cartService, authService, savedSearchService, $state, catalogService) {
 
 		var vm = this;
 
@@ -148,11 +148,17 @@ angular.module('voyager.layout')
 				delete params.view;
 			}
 
+			if (angular.isDefined(params.shard)) {
+				var catalog = catalogService.lookup(params.shard);
+				if (angular.isDefined(catalog)) {
+					params.shard = catalog.id;
+				}
+			}
 			params = sugar.retroParams(params);
 
 			var path = $location.path();
 			if (path.indexOf('/show') !== -1) {
-				baseUrl += path.replace('/show?id=', 'id=')  + '/';
+				baseUrl += path.replace('/show', '');
 			} else if(path.indexOf('/home') !== -1) {
 				params = ''; // just show default search in classic for home page
 			}

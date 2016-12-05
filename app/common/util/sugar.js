@@ -69,6 +69,7 @@ angular.module('voyager.util').
                 retro = retro.replace(/path_path/g, 'path');
                 retro = retro.replace('f.path', 'path');
                 retro = retro.replace('f.bbox', 'bbox');
+                retro = retro.replace('shard', 'catalog');
                 retro = retro.replace(/:/g, '=');
                 retro = retro.replace('*=*', '*:*');
                 return retro;

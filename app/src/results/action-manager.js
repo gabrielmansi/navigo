@@ -74,15 +74,14 @@
                     $analytics.eventTrack('openWith', {
                         category: 'results', label: action.url // jshint ignore:line
                     });
-                    var param = 'url'; //default for esri
-                    if(action.param) {
-                        param = action.param;
+                    var param = '';
+                    if (action.url.indexOf('?') === -1) {
+                        param = '?url='; //default for esri if not supplied
                     }
-                    var sep = '?';
-                    if(action.url.indexOf(sep) !== -1) {
-                        sep = '&';
+                    if (action.param) {
+                        param = '?' + action.param + '=';
                     }
-                    $window.open(action.url + sep + param + '=' + encodeURIComponent(scope.doc.fullpath));
+                    $window.open(action.url + param + encodeURIComponent(scope.doc.fullpath));
                 };
             } else if (action.action === 'openArcMap') {
                 action.do = function() {
