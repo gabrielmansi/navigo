@@ -176,13 +176,11 @@ angular.module('voyager.layout')
 
             modalInstance.result.then(function (result) {
                 //modal closed with result
-				console.log('RESET CLOSED RESULT: ' + result);
 				if(result === 'confirm') {
 					systemService.doRestart();
 				}
             }, function (result) {
                 //$log.info('Modal dismissed at: ' + new Date());
-				console.log('RESET DISMISSED RESULT: ' + result)
             });
 		};
 
