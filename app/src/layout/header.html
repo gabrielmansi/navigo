@@ -37,8 +37,8 @@
 							<li ng-if="vm.canManage"><a href="{{vm.manageLink}}">Manage Voyager</a></li>
 							<li ng-if="!vm.canManage"><a href="{{vm.myVoyagerLink}}">My Voyager</a></li>
 							<li ng-if="vm.showLogout"><a href="javascript:;" ng-click="vm.logout()">Logout</a></li>
-							<li ng-if="vm.canManage"><a href="javascript:;" ng-click="vm.restart()">Restart</a></li>
 							<li ng-if="vm.showClassicLink"><a href="javascript:;" ng-click="vm.goToClassic()">View Classic</a></li>
+							<li ng-if="vm.canManage"><a href="javascript:;" ng-click="vm.restart()">Restart Voyager</a></li>
 							<li><a href="http://voyagersearch.zendesk.com/hc" target="_blank">Help and Support</a></li>
 						</ul>
 					</div>

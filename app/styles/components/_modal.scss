@@ -131,6 +131,16 @@
 		padding: 12px 20px;
 		height: 40px;
 	}
+
+	.modal-inner {
+		background-color: $white;
+		padding: 25px 30px;
+
+		p {
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+	}
 }
 
 .saved-modal {
