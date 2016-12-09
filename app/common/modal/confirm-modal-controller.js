@@ -9,10 +9,16 @@ angular.module('voyager.modal')
 
         var vm = this;
 
+        vm.modalHeader = 'Please Confirm';
         vm.modalText = [];
         vm.confirmButtonText = 'Confirm';
         vm.cancelLinkText = 'Cancel';
         vm.statusMessage = '';
+
+        vm.notStarted = true;
+        vm.isWaiting = false;
+        vm.hasCompleted = false;
+        vm.hasError = false;
 
         vm.confirm = function() {
             $uibModalInstance.close(vm.confirmButtonText);
@@ -20,21 +26,5 @@ angular.module('voyager.modal')
 
         vm.cancel = function () {
             $uibModalInstance.dismiss(vm.cancelLinkText);
-        };
-
-        vm.notStarted = function () {
-            return true;
-        };
-
-        vm.isWaiting = function () {
-            return false;
-        };
-
-        vm.hasCompleted = function () {
-            return false;
-        };
-
-        vm.hasError = function () {
-            return false;
         };
     });

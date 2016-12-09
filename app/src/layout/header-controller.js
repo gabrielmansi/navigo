@@ -167,17 +167,11 @@ angular.module('voyager.layout')
 		};
 
 		vm.restart = function() {
-            var modalInstance = $uibModal.open({
+            $uibModal.open({
                 templateUrl: 'common/modal/confirm-modal.html',
                 controller: 'ConfirmRestartCtrl',
 				controllerAs: 'vm',
 				size: 'md'
-            });
-
-            modalInstance.result.then(function () {
-                //$log.info('Modal closed at: ' + new Date());
-            }, function () {
-                //$log.info('Modal dismissed at: ' + new Date());
             });
 		};
 

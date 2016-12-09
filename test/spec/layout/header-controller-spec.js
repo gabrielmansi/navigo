@@ -179,8 +179,6 @@ describe('Controller: HeaderCtrl', function () {
             },
             close: function(response) {
                 this.result.confirm_callback(response);
-                $http.expectPOST(new RegExp('restart')).respond({});
-                $http.flush();
             },
             dismiss: function(response) {
                 this.result.cancel_callback(response);
@@ -194,6 +192,5 @@ describe('Controller: HeaderCtrl', function () {
         sut.restart();
 
         expect($uibModal.open).toHaveBeenCalled();
-        fakeModal.close('confirm');
     });
 });

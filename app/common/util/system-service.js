@@ -26,21 +26,15 @@ angular.module('voyager.util').
         function _pollUserInfo() {
             authService.getUserInfo().then(function (resp) {
                 if(!resp) {
-                    console.log("POLLED USER INFO UNDEFINED!");
                     _nextPoll(_pollUserInfo, _pollInterval);
                 } else {
-                    console.log("POLLED USER INFO RETURNED: ");
-                    console.log(resp);
-
                     _pollSuccessCallback();
 
                     _pollPromise = undefined;
                     _pollInterval = undefined;
                     _pollSuccessCallback = undefined;
                 }
-            }).catch(function (resp) {
-                console.log("ERROR POLLING USER INFO!");
-                console.log(resp);
+            }).catch(function () {
                 _nextPoll(_pollUserInfo, _pollInterval);
             });
         };
