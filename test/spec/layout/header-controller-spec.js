@@ -2,7 +2,7 @@
 
 describe('Controller: HeaderCtrl', function () {
 
-    var $scope, $timeout, $uibModal, usSpinnerService, $location, $http, $controller, q, authService, sut, $window, $state;
+    var $scope, $timeout, $uibModal, usSpinnerService, $location, $http, $controller, q, authService, systemService, sut, $window, $state;
     var cfg = _.clone(config);
 
     beforeEach(function () {
@@ -17,7 +17,7 @@ describe('Controller: HeaderCtrl', function () {
             $provide.constant('config', cfg);
         });
 
-        inject(function (_$controller_, _$timeout_, _$uibModal_, _usSpinnerService_, _$location_, $httpBackend , $rootScope, _$q_, _authService_, _$window_, _$state_) {
+        inject(function (_$controller_, _$timeout_, _$uibModal_, _usSpinnerService_, _$location_, $httpBackend , $rootScope, _$q_, _authService_, _systemService_, _$window_, _$state_) {
             $scope = $rootScope.$new();
             $timeout = _$timeout_;
             $uibModal = _$uibModal_;
@@ -27,6 +27,7 @@ describe('Controller: HeaderCtrl', function () {
             $controller = _$controller_;
             q = _$q_;
             authService = _authService_;
+            systemService = _systemService_;
             $window = {location:{href:''}, open: function() {}};
             $state = _$state_;
         });
@@ -38,7 +39,7 @@ describe('Controller: HeaderCtrl', function () {
 
     function initController() {
         $location.search().disp = 'disp';
-        sut = $controller('HeaderCtrl', {$scope: $scope, authService: authService, $window: $window});
+        sut = $controller('HeaderCtrl', {$scope: $scope, authService: authService, $window: $window, $uibModal: $uibModal});
 
         //spyOn($window, 'location');
 
@@ -164,5 +165,35 @@ describe('Controller: HeaderCtrl', function () {
         sut.goToClassic();
 
         expect($window.open).toHaveBeenCalledWith('root/voyager/#/q=text/disp=disp', '_blank');
+    });
+
+    it('should execute a restart on confirm', function () {
+        spyOn(authService,'hasPermission').and.returnValue(true);
+
+        var fakeModal = {
+            result: {
+                then: function (confirmCallback, cancelCallback) {
+                    this.confirm_callback = confirmCallback;
+                    this.cancel_callback = cancelCallback;
+                }
+            },
+            close: function(response) {
+                this.result.confirm_callback(response);
+                $http.expectPOST(new RegExp('restart')).respond({});
+                $http.flush();
+            },
+            dismiss: function(response) {
+                this.result.cancel_callback(response);
+            }
+        };
+
+        initController();
+
+        spyOn($uibModal, 'open').and.returnValue(fakeModal);
+
+        sut.restart();
+
+        expect($uibModal.open).toHaveBeenCalled();
+        fakeModal.close('confirm');
     });
 });

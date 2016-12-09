@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h3>Confirm Restart</h3>
+</div>
+<div class="modal-body">
+    <div class="alert"
+         ng-class="{ 'waiting': vm.isWaiting(),
+                     'alert-danger': (vm.isWaiting() || vm.hasError()),
+                     'alert-success': vm.hasCompleted(),
+                     'icon-warning': vm.isWaiting(),
+                     'icon-error': vm.hasError()}
+         "ng-show="!vm.notStarted()"> {{vm.statusMessage}} </div>
+    <div class="modal-inner">
+        <p ng-repeat="line in vm.modalText">{{line}}</p>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="cta_row">
+        <button class="btn btn-primary" ng-disabled="vm.isWaiting()" ng-click="vm.confirm()">{{vm.confirmButtonText}}</button>
+        <a href="javascript:;" class="link_secondary" ng-disabled="vm.isWaiting()" ng-click="vm.cancel()">{{vm.cancelLinkText}}</a>
+    </div>
+</div>
+<a href="javascript:;" class="modal-close icon-x" ng-click="vm.cancel()"></a>

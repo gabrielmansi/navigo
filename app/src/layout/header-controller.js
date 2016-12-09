@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('voyager.layout')
-	.controller('HeaderCtrl', function(config, $rootScope, $scope, $uibModal, $window, $location, $stateParams, sugar, cartService, authService, systemService, savedSearchService, $state, catalogService) {
+	.controller('HeaderCtrl', function(config, $rootScope, $scope, $uibModal, $window, $location, $stateParams, $timeout, sugar, cartService, authService, systemService, savedSearchService, $state, catalogService) {
 
 		var vm = this;
 
@@ -168,18 +168,15 @@ angular.module('voyager.layout')
 
 		vm.restart = function() {
             var modalInstance = $uibModal.open({
-                templateUrl: 'src/layout/confirm-restart.html',
+                templateUrl: 'common/modal/confirm-modal.html',
                 controller: 'ConfirmRestartCtrl',
 				controllerAs: 'vm',
 				size: 'md'
             });
 
-            modalInstance.result.then(function (result) {
-                //modal closed with result
-				if(result === 'confirm') {
-					systemService.doRestart();
-				}
-            }, function (result) {
+            modalInstance.result.then(function () {
+                //$log.info('Modal closed at: ' + new Date());
+            }, function () {
                 //$log.info('Modal dismissed at: ' + new Date());
             });
 		};
