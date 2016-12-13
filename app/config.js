@@ -1,9 +1,9 @@
 // Note: when running in Voyager, this static file is partially overwritten with voyager config settings
 /* jshint ignore:start */
 var config = {
-    //'root': 'http://voyagerdemo.com/daily/',
+    'root': 'http://voyagerdemo.com/daily/',
     //'root': 'http://voyagerdemo.com/198/',
-    'root': 'http://localhost:8888/',
+    //'root': 'http://localhost:8888/',
     'explorePath': 'voyager',
     'enableEmail': true,
     'title' : 'Voyager Search',
