@@ -18,6 +18,7 @@ angular.module('portalApp', [
     'voyager.filters',
     'voyager.map',
     'voyager.util',
+    'voyager.modal',
     'voyager.layout',
     'voyager.home',
     'voyager.search',
