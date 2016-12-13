@@ -53,7 +53,7 @@ angular.module('voyager.layout')
         function _setRestartSuccessful() {
             _setStatus_COMPLETED();
             vm.statusMessage = 'Voyager Restart has Completed Successfully';
-            vm.confirmButtonText = 'Restart Again';
+            vm.confirmButtonText = 'Restart';
             vm.cancelLinkText = 'Dismiss';
         }
 
