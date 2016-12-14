@@ -13,12 +13,6 @@ angular.module('voyager.modal')
         vm.modalText = [];
         vm.confirmButtonText = 'Confirm';
         vm.cancelLinkText = 'Cancel';
-        vm.statusMessage = '';
-
-        vm.notStarted = true;
-        vm.isWaiting = false;
-        vm.hasCompleted = false;
-        vm.hasError = false;
 
         vm.confirm = function() {
             $uibModalInstance.close(vm.confirmButtonText);

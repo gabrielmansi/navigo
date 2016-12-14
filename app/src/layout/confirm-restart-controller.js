@@ -14,27 +14,27 @@ angular.module('voyager.layout')
         vm.cancelLinkText = 'Cancel';
         vm.statusMessage = '';
 
-        vm.notStarted = true;
+        vm.showMessage = false;
         vm.isWaiting = false;
         vm.hasCompleted = false;
         vm.hasError = false;
 
         function _setStatus_WAITING() {
-            vm.notStarted = false;
+            vm.showMessage = true;
             vm.isWaiting = true;
             vm.hasCompleted = false;
             vm.hasError = false;
         }
 
         function _setStatus_COMPLETED() {
-            vm.notStarted = false;
+            vm.showMessage = true;
             vm.isWaiting = false;
             vm.hasCompleted = true;
             vm.hasError = false;
         }
 
         function _setStatus_FAILED() {
-            vm.notStarted = false;
+            vm.showMessage = true;
             vm.isWaiting = false;
             vm.hasCompleted = false;
             vm.hasError = true;

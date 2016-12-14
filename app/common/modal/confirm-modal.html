@@ -8,7 +8,7 @@
                      'alert-success': vm.hasCompleted,
                      'icon-warning': vm.isWaiting,
                      'icon-error': vm.hasError}
-         "ng-show="!vm.notStarted"> {{vm.statusMessage}} </div>
+         "ng-show="vm.showMessage"> {{vm.statusMessage}} </div>
     <div class="modal-inner">
         <p ng-repeat="line in vm.modalText">{{line}}</p>
     </div>

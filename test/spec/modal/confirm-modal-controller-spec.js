@@ -37,7 +37,7 @@ describe('Controller: ConfirmModalCtrl', function () {
     it('should return default statuses', function () {
         initController();
 
-        expect(sut.notStarted).toBe(true);
+        expect(sut.showMessage).toBe(false);
         expect(sut.isWaiting).toBe(false);
         expect(sut.hasCompleted).toBe(false);
         expect(sut.hasError).toBe(false);
