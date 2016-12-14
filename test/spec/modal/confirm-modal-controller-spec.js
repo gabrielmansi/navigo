@@ -34,15 +34,6 @@ describe('Controller: ConfirmModalCtrl', function () {
         expect(sut).not.toBeUndefined();
     });
 
-    it('should return default statuses', function () {
-        initController();
-
-        expect(sut.showMessage).toBe(false);
-        expect(sut.isWaiting).toBe(false);
-        expect(sut.hasCompleted).toBe(false);
-        expect(sut.hasError).toBe(false);
-    });
-
     it('should confirm', function () {
         initController();
         spyOn($uibModalInstance, 'close');

@@ -42,7 +42,7 @@ describe('Controller: ConfirmRestartCtrl', function () {
     it('should restart on confirm and poll server', function () {
         initController();
 
-        expect(sut.notStarted).toBe(true);
+        expect(sut.showMessage).toBe(false);
         expect(sut.isWaiting).toBe(false);
         expect(sut.hasCompleted).toBe(false);
         expect(sut.hasError).toBe(false);
@@ -51,7 +51,7 @@ describe('Controller: ConfirmRestartCtrl', function () {
         $http.expectPOST(new RegExp('restart')).respond(200, {});
         $http.flush(1);
 
-        expect(sut.notStarted).toBe(false);
+        expect(sut.showMessage).toBe(true);
         expect(sut.isWaiting).toBe(true);
         expect(sut.hasCompleted).toBe(false);
         expect(sut.hasError).toBe(false);
@@ -60,7 +60,7 @@ describe('Controller: ConfirmRestartCtrl', function () {
         $timeout.flush();
         $http.flush(1);
 
-        expect(sut.notStarted).toBe(false);
+        expect(sut.showMessage).toBe(true);
         expect(sut.isWaiting).toBe(true);
         expect(sut.hasCompleted).toBe(false);
         expect(sut.hasError).toBe(false);
@@ -69,7 +69,7 @@ describe('Controller: ConfirmRestartCtrl', function () {
         $timeout.flush();
         $http.flush(1);
 
-        expect(sut.notStarted).toBe(false);
+        expect(sut.showMessage).toBe(true);
         expect(sut.isWaiting).toBe(true);
         expect(sut.hasCompleted).toBe(false);
         expect(sut.hasError).toBe(false);
@@ -78,7 +78,7 @@ describe('Controller: ConfirmRestartCtrl', function () {
         $timeout.flush();
         $http.flush(1);
 
-        expect(sut.notStarted).toBe(false);
+        expect(sut.showMessage).toBe(true);
         expect(sut.isWaiting).toBe(false);
         expect(sut.hasCompleted).toBe(true);
         expect(sut.hasError).toBe(false);
@@ -87,7 +87,7 @@ describe('Controller: ConfirmRestartCtrl', function () {
     it('should notify user of error on restart', function () {
         initController();
 
-        expect(sut.notStarted).toBe(true);
+        expect(sut.showMessage).toBe(false);
         expect(sut.isWaiting).toBe(false);
         expect(sut.hasCompleted).toBe(false);
         expect(sut.hasError).toBe(false);
@@ -96,7 +96,7 @@ describe('Controller: ConfirmRestartCtrl', function () {
         $http.expectPOST(new RegExp('restart')).respond(500, {});
         $http.flush();
 
-        expect(sut.notStarted).toBe(false);
+        expect(sut.showMessage).toBe(true);
         expect(sut.isWaiting).toBe(false);
         expect(sut.hasCompleted).toBe(false);
         expect(sut.hasError).toBe(true);
