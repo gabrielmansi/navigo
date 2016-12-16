@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('voyager.details').
-    factory('detailConfig', function(config, $q, configService, translateService, configLoader, solrUtil) {
+    factory('detailConfig', function(config, $q, configService, translateService, configLoader, sugar, solrUtil) {
 
         var displayFields;
         if(config.settings) {
@@ -137,8 +137,7 @@ angular.module('voyager.details').
 
                         if (name === 'format') {
                             formattedValue = translateService.getType(value);
-                        }
-                        if (name === 'contains_mime') {
+                        } else if (name === 'contains_mime') {
                             if (_.isArray(value)) {
                                 formattedValues = {};  //overwrite with actual formatted values
                                 _.each(value, function (val) {
@@ -148,10 +147,12 @@ angular.module('voyager.details').
                             } else {
                                 formattedValue = translateService.getType(value);
                             }
-                        }
-                        if (name === 'location') {
+                        } else if (name === 'location') {
                             formattedValue = translateService.getLocation(value);
+                        } else if (name === 'bytes') {
+                            formattedValue = sugar.bytesToSize(value);
                         }
+
                         if (typeStyles[name] === 'STRIP_HTML') {
                             formattedValue = $('<p>' + value + '</p>').text();
                         }
