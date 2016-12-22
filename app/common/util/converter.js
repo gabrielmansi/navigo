@@ -268,6 +268,21 @@ angular.module('voyager.util').
                 return _.transform(source, function(arr, val, idx) {
                     arr[idx] = {id: val, text: val};
                 });
+            },
+
+            toPlaceFilter: function(params) {
+                var placeFq = '';
+                if (angular.isDefined(params['place.op'])) {
+                    placeFq += ' place.op=' + params['place.op'];
+                    delete params['place.op'];
+                }
+                if (angular.isDefined(params['place.id'])) {
+                    placeFq += ' place.id=' + params['place.id'];
+                    delete params['place.id'];
+                }
+                placeFq = '{!' + placeFq +  '}place:"' + params.place + '"';
+                delete params.place;
+                return placeFq;
             }
         };
 

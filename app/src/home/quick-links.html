@@ -1,0 +1,35 @@
+<section class="quick-links collections col-md-3 col-sm-4 col-xs-12 pull-right">
+    <header>
+        <h1>{{$ctrl.title}}</h1>
+    </header>
+    <ul ng-if="$ctrl.categories.length == 0">
+        <li ng-repeat="item in ::$ctrl.list">
+            <a href="javascript:;" class="icon-collection" ng-click="applyCollection(item)">
+                {{::item.title}}<span>{{::item.count | number}} item{{::item.count > 1 ? "s" : ""}}</span>
+            </a>
+        </li>
+    </ul>
+    <div ng-if="$ctrl.categories.length > 0" class="panel panel-primary" ng-repeat="category in $ctrl.categories" aria-hidden="false">
+        <div class="panel-heading" ng-class="category.displayState == 'in' ? 'selected' : ''">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" target="_self" href="#{{category.key}}" ng-click="$ctrl.toggleDisplayState(category)">
+                    {{category.key}} <i class="fa" ng-class="category.displayState == 'in' ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                </a>
+            </h4>
+        </div>
+        <div id="{{category.key}}" class="panel-collapse collapse facet-types {{category.displayState}}">
+            <div class="panel-body">
+                <div ng-repeat="item in category.list">
+                    <div>
+                        <a href="javascript:;" ng-click="$ctrl.applyCollection(item)" class="underline ng-scope">
+                            <span class="text ng-binding">
+                                {{item.title}}
+                                <span class="facet_count ng-binding" aria-hidden="false"> ({{item.count}} items)</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

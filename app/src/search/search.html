@@ -16,7 +16,7 @@
 	<div class="map_content {{mapContentClass}}">
 		<div class="row">
 			<!-- search results section -->
-			<div class="result_container no_padding" ng-class="{'open_filter' : (filterVisible && hasResults())}">
+			<div class="result_container no_padding" ng-class="(filterVisible && hasResults()) ? 'open_filter' : 'close_filter'">
 				<header class="sticky clearfix {{headerClass}}" ng-include="'src/search/results-header.html'"></header>
 				<div class="container-fluid clearfix">
 				<div id="selectedFilters" ng-controller="SelectedFiltersCtrl" vs-selected-filter data-view="{{view}}" ng-include="'src/filters/selected-filters.html'">

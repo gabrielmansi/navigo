@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('voyager.util').
-    factory('queryBuilder', function (config, filterService, configService, sugar, catalogService) {
+    factory('queryBuilder', function (config, filterService, configService, sugar, catalogService, converter) {
 
         var actionFields = null;
         var selectPath = 'solr/v0/select';
         var customFields = ['shards', 'discoveryStatus']; //all custom fields must be entered here in order to not impact query string
+        var STATIC_FIELDS = 'id,title, name:[name],format,abstract,fullpath:[absolute],absolute_path:[absolute],thumb:[thumbURL], path_to_thumb, subject,download:[downloadURL],format_type,bytes,modified,shard:[shard],bbox,geo:[geo],format_category, component_files, ags_fused_cache, linkcount__children, contains_name, wms_layer_name,tag_flags,hasMissingData,layerURL:[lyrURL]';
 
         var getFacetParams = function (field) {
             var facetParams = '';
@@ -79,9 +80,40 @@ angular.module('voyager.util').
             return actionFields;
         }
 
+        function _convertPlaceFilter(params) {
+            var placeFilter = '';
+            if (angular.isDefined(params.place)) {
+                placeFilter = '&fq=' + converter.toPlaceFilter(params);
+            }
+            return placeFilter;
+        }
+
+        function _getRequestFields() {
+            var fields = STATIC_FIELDS;
+            fields += configService.getSolrFields();
+            fields += getActionFields();  // add fields configured for action display
+            //prevent adding extra comma when table field name is empty
+            if (configService.getTableFieldNames().length) {
+                fields += ',' + configService.getTableFieldNames().join(',');
+            }
+            fields = fields.replace(/, /g, ',');
+            fields = _.indexBy(fields.split(','));  // remove dups
+            return _.values(fields).join(',');
+        }
+
+        function _getFilters(placeFilter) {
+            var queryString = '';
+            queryString += filterService.getFilterParams();
+            queryString += filterService.getBoundsParams();
+            queryString += placeFilter;
+            return queryString;
+        }
+
         function build2(solrParams, page, itemsPerPage, sortDirection, sortField) {
+            var placeFilter = '';
             if(solrParams) {
                 delete solrParams.fq; //filter service will apply filter params below
+                placeFilter = _convertPlaceFilter(solrParams);
             } else {
                 solrParams = {};
             }
@@ -96,18 +128,11 @@ angular.module('voyager.util').
                 var start = (page - 1) * itemsPerPage;
                 rows = itemsPerPage;
                 queryString += '&start=' + start;
-                queryString += '&fl=id,title, name:[name],format,abstract,fullpath:[absolute],absolute_path:[absolute],thumb:[thumbURL], path_to_thumb, subject,download:[downloadURL],format_type,bytes,modified,shard:[shard],bbox,geo:[geo],format_category, component_files, ags_fused_cache, linkcount__children, contains_name, wms_layer_name,tag_flags,hasMissingData,layerURL:[lyrURL]';
-                queryString += configService.getSolrFields();
-                queryString += getActionFields();  // add fields configured for action display
-                //prevent adding extra comma when table field name is empty
-                if (configService.getTableFieldNames().length) {
-                    queryString += ',' + configService.getTableFieldNames().join(',');
-                }
+                queryString += '&fl=' + _getRequestFields();
             }
             queryString += '&rows=' + rows;
             queryString += '&extent.bbox=true&block=false';
-            queryString += filterService.getFilterParams();
-            queryString += filterService.getBoundsParams();
+            queryString += _getFilters(placeFilter);
             if(angular.isDefined(configService.getConfigId()) && angular.isUndefined(solrParams['voyager.config.id'])) {
                 queryString += '&voyager.config.id=' + configService.getConfigId();
             }
@@ -137,6 +162,7 @@ angular.module('voyager.util').
         }
 
         function _buildIdList(solrParams) {
+            var placeFilter = _convertPlaceFilter(solrParams);
             delete solrParams.fq; //filter service will apply filter params below
             if (angular.isDefined(solrParams.shards)) {
                 solrParams.shards = catalogService.removeInvalid(solrParams.shards);
@@ -145,14 +171,14 @@ angular.module('voyager.util').
             var queryString = config.root + selectPath;
             queryString += '?' + sugar.toQueryString(solrParams);
             queryString += '&fl=id&rows=999999';
-            queryString += filterService.getFilterParams();
-            queryString += filterService.getBoundsParams();
+            queryString += _getFilters(placeFilter);
             queryString += '&rand=' + Math.random(); // avoid browser caching?
             queryString += '&wt=json&json.wrf=JSON_CALLBACK';
             return queryString;
         }
 
         function _buildBboxList(solrParams) {
+            var placeFilter = _convertPlaceFilter(solrParams);
             delete solrParams.fq; //filter service will apply filter params below
             if (angular.isDefined(solrParams.shards)) {
                 solrParams.shards = catalogService.removeInvalid(solrParams.shards);
@@ -161,8 +187,7 @@ angular.module('voyager.util').
             var queryString = config.root + selectPath;
             queryString += '?' + sugar.toQueryString(solrParams);
             queryString += '&fl=bbox,name,id&rows=' + config.markerLimit + '&fq=bbox:[-90,-180 TO 90,180]';
-            queryString += filterService.getFilterParams();
-            queryString += filterService.getBoundsParams();
+            queryString += _getFilters(placeFilter);
             queryString += '&rand=' + Math.random(); // avoid browser caching?
             queryString += '&wt=json&json.wrf=JSON_CALLBACK';
             return queryString;
@@ -179,6 +204,7 @@ angular.module('voyager.util').
             },
 
             buildAllFacets: function(params, field) {
+                var placeFilter = _convertPlaceFilter(params);
                 delete params.fq; //filter service will apply filter params below
                 delete params.sort; //don't sort
                 if (angular.isDefined(params.shards)) {
@@ -197,8 +223,7 @@ angular.module('voyager.util').
                         queryString += '&facet.field=' + field;
                     }
                 }
-                queryString += filterService.getFilterParams();
-                queryString += filterService.getBoundsParams();
+                queryString += _getFilters(placeFilter);
                 queryString += '&rand=' + Math.random(); // avoid browser caching?
                 queryString += '&wt=json&json.wrf=JSON_CALLBACK';
                 return queryString;
@@ -213,6 +238,7 @@ angular.module('voyager.util').
             },
 
             buildBulkUpdaterUrl: function(url, params) {
+                var placeFilter = _convertPlaceFilter(params);
                 delete params.fq; //filter service will apply filter params below
                 delete params.sort; //don't sort
                 delete params.view;
@@ -223,8 +249,7 @@ angular.module('voyager.util').
                 var queryString = config.root + url, rows = 999999;
                 queryString += '?' + sugar.toQueryString(params);
                 queryString += '&rows=' + rows;
-                queryString += filterService.getFilterParams();
-                queryString += filterService.getBoundsParams();
+                queryString += _getFilters(placeFilter);
                 queryString += '&rand=' + Math.random(); // avoid browser caching?
                 queryString += '&wt=json';
                 return queryString;

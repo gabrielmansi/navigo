@@ -26,6 +26,7 @@ module.exports = function (grunt) {
         }
 
         grunt.task.run([
+            'ts:dev',
             'clean:server',
             'compass',
             //'concurrent:server',
@@ -55,6 +56,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', [
+        'ts:dev',
         'clean:server',
         'newer:jshint',
         'concurrent:test',
@@ -65,6 +67,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('test-chrome', [
+        'ts:dev',
         'clean:server',
         'concurrent:test',
         'autoprefixer',
@@ -73,6 +76,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build', [
+        'ts:dev',
         'clean:dist',
         'useminPrepare',
         'compass',

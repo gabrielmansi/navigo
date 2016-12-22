@@ -1,7 +1,7 @@
 /*global angular, $ */
 
 angular.module('taskRunner').
-    factory('taskService', function ($http, config, $q, cartService, cartItemsQuery, translateService, taskModalService) {
+    factory('taskService', function ($http, config, $q, cartService, cartItemsQuery, translateService, taskModalService, converter) {
         'use strict';
 
         var _items = [];
@@ -45,10 +45,28 @@ angular.module('taskRunner').
             return groups;
         }
 
-        return {
+        function _convertPlaceFilter(request) {
+            var inputItems = request.params.filter(function (item) {
+                return item.name === 'input_items';
+            });
+            if (inputItems) {
+                var inputItemsParam = inputItems[0];
+                if (inputItemsParam.query && angular.isDefined(inputItemsParam.query.place)) {
+                    var placeFq = converter.toPlaceFilter(inputItemsParam.query);
+                    var fq = [];
+                    if (angular.isDefined(inputItemsParam.query.fq)) {
+                        fq = inputItemsParam.query.fq;
+                    }
+                    fq.push(placeFq);
+                    inputItemsParam.query.fq = fq;
+                }
+            }
+        }
 
-            findAllTasks: function (isAdmin) {
-                return $http.jsonp(_buildQuery(isAdmin)).then(function(data){
+    return {
+
+        findAllTasks: function (isAdmin) {
+            return $http.jsonp(_buildQuery(isAdmin)).then(function(data){
                     return _decorator(data.data.response.docs);
                 }, function(error) {
                     return error;
@@ -70,6 +88,7 @@ angular.module('taskRunner').
             },
 
             execute: function (request) {
+                _convertPlaceFilter(request);
                 return _post(request, false);
             },
 
@@ -77,38 +96,27 @@ angular.module('taskRunner').
                 return _post(request, true);
             },
 
-            getTaskQueryCriteria: function (constraints, invalidItemsOnly, items){
-                var constraint_string = '';
+            getTaskQueryCriteria: function (constraints, invalidItemsOnly){
                 var query = cartService.getQuery();
 
                 if (!query) {
                     query = cartItemsQuery.getQueryCriteria({});
                 }
 
-                if (angular.isUndefined(query.filters)) {
-                    query.filters = '';
-                }
                 if (angular.isUndefined(query.solrFilters)){
                     query.solrFilters = [];
                 }
-                else {
-                    if (angular.isDefined(items) && items.length > 0) {
-                        query.filters = '';
-                    }
-                }
 
                 _.each(constraints, function(value) {
-                    if (query.solrFilters === []) {
-                        query.solrFilters.push('{!tag=' + value[0] + '}' + value[0] + ':' + '(' + value[1] +')');
+                    if (_.isEmpty(query.solrFilters)) {
+                        query.solrFilters = [];
                     }
-                    value = value.split(':');
-                    if (angular.isDefined(invalidItemsOnly) && invalidItemsOnly === true) {
-                        constraint_string = '&fq=-(' + value[0] + ':' + value[1] + ')';
+
+                    if (invalidItemsOnly === true) {
+                        query.solrFilters.push('-(' + value + ')');
+                    } else {
+                        query.solrFilters.push(value);
                     }
-                    else {
-                        constraint_string = '&fq=' + value[0] + ':' + value[1];
-                    }
-                    query.filters += constraint_string;
                 });
                 return query;
             },
@@ -144,12 +152,12 @@ angular.module('taskRunner').
                 var query = this.getTaskQueryCriteria(constraints, invalidItemsOnly, items);
                 query.constraints = true;
                 query.count = cartService.getCount();
-                if (angular.isDefined(invalidItemsOnly) && invalidItemsOnly === true){
+                if (invalidItemsOnly === true) {
                     return cartItemsQuery.execute(query, items);
-                }
-                else {
-                    query.solrFilters = [];
-                    return cartItemsQuery.fetchItems(query, items).then(function(data) {
+                } else {
+                    // TODO - why is this clearing filters?
+                    //query.solrFilters = [];
+                     return cartItemsQuery.fetchItems(query, items).then(function(data) {
                         var count = data.count;
                         if (angular.isDefined(data.bbox)){
                             _extent = data.bbox;

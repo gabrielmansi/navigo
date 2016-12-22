@@ -28,7 +28,10 @@ angular.module('voyager.component')
 						trigger.parents('.hover_flyout').removeClass('opened');
 					} else if (trigger.hasClass('subcat_trigger')) {
 						trigger.parent().toggleClass('opened');
-						el.find('.flyout_inner').css('max-height', (($window.innerHeight - (el.offset().top - $window.pageYOffset) - 80) + 'px'));
+						// TODO - why is el empty?
+						if (el.length > 0) {
+							el.find('.flyout_inner').css('max-height', (($window.innerHeight - (el.offset().top - $window.pageYOffset) - 80) + 'px'));
+						}
 					}
                 }).on('mouseleave', '.hover_flyout', function (event) {
                     var trigger = $(event.currentTarget);

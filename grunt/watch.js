@@ -3,8 +3,12 @@
 // Watches files for changes and runs tasks based on the changed files
 module.exports = {
 	js: {
-		files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-		tasks: ['newer:jshint:all'],
+		files: ['<%= yeoman.app %>/src/{,*/}*.js',
+			'<%= yeoman.app %>/common/{,*/}*.js',
+			'<%= yeoman.app %>/common/{,*/}*.ts',
+			'<%= yeoman.app %>/src/{,*/}*.ts',
+			'<%= yeoman.app %>/src/{,*/}*.html'],
+		tasks: ['ts:dev', 'newer:jshint:all'],
 		options: {
 			livereload: true
 		}

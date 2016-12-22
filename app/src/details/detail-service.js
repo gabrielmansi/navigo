@@ -198,10 +198,14 @@ angular.module('voyager.details').
         },
 
         getFields: function(shard) {
-            if (angular.isUndefined(shard)) {
-                return _fields.local;
+            var catalog = 'local';
+            if (angular.isDefined(shard)) {
+                var remoteCatalog = catalogService.lookup(shard);
+                if (angular.isDefined(remoteCatalog)) {
+                    catalog = shard;
+                }
             }
-            return _fields[shard];
+            return _fields[catalog];
         },
 
         fetchMetadataStyles: function(id) {

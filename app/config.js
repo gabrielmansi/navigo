@@ -63,7 +63,7 @@ var config = {
         "featuredContentTitle": "Featured",
         "showSidebarLinks": true,
         "sidebarLinksTitle": "Collections",
-        "sidebarLinksLabel": "featured",
+        "sidebarLinksLabel": "Featured",
         "footerHTML": "&copy; 2015 Voyager Search"
         //"bannerHTML": "<h3 class=\"banner\" style=\"line-height: 40px; background-color: green; color: white; height: 20px; margin: 0px;\">BANNER<\/h3>"
     },

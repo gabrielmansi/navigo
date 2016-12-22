@@ -52,6 +52,15 @@ angular.module('voyager.util').
             return separated;
         }
 
+        function _loadMapItem(mapList, key, item) {
+            var mapItem = mapList[key];
+            if (mapItem === undefined) {
+                mapItem = {key: key, list: []};
+            }
+            mapItem.list.push(item);
+            mapList[key] = mapItem;
+        }
+
         return {
 
             retroParams: function (params) {
@@ -103,6 +112,24 @@ angular.module('voyager.util').
                     map[value[key]] = value;
                 });
                 return map;
+            },
+
+            toMapList: function(key, sourceList) {
+                var mapList = {};
+                var listItem;
+                sourceList.forEach(function(item) {
+                    listItem = item[key];
+                    if (listItem !== undefined) {
+                        if (Array.isArray(listItem)) {
+                            item[key].forEach(function (sub) {
+                                _loadMapItem(mapList, sub, item);
+                            });
+                        } else {
+                            _loadMapItem(mapList, listItem, item);
+                        }
+                    }
+                });
+                return mapList;
             },
 
             hasField: function(list,field) {
@@ -261,6 +288,19 @@ angular.module('voyager.util').
                     }
                 }
                 return contains;
+            },
+
+            mapToList: function(map) {
+                var list = [];
+                Object.keys(map).forEach(function(key) {
+                    list.push(map[key]);
+                });
+                return list;
+            },
+
+            toGroupedList: function(key, list) {
+                var categoryMap = this.toMapList(key,list);
+                return this.mapToList(categoryMap);
             }
 
         };

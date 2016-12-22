@@ -1,9 +1,18 @@
 'use strict';
 
 angular.module('voyager.filters').
-    factory('filterQuery', function (config, facetService, configService, sugar, $http, queryBuilder, catalogService) {
+    factory('filterQuery', function (config, facetService, configService, sugar, $http, queryBuilder, catalogService, converter) {
+
+        function _convertPlaceFilter(params) {
+            var placeFilter = '';
+            if (angular.isDefined(params.place)) {
+                placeFilter = '&fq=' + converter.toPlaceFilter(params);
+            }
+            return placeFilter;
+        }
 
         function _getQueryString(params, filters, bounds) {
+            var placeFilter = _convertPlaceFilter(params);
             delete params.fq; //use filter params
             delete params.sort; //don't sort
             if (angular.isDefined(params.shards)) {
@@ -22,6 +31,7 @@ angular.module('voyager.filters').
             queryString += '&facet=true&facet.mincount=1&facet.limit=' + facetLimit + queryBuilder.buildFacetParams();
             queryString += filters;
             queryString += bounds;
+            queryString += placeFilter;
             queryString += '&rand=' + Math.random(); // avoid browser caching?
             queryString += '&wt=json&json.wrf=JSON_CALLBACK';
             return queryString;
