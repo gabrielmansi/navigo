@@ -260,7 +260,7 @@ label[class*="icon-"] {
 
 }
 
-.alert {
+.alert-status {
 	border: 0;
 	border-radius: 0;
 	background-color: transparent;
@@ -277,6 +277,7 @@ label[class*="icon-"] {
 }
 
 .alert-error {
+	@extend .alert-status;
 	color: $errorColor;
 
 	&.alert-invert {
@@ -287,6 +288,7 @@ label[class*="icon-"] {
 }
 
 .alert-danger {
+	@extend .alert-status;
 	color: $dangerColor;
 
 	&.alert-invert {
@@ -297,6 +299,7 @@ label[class*="icon-"] {
 }
 
 .alert-warning {
+	@extend .alert-status;
 	color: $warningColor;
 
 	&.alert-invert {
@@ -307,6 +310,7 @@ label[class*="icon-"] {
 }
 
 .alert-warn {
+	@extend .alert-status;
 	color: $warnColor;
 
 	.alert-link {
@@ -321,6 +325,7 @@ label[class*="icon-"] {
 }
 
 .alert-success {
+	@extend .alert-status;
 	color: $successColor;
 
 	&.alert-invert {
