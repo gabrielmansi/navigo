@@ -42,7 +42,7 @@ angular.module('voyager.layout')
 
         function _restart() {
             systemService.doRestart().then(function() {
-                systemService.checkForLife(_setRestartSuccessful, 2500);
+                systemService.checkForLife(_setRestartSuccessful, 2500, 10000);
             }, function() {
                 _setRestartFailed();
             }).catch(function() {

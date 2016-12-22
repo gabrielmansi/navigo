@@ -17,10 +17,11 @@ angular.module('voyager.util').
         var _pollSuccessCallback;
         var _pollInterval;
 
-        function _startPollUserInfo(successCallback, interval) {
+        function _startPollUserInfo(successCallback, interval, initialInterval) {
+            initialInterval = initialInterval || interval;
             _pollSuccessCallback = successCallback;
             _pollInterval = interval;
-            _nextPoll(_pollUserInfo, _pollInterval);
+            _nextPoll(_pollUserInfo, initialInterval);
         }
 
         function _pollUserInfo() {
@@ -51,8 +52,8 @@ angular.module('voyager.util').
                 return _doRestart();
             },
 
-            checkForLife: function(successCallback, pollInterval) {
-                _startPollUserInfo(successCallback, pollInterval);
+            checkForLife: function(successCallback, pollInterval, initialInterval) {
+                _startPollUserInfo(successCallback, pollInterval, initialInterval);
             }
         };
     });
