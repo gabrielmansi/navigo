@@ -194,6 +194,10 @@
             a:hover {
             	color: $darkerBlue;
             }
+
+			.suggest-container {
+				top: 60px;
+			}
 		}
 	}
 }
@@ -345,4 +349,42 @@
 	}
 }
 
+.quick-links {
 
+	.panel-primary .panel-heading {
+		text-transform: uppercase;
+		padding: 0;
+		background-color: transparent;
+		border: 0;
+		color: #262e3f;
+		border-bottom: 1px solid #d7dcdf;
+	}
+
+	.panel-heading a {
+		display: block;
+		padding: 20px;
+		.panel-title {
+			font-size: .8125rem;
+		}
+		text-transform: uppercase;
+	}
+
+	.panel-body {
+		padding-left:30px;
+	}
+
+	.panel-group {
+		margin-bottom: 0;
+	}
+
+	.panel {
+		border-radius: 0;
+		border: 0;
+		border-bottom: 1px solid #44556a;
+		margin-bottom: 0;
+	}
+
+	.fa {
+		float: right;
+	}
+}

@@ -130,13 +130,13 @@ describe('Factory: cartItemsQuery', function () {
 		$http.flush();
 	});
 
-	it('should execute and fetch items with OR text search and apply filters and bounds', function () {
-		var queryCriteria = {count: 1, params:{q:'junk'}, solrFilters:['name:joe'], bounds:'&fq=bbox:1234'};
+	it('should execute and fetch items with OR text search and apply filters and place', function () {
+		var queryCriteria = {count: 1, params:{q:'junk', place:'michigan', 'place.op': 'within'}, solrFilters:['name:joe']};
 		var items = ['item1','item2'];
 		var docs = [{id:'junk', name:'name'},{id:'2', name:'name2', format:'junk',thumb:'vres/mime'}];
 
 		// verifies the url contains the items
-		var urlPattern = escapeRegExp('q=id:(item1 item2) OR (junk AND name:joe AND bbox:1234)');
+		var urlPattern = escapeRegExp('q=id:(item1 item2) OR (junk AND {! place.op=within}place:"michigan" AND name:joe)');
 		var expr = new RegExp(urlPattern);
 
 		$http.expectJSONP(expr).respond({response: {docs:docs}});
@@ -145,13 +145,13 @@ describe('Factory: cartItemsQuery', function () {
 		$http.flush();
 	});
 
-	it('should execute and fetch items with no text search and apply filters and bounds', function () {
-		var queryCriteria = {count: 1, params:{}, solrFilters:['name:joe'], bounds:'&fq=bbox:1234'};
+	it('should execute and fetch items with no text search and apply filters and place', function () {
+		var queryCriteria = {count: 1, params:{place:'michigan', 'place.op': 'within'}, solrFilters:['name:joe']};
 		var items = ['item1','item2'];
 		var docs = [{id:'junk', name:'name'},{id:'2', name:'name2', format:'junk',thumb:'vres/mime'}];
 
 		// verifies the url contains the items
-		var urlPattern = escapeRegExp('q=id:(item1 item2) OR (name:joe AND bbox:1234)');
+		var urlPattern = escapeRegExp('q=id:(item1 item2) OR ({! place.op=within}place:"michigan" AND name:joe)');
 		var expr = new RegExp(urlPattern);
 
 		$http.expectJSONP(expr).respond({response: {docs:docs}});
@@ -175,13 +175,13 @@ describe('Factory: cartItemsQuery', function () {
 		$http.flush();
 	});
 
-	it('should execute and fetch items with bounds', function () {
-		var queryCriteria = {count: 1, params:{}, bounds:'&fq=bbox:1234'};
+	it('should execute and fetch items with place', function () {
+		var queryCriteria = {count: 1, params:{place:'michigan', 'place.op': 'within'}};
 		var items = ['item1','item2'];
 		var docs = [{id:'junk', name:'name'},{id:'2', name:'name2', format:'junk',thumb:'vres/mime'}];
 
 		// verifies the url contains the items
-		var urlPattern = escapeRegExp('q=id:(item1 item2) OR (bbox:1234)');
+		var urlPattern = escapeRegExp('q=id:(item1 item2) OR ({! place.op=within}place:"michigan")');
 		var expr = new RegExp(urlPattern);
 
 		$http.expectJSONP(expr).respond({response: {docs:docs}});

@@ -9,7 +9,7 @@ module.exports = {
         livereload: 35729,
         middleware: function (connect, options) {
             var optBase = (typeof options.base === 'string') ? [options.base] : options.base,
-                middleware = [modRewrite(['^[^\\.]*$ /index.html [L]'])]
+                middleware = [modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.jpg|\\.gif|\\.swf$|\\.woff|\\.woff2|\\.ttf /index.html [L]'])]
                     .concat(optBase.map(function (path) {
                         if (path.indexOf('rewrite|') === -1) {
                             return serveStatic(path);

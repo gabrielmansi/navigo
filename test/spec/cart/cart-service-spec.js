@@ -73,12 +73,11 @@ describe('Factory: cartService', function () {
 	it('should add query then item then remove item from query', function () {
 
 		cartService.clear();
-		cartService.addQuery({filters: '&fq=-id:junk', count: 1});
+		cartService.addQuery({solrFilters:['-id:junk'], count: 1});
 		cartService.addItem({id:'junk'});
 
 		var query = cartService.getQuery();
 
-		expect(query.filters).toBeUndefined();
 		expect(query.count).toBe(2);
 
 		expect(cartService.getCount()).toBe(2);
@@ -116,7 +115,7 @@ describe('Factory: cartService', function () {
 
 		expect(cartService.getCount()).toBe(1);
 		var query = cartService.getQuery();
-		expect(query.filters).toBe('&fq=-id:junk');
+		expect(query.solrFilters[0]).toBe('-id:junk');
 	});
 
 	it('should set count', function () {

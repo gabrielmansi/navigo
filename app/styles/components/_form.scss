@@ -260,65 +260,74 @@ label[class*="icon-"] {
 
 }
 
-.alert-error {
-  color: $errorColor;
-  border: 0;
-  border-radius: 0;
-  background-color: transparent;
-  margin-bottom: 10px;
-
-  &:before {
-    margin-right: 10px;
-  }
-}
-
-.alert-danger {
-	color: $errorColor;
+.alert {
 	border: 0;
 	border-radius: 0;
 	background-color: transparent;
 	margin-bottom: 10px;
+
+	&.alert-invert {
+		border: 1px solid transparent;
+		border-radius: 4px;
+	}
 
 	&:before {
 		margin-right: 10px;
 	}
 }
 
-.alert-warning {
-  color: darkorange;
-  border: 0;
-  border-radius: 0;
-  background-color: transparent;
-  margin-bottom: 10px;
+.alert-error {
+	color: $errorColor;
 
-  &:before {
-    margin-right: 10px;
-  }
+	&.alert-invert {
+		color: $errorColorInvert;
+		background-color: $errorBackgroundColor;
+		border-color: $errorBorderColor;
+	}
+}
+
+.alert-danger {
+	color: $dangerColor;
+
+	&.alert-invert {
+		color: $dangerColorInvert;
+		background-color: $dangerBackgroundColor;
+		border-color: $dangerBorderColor;
+	}
+}
+
+.alert-warning {
+	color: $warningColor;
+
+	&.alert-invert {
+		color: $warningColorInvert;
+		background-color: $warningBackgroundColor;
+		border-color: $warningBorderColor;
+	}
 }
 
 .alert-warn {
-	color: #8a6d3b;
-	background-color: #fcf8e3;
-	border-color: #faebcc;
+	color: $warnColor;
 
-	hr {
-		border-top-color: #f7e1b5;
-	}
 	.alert-link {
-		color: #66512c;
+		color: $warnLinkColor;
+	}
+
+	&.alert-invert {
+		color: $warnColorInvert;
+		background-color: $warnBackgroundColor;
+		border-color: $warnBorderColor;
 	}
 }
 
 .alert-success {
-  color: #3c763d;
-  border: 0;
-  border-radius: 0;
-  background-color: transparent;
-  margin-bottom: 10px;
+	color: $successColor;
 
-  &:before {
-    margin-right: 10px;
-  }
+	&.alert-invert {
+		color: $successColorInvert;
+		background-color: $successBackgroundColor;
+		border-color: $successBorderColor;
+	}
 }
 
 .checkbox_label {

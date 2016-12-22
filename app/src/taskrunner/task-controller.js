@@ -28,6 +28,9 @@ angular.module('taskRunner')
             $scope.showAdvanced = false;
             $scope.displayCategory = cartService.getCount() > 100;
             usSpinnerService.spin('tasks-spinner');
+            if (_.isEmpty($scope.task)) {
+                $scope.task = {name: $stateParams.type};
+            }
             taskService.lookupTaskType($scope.task.name).then(function (response) {
                 $scope.task.display = response[1].data.display;
                 $scope.task.description = response[1].data.description;
@@ -103,19 +106,6 @@ angular.module('taskRunner')
             }
         }
 
-        //TODO bbox no longer supported - remove?
-        //function _bboxParamToJson(queryCriteria) {
-        //    var bboxFilter = queryCriteria.bounds.replace('&fq=','');
-        //    var fq = queryCriteria.params.fq;
-        //    if (angular.isDefined(fq)) {
-        //        var filters = sugar.toArray(fq);
-        //        filters.push(bboxFilter);
-        //        queryCriteria.params.fq = filters;
-        //    } else {
-        //        queryCriteria.params.fq = bboxFilter;
-        //    }
-        //}
-
         function _getQuery(queryCriteria, items) {
             var query = {params:{}}, hasItems = false;
             if(queryCriteria) {
@@ -141,11 +131,7 @@ angular.module('taskRunner')
             else if (angular.isDefined(query.solrFilters)) {
                 query.params.fq = query.solrFilters;
             }
-            //TODO bbox no longer supported - remove?
-            //if(!_.isEmpty(query.bounds) && !hasItems) {
-            //    _bboxParamToJson(query);
-            //}
-            //console.log(query)
+
             //remove params the task runner doesn't use
             delete query.params.bbox;
             delete query.params.bboxt;

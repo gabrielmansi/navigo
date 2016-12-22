@@ -51,6 +51,14 @@ angular.module('cart')
             });
         }
 
+        function _appendFilter(filter, query) {
+            var solrFilters = query.solrFilters;
+            if (angular.isUndefined(solrFilters)) {
+                query.solrFilters = [];
+            }
+            query.solrFilters.push(filter);
+        }
+
         // function _decorator(items) {
         //     $.each(items, function(index, item) {
         //         item.displayFormat = translateService.getType(item.format);
@@ -61,21 +69,28 @@ angular.module('cart')
             addItem: function (item) {
                 var query = localStorageService.get('cart-query');
                 var removedFilter = false;
-                if(query) {
-                    if(angular.isDefined(query.filters)) {
-                        if (query.filters.indexOf('&fq=-id:' + item.id) !== -1) {
-                            query.filters = query.filters.replace('&fq=-id:' + item.id, '');
-                            if (query.filters === '') {
-                                delete query.filters;
-                            }
-                            removedFilter = true;
-                        }
+                if (query) {
+                    //if(angular.isDefined(query.filters)) {
+                    //    if (query.filters.indexOf('&fq=-id:' + item.id) !== -1) {
+                    //        query.filters = query.filters.replace('&fq=-id:' + item.id, '');
+                    //        if (query.filters === '') {
+                    //            delete query.filters;
+                    //        }
+                    //        removedFilter = true;
+                    //    }
+                    //}
+                    if (angular.isDefined(query.solrFilters)) {
+                        var length = query.solrFilters.length;
+                        query.solrFilters = query.solrFilters.filter(function(item) {
+                            return item !== '-id:' + item.id;
+                        });
+                        removedFilter = query.solrFilters.length !== length;
                     }
                     query.count = query.count + 1;
                     this.addQuery(query);
                 }
 
-                if(!removedFilter) {  //wasn't filtered out so add it
+                if (!removedFilter) {  //wasn't filtered out so add it
                     var itemMap = _getItems();
                     itemMap[item.id] = item.id;
                     localStorageService.add(CART_STORAGE_NAME, itemMap);
@@ -128,10 +143,8 @@ angular.module('cart')
                     _notify(itemMap);
                 }
                 if(query) {
-                    if(angular.isUndefined(query.filters)) {
-                        query.filters = '';
-                    }
-                    query.filters += '&fq=-id:' + id;
+                    _appendFilter('-id:' + id, query);
+
                     query.count = query.count - 1;
                     this.addQuery(query);
                 }
@@ -177,10 +190,8 @@ angular.module('cart')
             removeByFormat: function(format) {
                 var query = localStorageService.get('cart-query');
                 if(query) {
-                    if(angular.isUndefined(query.filters)) {
-                        query.filters = '';
-                    }
-                    query.filters += '&fq=-format:' + format;
+                    _appendFilter('-format:' + format, query);
+
                     query.actualCount = false;
                     this.addQuery(query);
                 }

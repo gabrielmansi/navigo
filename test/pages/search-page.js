@@ -12,6 +12,7 @@ var searchPage = (function () {
         getTotalValue: function() {
             return this.getTotalLink().getText().then(function(text) {
                 var anchorVals = text.split(' ');
+                anchorVals[0] = anchorVals[0].replace(/,/g , '');
                 return parseInt(anchorVals[0]);
             });
         },

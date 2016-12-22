@@ -13,7 +13,6 @@ angular.module('voyager.home')
 		$scope.changeTab = _changeSearchTab;
 		$scope.submitSearch = _submitSearch;
 		$scope.changeSelectedType = _changeSelectedType;
-		$scope.applyCollection = _applyCollection;
 		$scope.showPan = true;
 		$scope.hideMap = !configService.showMap();
         $scope.featuredTitle = 'Featured';
@@ -191,10 +190,6 @@ angular.module('voyager.home')
 			$scope.selectedMapType = type;
 		}
 
-
-		function _applyCollection(saved) {
-			savedSearchService.applySavedSearch(saved, $scope);
-		}
 
 		$scope.$on('$destroy', function() {
 			authService.removeObserver(_reload);

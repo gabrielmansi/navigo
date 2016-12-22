@@ -152,6 +152,20 @@
 		}
 	}
 
+	@element '.result_container.close_filter' and (max-width:740px) {
+		.result_container.close_filter .ssearch-selector .ssearch-selector__text { display:inline; }
+		.result_container.close_filter .ssearch-selector .btn[class*=icon-]:before {
+			margin-right: 10px;
+		}
+	}
+
+	@element '.result_container.open_filter' and (max-width:740px) {
+		.ssearch-selector__text { display:none; }
+		.ssearch-selector .btn[class*=icon-]:before {
+			margin-right: auto;
+		}
+	}
+
 	#working {
 		margin-top: -13px;
 		margin-left: 150px;

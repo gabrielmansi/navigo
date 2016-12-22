@@ -7,7 +7,7 @@ describe('Queue', function() {
     var server = Util.getServer();
 
     function _showTasks() {
-        var selectTaskButton = element(by.id('runTaskBtn'));
+        var selectTaskButton = element.all(by.css('a[href="tasks"].btn'));
         Util.waitForSpinner();
         selectTaskButton.click();
     }
@@ -16,7 +16,7 @@ describe('Queue', function() {
     it('should add to queue', function() {
         browser.get(server + '/search?debug=true');
         Util.waitForSpinner();
-        var addToQueueAnchor = element(by.css('.underline.icon-plus'));
+        var addToQueueAnchor = element(by.css('[ng-click="default.do()"]'));
         addToQueueAnchor.click();
     });
 
@@ -24,14 +24,14 @@ describe('Queue', function() {
         browser.get(server + '/queue?disp=default');
 
         var items = element.all(by.repeater('item in cartItems'));
-        expect(items.count()).toBe(1);
+        expect(items.count()).toBeGreaterThan(0);
     });
 
     it('should show task list', function() {
         browser.get(server + '/queue?disp=default');
 
         var items = element.all(by.repeater('item in cartItems'));
-        expect(items.count()).toBe(1);
+        expect(items.count()).toBeGreaterThan(0);
 
         Util.waitForSpinner();
         Util.waitForSpinner();

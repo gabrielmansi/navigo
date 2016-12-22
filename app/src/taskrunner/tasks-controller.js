@@ -56,13 +56,13 @@ angular.module('taskRunner')
                 if (severity === 0) {
                     task.error = false;
                     task.warning = false;
-                    $state.go('task', {task: task});
+                    $state.go('task', {task: task, type: task.name});
                 }
                 else if (severity === 1) {
                     task.error = false;
                     task.warning = true;
                     $scope.hasInvalidItems = true;
-                    $state.go('task', {task: task});
+                    $state.go('task', {task: task, type: task.name});
                 }
                 else if (severity === 2) {
                     taskService.showTaskValidationError($scope.constraintFormats);

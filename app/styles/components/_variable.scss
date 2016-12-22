@@ -28,6 +28,7 @@ $darkBlue: #12619b;
 $darkerBlue: #333c4e;
 $darkBlueBorder: #252c39;
 $navyText: #31373f;
+$darkOrange: #ff8c00;
 
 $placeholderTextColor: #888992;
 $placeholderFocusTextColor: #749fc0;
@@ -71,9 +72,28 @@ $borderColor: #d7dcdf;
 $filterBorderColor: #44556a;
 $filterColor: #c5ccd9;
 
-//ERROR
+//STATUS
 $errorColor: #cd1717;
-
+$errorColorInvert: #cd1717;
+$errorBackgroundColor: #f2dede;
+$errorBorderColor: #ebccd1;
+$dangerColor: #cd1717;
+$dangerColorInvert: #cd1717;
+$dangerBackgroundColor: #f2dede;
+$dangerBorderColor: #ebccd1;
+$warningColor: $darkOrange;
+$warningColorInvert: $white;
+$warningBackgroundColor: #f0ad4e;
+$warningBorderColor: $darkOrange;
+$warnColor: #8a6d3b;
+$warnLinkColor: #66512c;
+$warnColorInvert: $white;
+$warnBackgroundColor: #b39245;
+$warnBorderColor: #8a6d3b;
+$successColor: #3c763d;
+$successColorInvert: #3c763d;
+$successBackgroundColor: #dff0d8;
+$successBorderColor: #d6e9c6;
 
 //STAR COLORS
 $high: #f73e19;

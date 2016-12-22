@@ -1,6 +1,6 @@
 'use strict';
 angular.module('cart').
-    factory('cartItemsQuery', function (config, filterService, configService, sugar, $http, translateService, $log) {
+    factory('cartItemsQuery', function (config, filterService, configService, sugar, $http, translateService, $log, converter) {
 
         function _cleanFilters(filters) {
             var cleanFilters = _.clone(filters), pos;
@@ -14,95 +14,69 @@ angular.module('cart').
             return cleanFilters.join(' AND ');
         }
 
-        //function _getPlaceFilter(queryCriteria, start) {
-        //    var filters = '', sep = ' AND ';
-        //    if(start) {
-        //        sep = '';
-        //    }
-        //    if(angular.isDefined(queryCriteria.params.place)) {
-        //        filters += sep + 'place:' + queryCriteria.params.place;
-        //        if(angular.isDefined(queryCriteria.params['place.id'])) {
-        //            filters += ' AND place.id:' + queryCriteria.params['place.id'];
-        //        }
-        //        if(angular.isDefined(queryCriteria.params['place.op'])) {
-        //            filters += ' AND place.op:' + queryCriteria.params['place.op'];
-        //        }
-        //    }
-        //    //delete - these are now part of the q param
-        //    delete queryCriteria.params.place;
-        //    delete queryCriteria.params['place.id'];
-        //    delete queryCriteria.params['place.op'];
-        //
-        //    return filters;
-        //}
-
         function _applyItems(queryCriteria, items) {
-            var itemsStr = '', sep = '', hasItems = false, filters, bounds;
+            var itemsStr = '', sep = '', hasItems = false, filters, q = '', oper = '';
             if (items && items.length > 0) {
                 itemsStr = 'id:(' + items.join(' ') + ')';
                 sep = ' OR ';
                 hasItems = true;
             }
-            //TODO don't think we need this
-            //if(queryCriteria.hasQuery !== false && angular.isUndefined(queryCriteria.params.q) && hasItems) {
-            //    queryCriteria.params.q = '*';  //has items and query is defined but keyword empty, default to *
-            //}
-            if(angular.isDefined(queryCriteria.params.q) && _.isEmpty(queryCriteria.solrFilters)) { //no filters
-                queryCriteria.params.q = itemsStr + sep + queryCriteria.params.q;
-            } else if (hasItems && !_.isEmpty(queryCriteria.solrFilters) && angular.isDefined(queryCriteria.params.q)) { //has items and filters, do an OR
-                filters = _cleanFilters(queryCriteria.solrFilters); //filters are AND (within OR below)
-                if(angular.isDefined(queryCriteria.bounds) && !_.isEmpty(queryCriteria.bounds)) {
-                    bounds = queryCriteria.bounds.replace('&fq=','');
-                    filters += ' AND ' + bounds;
-                }
-                //TODO place isn't working as q param
-                //filters += _getPlaceFilter(queryCriteria);
 
-                if (_.has(queryCriteria, 'constraints')){
-                    filters += queryCriteria.filters;
-                    queryCriteria.params.q = itemsStr + sep + filters;
+            if (angular.isDefined(queryCriteria.params.q) && _.isEmpty(queryCriteria.solrFilters)) {  // no filters
+                q = queryCriteria.params.q;
+                if (angular.isDefined(queryCriteria.params.place)) {
+                    q = '(' + q + ' AND ' + converter.toPlaceFilter(queryCriteria.params) + ')';
                 }
-                else {
-                    queryCriteria.params.q = itemsStr + sep + '(' + queryCriteria.params.q + ' AND ' + filters + ')';
-                }
-            } else if (hasItems && !_.isEmpty(queryCriteria.solrFilters)) { //has items and filters, do an OR
-                filters = _cleanFilters(queryCriteria.solrFilters); //filters are AND (within OR below)
-                if(angular.isDefined(queryCriteria.bounds) && !_.isEmpty(queryCriteria.bounds)) {
-                    bounds = queryCriteria.bounds.replace('&fq=','');
-                    filters += ' AND ' + bounds;
-                }
-                //TODO place isn't working as q param
-                //filters += _getPlaceFilter(queryCriteria);
+                queryCriteria.params.q = itemsStr + sep + q;
+            } else if (hasItems) {
+                if (!_.isEmpty(queryCriteria.solrFilters)) {
+                    filters = _cleanFilters(queryCriteria.solrFilters); // filters are AND (within OR below)
+                    if (angular.isDefined(queryCriteria.params.q)) {
+                        q = queryCriteria.params.q;
+                        oper = ' AND ';
+                    }
 
-                if (_.has(queryCriteria, 'constraints')){
-                    filters += queryCriteria.filters;
-                    queryCriteria.params.q = itemsStr + sep + filters;
-                }
-                else {
-                    queryCriteria.params.q = itemsStr + sep + '(' + filters + ')';
-                }
+                    if (angular.isDefined(queryCriteria.params.place)) {
+                        q += oper + converter.toPlaceFilter(queryCriteria.params);
+                        oper = ' AND ';
+                    }
 
-            } else if (hasItems && angular.isDefined(queryCriteria.bounds) && !_.isEmpty(queryCriteria.bounds)) { //has items and bounds, do an OR
-                bounds = queryCriteria.bounds.replace('&fq=','');
-                queryCriteria.params.q = itemsStr + sep + '(' + bounds + ')';
-                //TODO place isn't working a q param
-            //} else if (hasItems && angular.isDefined(queryCriteria.params.place)) { //has items and place, do an OR
-            //    filters = _getPlaceFilter(queryCriteria, true);
-            //    queryCriteria.params.q = itemsStr + sep + '(' + filters + ')';
-            } else if( hasItems && !_.isEmpty(queryCriteria.filters)) {
-                queryCriteria.params.q = itemsStr + queryCriteria.filters;
-            } else {
-                queryCriteria.params.q = itemsStr;
+                    // TODO - Jason - why does having constraints do this? (not include the q filter)
+                    //if (_.has(queryCriteria, 'constraints')) {
+                    //    queryCriteria.params.q = itemsStr + sep + filters;
+                    //} else {
+                    queryCriteria.params.q = itemsStr + sep + '(' + q + oper + filters + ')';
+                    //}
+                } else {
+                    if (angular.isDefined(queryCriteria.params.place)) {
+                        q = '(' + converter.toPlaceFilter(queryCriteria.params) + ')';
+                        oper = ' OR ';
+                    }
+                    queryCriteria.params.q = itemsStr + oper + q;
+                }
+            }
+        }
+
+        function _convertPlaceIf(queryCriteria) {
+            if (angular.isDefined(queryCriteria.params.place)) {
+                var fq = [];
+                if (angular.isDefined(queryCriteria.solrFilters)) {
+                    fq = queryCriteria.solrFilters;
+                }
+                fq.push(converter.toPlaceFilter(queryCriteria.params));
+                queryCriteria.solrFilters = fq;
             }
         }
 
         function _setParams(queryCriteria, items) {
             var queryString = '';
-            if(!queryCriteria) {
+            if (!queryCriteria) {
                 queryCriteria = {params:{}, hasQuery:false};
             }
-            if(!_.isEmpty(items)) {
+            if (!_.isEmpty(items)) {
                 _applyItems(queryCriteria, items);
+            } else {
+                _convertPlaceIf(queryCriteria);
             }
             queryString += '?' + sugar.toQueryString(queryCriteria.params);
             return queryString;
@@ -128,47 +102,41 @@ angular.module('cart').
             return {results:results, count:count};
         }
 
-        function _getSummaryQueryString(queryCriteria, items, block) {
+        function _buildQuery(settings, queryCriteria, items, block) {
             var queryString = config.root + 'solr/v0/select';
             queryString += _setParams(queryCriteria, items);
-            queryString += '&fl=id,name:[name],format&extent.bbox=true';
-            queryString += '&facet=true&stats=true&stats.field=bytes&facet.field=format&facet.mincount=1&rows=0';
-            if(queryCriteria && (angular.isUndefined(items) || items.length === 0)) { //setParams will apply filters
-                if(angular.isDefined(queryCriteria.filters)) {
-                    queryString += queryCriteria.filters;
+            queryString += settings;
+            if (queryCriteria && (angular.isUndefined(items) || items.length === 0)) { //setParams will apply filters
+                if(!_.isEmpty(queryCriteria.solrFilters)) {
+                    queryString += '&fq=' + queryCriteria.solrFilters.join('&fq=');
                 }
-                queryString += queryCriteria.bounds;
+                if(angular.isDefined(queryCriteria.bounds)) {
+                    queryString += queryCriteria.bounds;
+                }
             }
-            if(angular.isDefined(block)) {
+            if (angular.isDefined(block)) {
                 queryString += '&block=' + block;
             }
-            queryString += '&wt=json&json.wrf=JSON_CALLBACK';
-            $log.log('Cart summary queryString: ' + queryString);
-            return queryString;
-        }
-
-        function _getQueryString(queryCriteria, items, block) {
-            var queryString = config.root + 'solr/v0/select';
-            queryString += _setParams(queryCriteria, items);
-            queryString += '&fl=id,title,name:[name],format,thumb:[thumbURL]';
-            queryString += '&rows=100&extent.bbox=true';
-            if(angular.isDefined(block)) {
-                queryString += '&block=' + block;
-            }
-            if(queryCriteria && (angular.isUndefined(items) || items.length === 0)) { //setParams will apply filters
-                if(angular.isDefined(queryCriteria.filters)) {
-                    queryString += queryCriteria.filters;
-                }
-                queryString += queryCriteria.bounds;
-            }
-            queryString += '&rand=' + Math.random(); // avoid browser caching?
-            queryString += '&wt=json&json.wrf=JSON_CALLBACK';
+            queryString += '&wt=json&json.wrf=JSON_CALLBACK&r=' + Math.random();
             $log.log('Cart queryString: ' + queryString);
             return queryString;
         }
 
+        function _getSummaryQueryString(queryCriteria, items, block) {
+            var settings = '&fl=id,name:[name],format&extent.bbox=true';
+            settings += '&facet=true&stats=true&stats.field=bytes&facet.field=format&facet.mincount=1&rows=0';
+
+            return _buildQuery(settings, queryCriteria, items, block);
+        }
+
+        function _getQueryString(queryCriteria, items, block) {
+            var settings = '&fl=id,title,name:[name],format,thumb:[thumbURL]';
+            settings += '&rows=100&extent.bbox=true';
+
+            return _buildQuery(settings, queryCriteria, items, block);
+        }
+
         function _getQueuedQueryString(queryCriteria, items, queued) {
-            var queryString = config.root + 'solr/v0/select';
             if(!queryCriteria) {
                 queryCriteria = {params:{}, hasQuery:false};
             }
@@ -180,21 +148,8 @@ angular.module('cart').
                     queryCriteria.params.fq = 'id:(' + ids.join(' ') + ')';
                 }
             }
-            queryString += _setParams(queryCriteria, items);
-            queryString += '&fl=id';
-            queryString += '&rows=100&extent.bbox=true&block=false';
-            if(queryCriteria && (angular.isUndefined(items) || items.length === 0)) { //setParams will apply filters
-                if(angular.isDefined(queryCriteria.filters)) {
-                    queryString += queryCriteria.filters;
-                }
-                if(angular.isDefined(queryCriteria.bounds)) {
-                    queryString += queryCriteria.bounds;
-                }
-            }
-            queryString += '&rand=' + Math.random(); // avoid browser caching?
-            queryString += '&wt=json&json.wrf=JSON_CALLBACK';
-            $log.log('Cart queued queryString: ' + queryString);
-            return queryString;
+            var settings = '&fl=id&rows=100&extent.bbox=true&block=false';
+            return _buildQuery(settings, queryCriteria, items, false);
         }
 
         function _getQueryCriteria(solrParams) {
@@ -208,7 +163,7 @@ angular.module('cart').
             if(params.q === '*:*') {
                 delete params.q;
             }
-            return {params:params, filters: filterService.getFilterParams(), bounds: filterService.getBoundsParams(), solrFilters: solrFilters};
+            return {params:params, bounds: filterService.getBoundsParams(), solrFilters: solrFilters};
         }
 
         function _decorate(items) {

@@ -117,9 +117,9 @@ angular.module('portalApp')
             })
 
             .state('task', {
-                url: '/task',
+                url: '/task?type',
                 templateUrl: 'src/taskrunner/task.html',
-                params: {task: {}},
+                params: {task: {}, type: ''},
                 resolve: {
                     load: function ($q, authService) {
                         return _canProcess(authService, $q);

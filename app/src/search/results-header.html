@@ -52,7 +52,7 @@
             </div>
         </div>
     </li>
-    <li ng-if="hasPermission('save_search')"><a href="javascript:;" ng-click="toggleSave()" class="btn btn-action icon-heart_empty"><span>Save search</span></a></li>
+    <li ng-if="hasPermission('save_search')" class="ssearch-selector"><a href="javascript:;" ng-click="toggleSave()" class="btn btn-action icon-heart_empty"><span class="ssearch-selector__text">Save search</span></a></li>
     <li ng-show="view != 'table' && pageFramework.showSort">
         <div class="hover_flyout top_only">
             <a href="javascript:;" class="btn btn-secondary flyout_trigger"><span class="sort_label">{{view == 'map' && 'Sort' || displaySortField}}</span><span class="icon-arrow"></span></a>
