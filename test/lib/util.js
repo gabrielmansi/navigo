@@ -61,7 +61,22 @@ var Util = (function () {
                 }
                 return !isVisible;
             });
+        },
+        
+        sendEnter: function() {
+            //wait for the block-ui overlay to go away
+            var enter = browser.actions().sendKeys(protractor.Key.ENTER);
+            enter.perform();
+        },
+
+        getParent: function(object) {
+            //wait for the block-ui overlay to go away
+           return object.element(by.xpath('..'));
         }
+
+
+
+
     };
 })();  // jshint ignore:line
 module.exports = Util;
