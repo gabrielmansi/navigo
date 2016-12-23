@@ -1,7 +1,18 @@
 (function() {
     'use strict';
 
+// just add this to your controller.  then reference trustSrc in your template: (edited)
+
     angular.module('voyager.results')
+        .controller('geocortexController', function($scope, $modalInstance, lyrName, $sce) {
+            $scope.lyrName = $sce.trustAsResourceUrl("http://google.ca/#/q="+lyrName);
+        })
+        .controller('tableauController', function($scope, $modalInstance, lyrName, $sce, $timeout) {
+            $scope.lyrName = lyrName;
+            $timeout(function(){
+                $scope.loaded=true;
+            });
+        })
         .factory('actionManager', actionManager);
 
     function actionManager($window, $analytics, $modal, authService, sugar) {
@@ -86,6 +97,60 @@
                         category: 'results', label: scope.doc.id // jshint ignore:line
                     });
                     $window.location.href = scope.doc.layerURL;
+                };
+            } else if (action.action === 'openGeocortex') {
+                action.do = function() {
+                    scope.doc.isopen = false;
+                    $analytics.eventTrack('openGeocortex', {
+                        // nothing
+                    });
+                    // var lyrName = scope.doc.path;
+                    var lyrName = 'sde://svr=sdw;inst=sde%3aoracle11g%3asdw;user=VOYAGER_OPENDATA;ver=SDE.DEFAULT/SDW.cwaVulnerabilityScore';
+                    lyrName = lyrName.toLowerCase();                    
+                    if (lyrName.indexOf('sde://') < 0) {
+                        alert('Sorry. This option is only possible for SDE layers');
+                        return;
+                    }                    
+                    lyrName = lyrName.split('/');
+                    lyrName = lyrName[lyrName.length-1];
+                    $modal.open({
+                        templateUrl: 'common/york/geocortex.html',
+                        windowClass: 'york-modal-geocortex.html',
+                        controller: 'geocortexController',
+                        resolve: {
+                            lyrName: function () {
+                                return lyrName;
+                            }
+                        }
+                    });                    
+                };
+            } else if (action.action === 'openTableau') {
+                action.do = function() {
+                    scope.doc.isopen = false;
+                    $analytics.eventTrack('openTableau', {
+                        // nothing ...
+                    });
+                    // var lyrName = scope.doc.path;
+                    var lyrName = 'one/two/EnergySummary_test.zip';
+                    lyrName = lyrName.toLowerCase();
+                    if (lyrName.indexOf('.xls') < 0 && lyrName.indexOf('.zip') < 0) {
+                        alert('Sorry. This option is only possible for XLS(X) or ZIP files');
+                        return;
+                    }                    
+                    lyrName = lyrName.split('/');
+                    lyrName = lyrName[lyrName.length-1];
+                    lyrName = lyrName.split('.');
+                    lyrName = lyrName[0];                    
+                    $modal.open({
+                        templateUrl: 'common/york/tableau.html',
+                        windowClass: 'york-modal-tableau',
+                        controller: 'tableauController',
+                        resolve: {
+                            lyrName: function () {
+                                return lyrName;
+                            }
+                        }
+                    });                    
                 };
             } else if (action.action === 'tag') {
                 action.do = function() {
