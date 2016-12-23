@@ -1,9 +1,7 @@
 // Note: when running in Voyager, this static file is partially overwritten with voyager config settings
 /* jshint ignore:start */
 var config = {
-    //'root': 'http://voyagerdemo.com/daily/',
-    'root': 'http://voyagerdemo.com/198/',
-    //'root': 'http://localhost:8888/',
+    'root': 'http://192.168.0.115:8888/',
     'explorePath': 'voyager',
     'enableEmail': true,
     'title' : 'Voyager Search',
@@ -38,7 +36,9 @@ var config = {
         {text:'Add to Cart', action:'add', visible:'canCart', toggle:'inCart', off:'Remove', onIcon:'icon-plus', offIcon:'icon-x', offListIcon:'fa fa-shopping-cart', offList:'Remove from Cart'},
         {text:'Download', action:'download', visible:'hasDownload', alt:'Open'},
         {text:'Open in Map Viewer', action:'open', visible:'isService', url:'http://voyagerdemo.com/voyagerwidget/'},
-        {text:'Open in ArcMap', action:'openArcMap', visible:'isEsriLayer'}
+        {text:'Open in ArcMap', action:'openArcMap', visible:'isEsriLayer'},
+        {text:'Open in Geocortex', action:'openGeocortex', visible:'canCart'},
+        {text:'Open in Tableau', action:'openTableau', visible:'canCart'}
     ],
     docLink: {text:'Preview', action:'preview', visible:'isService'},
     //analyticsId: 'UA-56933647-1',
