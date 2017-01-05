@@ -79,9 +79,9 @@ var Util = (function () {
 
             waitTime = waitTime || 100;
             
-            object.click().then(null,function(err) {
+            object.click().then(null, function(err) {
                 if (maxAttempts>0) {
-                    browser.sleep(waitTime).then(Util.patientClick(object,maxAttempts-1));
+                    browser.sleep(waitTime).then(Util.patientClick(object, maxAttempts-1));
                 } else {
                     console.error('An error was thrown! '+ err);
                 }
