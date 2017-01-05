@@ -101,7 +101,11 @@ angular.module('voyager.search')
             $location.search('place.id', null);
 
 			$timeout(function() {
-				$scope.search.place = sugar.formatBBox(params.place);
+				if (mapUtil.isBbox(params.place)) {
+					$scope.search.place = sugar.formatBBox(params.place);
+				} else {
+					$scope.search.place = params.place;
+				}
 				$scope.search['place.op'] = params['place.op'];
 
 				if (!_.isNull(params.vw)) {

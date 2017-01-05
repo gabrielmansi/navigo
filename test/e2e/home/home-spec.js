@@ -61,6 +61,7 @@ describe('Home Page', function() {
         Util.patientClick(savedSearchesButton,3,100);
         Util.waitForSpinner();
         Util.patientClick(recentSearchesButton,3,100);
+
         expect(recentSearchesButtonParent.getAttribute('class')).toEqual('selected');
 
     });
@@ -136,6 +137,7 @@ describe('Home Page', function() {
         expect(browser.getCurrentUrl()).toContain('search?');
 
     });
+
 
     
 
@@ -229,5 +231,5 @@ describe('Home Page', function() {
         expect(cartCount.getText()).toEqual('1');
 
     });
-    
+   
 });
