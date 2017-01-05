@@ -83,7 +83,7 @@ var Util = (function () {
                 if (maxAttempts > 0) {
                     browser.sleep(waitTime).then(Util.patientClick(object, maxAttempts-1));
                 } else {
-                    console.error('An error was thrown! '+ err);
+                    console.error('An error was thrown!' + err);
                 }
             });
         },
