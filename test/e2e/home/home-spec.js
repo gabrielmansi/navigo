@@ -45,7 +45,7 @@ describe('Home Page', function() {
         var savedSearchesButtonParent = Util.getParent(savedSearchesButton);
 
         Util.waitForSpinner();
-        Util.patientClick(savedSearchesButton,3,100);
+        Util.patientClick(savedSearchesButton, 3, 100);
         expect(savedSearchesButtonParent.getAttribute('class')).toEqual('selected');
     });
 
@@ -58,9 +58,9 @@ describe('Home Page', function() {
         var recentSearchesButton = homePage.getRecentSearchesButton();
         var recentSearchesButtonParent = Util.getParent(recentSearchesButton);
 
-        Util.patientClick(savedSearchesButton,3,100);
+        Util.patientClick(savedSearchesButton, 3, 100);
         Util.waitForSpinner();
-        Util.patientClick(recentSearchesButton,3,100);
+        Util.patientClick(recentSearchesButton, 3, 100);
 
         expect(recentSearchesButtonParent.getAttribute('class')).toEqual('selected');
 
@@ -82,7 +82,7 @@ describe('Home Page', function() {
         browser.get(server + '/home');
 
         Util.waitForSpinner();   
-        Util.patientClick(mostRecentSearch,3,100);
+        Util.patientClick(mostRecentSearch, 3, 100);
 
         expect(browser.getCurrentUrl()).toContain('testSearch');
 
@@ -97,9 +97,9 @@ describe('Home Page', function() {
         var firstSavedSearch = homePage.getFirstSavedSearch();         
         
 
-        Util.patientClick(savedSearchesButton,3,100);
+        Util.patientClick(savedSearchesButton, 3, 100);
         Util.waitForSpinner();
-        Util.patientClick(firstSavedSearch,3,100);
+        Util.patientClick(firstSavedSearch, 3, 100);
 
         Util.waitForSpinner();   
         expect(browser.getCurrentUrl()).toContain('geometry_type:Raster');
@@ -114,7 +114,7 @@ describe('Home Page', function() {
         var firstFeaturedItem = homePage.getFirstFeaturedItem();   
 
         Util.waitForSpinner();     
-        Util.patientClick(firstFeaturedItem,3,100);
+        Util.patientClick(firstFeaturedItem, 3, 100);
 
         Util.waitForSpinner();   
         expect(browser.getCurrentUrl()).toContain('show?id=');
@@ -131,7 +131,7 @@ describe('Home Page', function() {
 
         expect(featuredItemsCount).toEqual(12);
         Util.waitForSpinner();
-        Util.patientClick(showAllButton,3,100);
+        Util.patientClick(showAllButton, 3, 100);
 
         Util.waitForSpinner();   
         expect(browser.getCurrentUrl()).toContain('search?');
@@ -151,7 +151,7 @@ describe('Home Page', function() {
         var placefinderSuggestion = homePage.getFirstPlaceSuggestion();  
 
         placefinderInput.sendKeys(placeString);
-        Util.patientClick(placefinderSuggestion,3,100);
+        Util.patientClick(placefinderSuggestion, 3, 100);
 
         expect(browser.getCurrentUrl()).toContain('place=Australia');
 
@@ -167,8 +167,8 @@ describe('Home Page', function() {
         var searchTypeButton = homePage.getSearchTypeButton();    
         var intersectsOption = homePage.getIntersectsOption();
 
-        Util.patientClick(searchTypeButton,3,100);
-        Util.patientClick(intersectsOption,3,100);
+        Util.patientClick(searchTypeButton, 3, 100);
+        Util.patientClick(intersectsOption, 3, 100);
         
         expect(searchTypeButton.getText()).toEqual('Intersects');
 
@@ -183,13 +183,13 @@ describe('Home Page', function() {
         var intersectsOption = homePage.getIntersectsOption();
         var withinOption = homePage.getWithinSecondaryOption();
 
-        Util.patientClick(searchTypeButton,3,100);
-        Util.patientClick(intersectsOption,3,100);
+        Util.patientClick(searchTypeButton, 3, 100);
+        Util.patientClick(intersectsOption, 3, 100);
 
         Util.waitForSpinner();
 
-        Util.patientClick(searchTypeButton,3,100);
-        Util.patientClick(withinOption,3,100);
+        Util.patientClick(searchTypeButton, 3, 100);
+        Util.patientClick(withinOption, 3, 100);
 
         Util.waitForSpinner();
 
@@ -225,9 +225,9 @@ describe('Home Page', function() {
         var cartDropdown = homePage.getCartDropdown();
         var clearCartButton = homePage.getClearCartButton();
 
-        Util.patientClick(cartDropdown,3,100);
-        Util.patientClick(clearCartButton,3,100);
-        Util.patientClick(addToCart,3,100);
+        Util.patientClick(cartDropdown, 3, 100);
+        Util.patientClick(clearCartButton, 3, 100);
+        Util.patientClick(addToCart, 3, 100);
         expect(cartCount.getText()).toEqual('1');
 
     });
