@@ -81,7 +81,7 @@ var searchPage = (function () {
 
         clickResult: function(resultElement)
         {
-            resultElement.element(by.css('img')).click();
+            Util.patientClick(resultElement.element(by.css('img')), 3, 100);
             Util.waitForSpinner();
         },
 
