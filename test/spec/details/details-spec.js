@@ -56,8 +56,8 @@ describe('DetailsCtrl', function () {
 
         $http.expectJSONP(new RegExp('fq=id')).respond(lookupResponse.data); // queue call
 
-        $http.expectJSONP(new RegExp('links.to')).respond(lookupResponse.data); // links to call
-        $http.expectJSONP(new RegExp('links.from')).respond(lookupResponse.data); // links from call
+        $http.expectGET(new RegExp('links.*dir=to')).respond(lookupResponse.data.response); // links to call
+        $http.expectGET(new RegExp('links.*dir=from')).respond(lookupResponse.data.response); // links from call
     }
 
     describe('Load', function () {
