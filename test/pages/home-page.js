@@ -69,7 +69,29 @@ var homePage = (function () {
             return element(by.css('[ng-bind="vm.queueTotal | number"]'));
         },
 
+        getCartDropdown: function() {
+            return element(by.css('.icon-arrow.flyout_trigger'));
+        },
 
+        getClearCartButton: function() {
+            return element(by.css('[ng-click="vm.clearQueue()"]'));
+            
+        },
+
+        getSearchBarDiv: function() {
+            return element(by.css('.search_wrap')).element(by.xpath('..'));
+        },
+
+        getSearchByPlaceButton: function(){
+            return element(by.id('searchByPlace'));
+        },
+
+        getSearchByMapButton: function(){
+            return element(by.id('searchByMap'));
+        },
+
+    
+          
     };
 })();
 module.exports = homePage;

@@ -45,7 +45,7 @@ describe('Home Page', function() {
         var savedSearchesButtonParent = Util.getParent(savedSearchesButton);
 
         Util.waitForSpinner();
-        savedSearchesButton.click();
+        Util.patientClick(savedSearchesButton, 3, 100);
         expect(savedSearchesButtonParent.getAttribute('class')).toEqual('selected');
     });
 
@@ -58,101 +58,104 @@ describe('Home Page', function() {
         var recentSearchesButton = homePage.getRecentSearchesButton();
         var recentSearchesButtonParent = Util.getParent(recentSearchesButton);
 
-        savedSearchesButton.click();
+        Util.patientClick(savedSearchesButton, 3, 100);
         Util.waitForSpinner();
-        recentSearchesButton.click();
+        Util.patientClick(recentSearchesButton, 3, 100);
+
         expect(recentSearchesButtonParent.getAttribute('class')).toEqual('selected');
 
     });
 
     it('should execute a recent search', function() {
 
-            browser.get(server + '/home');
-            Util.waitForSpinner();
+        browser.get(server + '/home');
+        Util.waitForSpinner();
 
-            var searchInput = homePage.getSearchInput();
-            var searchString = 'testSearch';
-            var mostRecentSearch = homePage.getMostRecentSearch();
-            
-            searchInput.sendKeys(searchString);
-            Util.sendEnter();
+        var searchInput = homePage.getSearchInput();
+        var searchString = 'testSearch';
+        var mostRecentSearch = homePage.getMostRecentSearch();
+        
+        searchInput.sendKeys(searchString);
+        Util.sendEnter();
 
-            Util.waitForSpinner();
-            browser.get(server + '/home');
+        Util.waitForSpinner();
+        browser.get(server + '/home');
 
-            Util.waitForSpinner();   
-            mostRecentSearch.click();
+        Util.waitForSpinner();   
+        Util.patientClick(mostRecentSearch, 3, 100);
 
-            expect(browser.getCurrentUrl()).toContain('testSearch');
+        expect(browser.getCurrentUrl()).toContain('testSearch');
 
-        });
+    });
 
     it('should execute a saved search', function() {
 
-            browser.get(server + '/home');
-            Util.waitForSpinner();
+        browser.get(server + '/home');
+        Util.waitForSpinner();
 
-            var savedSearchesButton = homePage.getSavedSearchesButton();
-            var firstSavedSearch = homePage.getFirstSavedSearch();        
+        var savedSearchesButton = homePage.getSavedSearchesButton();
+        var firstSavedSearch = homePage.getFirstSavedSearch();         
+        
 
-            savedSearchesButton.click();
-            Util.waitForSpinner();
-            firstSavedSearch.click();
+        Util.patientClick(savedSearchesButton, 3, 100);
+        Util.waitForSpinner();
+        Util.patientClick(firstSavedSearch, 3, 100);
 
-            Util.waitForSpinner();   
-            expect(browser.getCurrentUrl()).toContain('geometry_type:Raster');
+        Util.waitForSpinner();   
+        expect(browser.getCurrentUrl()).toContain('geometry_type:Raster');
 
-        });
+    });
 
     it('should open details of a featured item', function() {
 
-            browser.get(server + '/home');
-            Util.waitForSpinner();
+        browser.get(server + '/home');
+        Util.waitForSpinner();
 
-            var firstFeaturedItem = homePage.getFirstFeaturedItem();   
+        var firstFeaturedItem = homePage.getFirstFeaturedItem();   
 
-            Util.waitForSpinner();     
-            firstFeaturedItem.click();
+        Util.waitForSpinner();     
+        Util.patientClick(firstFeaturedItem, 3, 100);
 
-            Util.waitForSpinner();   
-            expect(browser.getCurrentUrl()).toContain('show?id=');
-        
-        });
+        Util.waitForSpinner();   
+        expect(browser.getCurrentUrl()).toContain('show?id=');
+    
+    });
 
     it('should press "show All" at the bottom of the featured list', function() {
 
-            browser.get(server + '/home');
-            Util.waitForSpinner();
+        browser.get(server + '/home');
+        Util.waitForSpinner();
 
-            var featuredItemsCount = homePage.getFeaturedItemsCount();    
-            var showAllButton = homePage.getShowAllButton();    
+        var featuredItemsCount = homePage.getFeaturedItemsCount();    
+        var showAllButton = homePage.getShowAllButton();    
 
-            expect(featuredItemsCount).toEqual(12);
-            Util.waitForSpinner();
-            showAllButton.click();
+        expect(featuredItemsCount).toEqual(12);
+        Util.waitForSpinner();
+        Util.patientClick(showAllButton, 3, 100);
 
-            Util.waitForSpinner();   
-            expect(browser.getCurrentUrl()).toContain('search?');
+        Util.waitForSpinner();   
+        expect(browser.getCurrentUrl()).toContain('search?');
 
-        });
+    });
+
 
     
 
     it('should select a suggestion in the Placefinder bar', function() {
 
-            browser.get(server + '/home');
-            Util.waitForSpinner();
+        browser.get(server + '/home');
+        Util.waitForSpinner();
 
-            var placefinderInput = homePage.getPlacefinderInput();    
-            var placeString = 'Austra';
-            var placefinderSuggestion = homePage.getFirstPlaceSuggestion();  
+        var placefinderInput = homePage.getPlacefinderInput();    
+        var placeString = 'Austra';
+        var placefinderSuggestion = homePage.getFirstPlaceSuggestion();  
 
-            placefinderInput.sendKeys(placeString);
-            placefinderSuggestion.click();
+        placefinderInput.sendKeys(placeString);
+        Util.patientClick(placefinderSuggestion, 3, 100);
 
-            expect(browser.getCurrentUrl()).toContain('place=Australia');
+        expect(browser.getCurrentUrl()).toContain('place=Australia');
 
-        });
+    });
 
     
 
@@ -164,8 +167,8 @@ describe('Home Page', function() {
         var searchTypeButton = homePage.getSearchTypeButton();    
         var intersectsOption = homePage.getIntersectsOption();
 
-        searchTypeButton.click();
-        intersectsOption.click();
+        Util.patientClick(searchTypeButton, 3, 100);
+        Util.patientClick(intersectsOption, 3, 100);
         
         expect(searchTypeButton.getText()).toEqual('Intersects');
 
@@ -180,11 +183,14 @@ describe('Home Page', function() {
         var intersectsOption = homePage.getIntersectsOption();
         var withinOption = homePage.getWithinSecondaryOption();
 
-        searchTypeButton.click();
-        intersectsOption.click();
+        Util.patientClick(searchTypeButton, 3, 100);
+        Util.patientClick(intersectsOption, 3, 100);
+
         Util.waitForSpinner();
-        searchTypeButton.click();
-        withinOption.click();
+
+        Util.patientClick(searchTypeButton, 3, 100);
+        Util.patientClick(withinOption, 3, 100);
+
         Util.waitForSpinner();
 
         expect(searchTypeButton.getText()).toEqual('Within');
@@ -209,7 +215,6 @@ describe('Home Page', function() {
 
     });
 
-
     it('should add a featured item to the cart', function() {
 
         browser.get(server + '/home');
@@ -217,11 +222,14 @@ describe('Home Page', function() {
 
         var addToCart = homePage.getAddFeaturedToCartButton();   
         var cartCount = homePage.getCartCount();
+        var cartDropdown = homePage.getCartDropdown();
+        var clearCartButton = homePage.getClearCartButton();
 
-        addToCart.click();
-
+        Util.patientClick(cartDropdown, 3, 100);
+        Util.patientClick(clearCartButton, 3, 100);
+        Util.patientClick(addToCart, 3, 100);
         expect(cartCount.getText()).toEqual('1');
 
     });
-
+   
 });

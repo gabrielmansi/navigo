@@ -72,11 +72,21 @@ var Util = (function () {
         getParent: function(object) {
             //wait for the block-ui overlay to go away
            return object.element(by.xpath('..'));
-        }
+        },
 
+        patientClick: function(object, maxAttempts, waitTime) {
+            //Tries to click the element, if it is unsuccessful it will try again until the attempts run out.
 
-
-
+            waitTime = waitTime || 100;
+            
+            object.click().then(null, function(err) {
+                if (maxAttempts > 0) {
+                    browser.sleep(waitTime).then(Util.patientClick(object, maxAttempts-1));
+                } else {
+                    console.error('An error was thrown!' + err);
+                }
+            });
+        },
     };
 })();  // jshint ignore:line
 module.exports = Util;
