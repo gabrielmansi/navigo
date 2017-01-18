@@ -1,7 +1,7 @@
 /*global angular */
 
 angular.module('voyager.component')
-	.directive('vsTableResults', function($window, $document, tableResultsService) {
+	.directive('vsTableResults', function($window, $timeout, $document, tableResultsService) {
 		'use strict';
 
 		return {
@@ -47,34 +47,34 @@ angular.module('voyager.component')
 				};
 
 				scope.resizeContent = function() {
+					$timeout(function() {
+                        if (scope.windowWidth < 768) {
+                            searchResultMapContainerEl.css({visibility: 'hidden', height: 0});
+                            listWrapEl.css('margin-top', scope.windowWidth < 640 ? '155px' : '110px');
+                            return;
+                        }
 
-					if (scope.windowWidth < 768) {
-						searchResultMapContainerEl.css({visibility: 'hidden', height: 0});
-						listWrapEl.css('margin-top', scope.windowWidth < 640 ? '155px' : '110px');
-						return;
-					}
+                        var mapTopPosition = angular.element('.search-map').offset().top;
+                        var availableHeight = scope.windowHeight - mapTopPosition;
 
-					var mapTopPosition = angular.element('.search-map').offset().top;
-					var availableHeight = scope.windowHeight - mapTopPosition;
+                        if (attr.size === 'small') {
+                            availableHeight = scope.getAvailableHeight('small', availableHeight);
+                            scope.animate(searchResultMapContainerEl, {height: availableHeight});
+                        }
+                        else if (attr.size === 'no') {
+                            availableHeight = 0;
+                            scope.animate(searchResultMapContainerEl, 0, function () {
+                                scope.hideElement(searchResultMapContainerEl);
+                            });
+                        } else {
+                            availableHeight = scope.getAvailableHeight('large', availableHeight);
+                            scope.animate(searchResultMapContainerEl, {height: availableHeight});
+                        }
 
-					if (attr.size === 'small') {
-						availableHeight = scope.getAvailableHeight('small', availableHeight);
-						scope.animate(searchResultMapContainerEl, {height: availableHeight});
-					}
-					else if (attr.size === 'no') {
-						availableHeight = 0;
-						scope.animate(searchResultMapContainerEl, 0, function(){
-							scope.hideElement(searchResultMapContainerEl);
-						});
-					} else {
-						availableHeight = scope.getAvailableHeight('large', availableHeight);
-						scope.animate(searchResultMapContainerEl, {height: availableHeight});
-					}
+                        scope.animate(listWrapEl, {marginTop: (availableHeight - 20)});
 
-					scope.animate(listWrapEl, {marginTop: (availableHeight - 20)});
-
-					tableResultsService.setFixedWidths();
-
+                        tableResultsService.setFixedWidths();
+                    }, 100);
 				};
 
 				scope.resize = function() {
