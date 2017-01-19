@@ -231,5 +231,55 @@ describe('Home Page', function() {
         expect(cartCount.getText()).toEqual('1');
 
     });
-   
+
+    it('should click a quick links option within a category',function() {
+
+        browser.get(server + '/home');
+        Util.waitForSpinner();
+
+        var mock = function() {
+            config.showSidebarLinks = true;
+        };
+        browser.addMockModule('portalApp', mock);
+
+        var e2eInterceptors = function() {
+            return angular.module('e2eInterceptors', []).factory('quickLinksInterceptor', function() {
+                return {
+                    response: function(response) {
+                        var requestedUrl = response.config.url;
+                        if (requestedUrl.indexOf('labels') > -1) { 
+                            var mockQuickLink = {
+                                'id':"S159228992CD",
+                                'title':"testCategoryTitle",
+                                "owner":"admin",
+                                "path":"/place=Michigan,United States/place.op=within/disp=ace4bb77/",
+                                "labels":["Featured"],
+                                "query":"",
+                                "count":815,
+                                "categories":["testCategoryName"],
+                                "query":"facet=true&facet.field=%7B!ex=format_category%7Dformat_category&facet.field=format&facet.field=format_type&facet.field=format_keyword&facet.field=geometry_type&facet.field=keywords&facet.field=properties&facet.field=author&facet.field=srs&facet.field=fileExtension&facet.field=%7B!ex=location%7Dlocation&facet.mincount=1&extent.bbox=true&place=Michigan,%20United%20States&place.op=Within&"
+                            };
+
+                            response.data.response.docs.push(mockQuickLink);
+                        }
+                        return response;
+                    }
+                };
+            }).config(function($httpProvider) {
+                return $httpProvider.interceptors.push('quickLinksInterceptor');
+            });
+        };
+        browser.addMockModule('e2eInterceptors',e2eInterceptors);
+
+        Util.waitForSpinner().then(function() {
+            var quickLink = homePage.getQuickLinkInCategory();
+            Util.patientClick(quickLink, 3, 100);
+        });
+
+        expect(browser.getCurrentUrl()).toContain('/search?place=Michigan');
+    });
+
+    //insert test for quicklinks without category here once VG-4941 is resolved. 
+    //(copy above test, remove categories attribute in mock, may need new selector)
+
 });

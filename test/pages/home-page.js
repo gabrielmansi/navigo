@@ -50,11 +50,10 @@ var homePage = (function () {
         getIntersectsOption: function() {
             return element(by.id('select2-result-label-4'));
         },
-
         
         getWithinSecondaryOption: function() {
             return element(by.id('select2-result-label-5'));
-            //Usually would be select2-result-label-3, but changes after you change the type
+            //Wwould be select2-result-label-3, but changes each time you change the type
         },
 
         getPlacefinderClearButton: function() {
@@ -75,7 +74,6 @@ var homePage = (function () {
 
         getClearCartButton: function() {
             return element(by.css('[ng-click="vm.clearQueue()"]'));
-            
         },
 
         getSearchBarDiv: function() {
@@ -89,6 +87,10 @@ var homePage = (function () {
         getSearchByMapButton: function(){
             return element(by.id('searchByMap'));
         },
+
+        getQuickLinkInCategory: function(){
+            return element(by.css('.text'));
+        }
 
     
           
