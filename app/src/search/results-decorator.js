@@ -51,6 +51,9 @@
             if(field.style === 'HTML') {
                 field.isHtml = true;
             }
+            if (field.style === 'HREF') {
+            	field.isHref = true;
+            }
             if(field.raw === 'contains_mime') {
                 if(field.value.indexOf(',') !== -1) {
                     formattedValues = [];
@@ -73,7 +76,7 @@
             field.formattedValue = formattedValue;
 
             //TODO how to determine which fields can be linkable - multivalue only?
-            if(lowerFieldName !== 'description' && lowerFieldName !== 'abstract' && isNaN(field.value) && lowerFieldName !== 'extent') {
+            if(lowerFieldName !== 'description' && lowerFieldName !== 'abstract' && isNaN(field.value) && lowerFieldName !== 'extent' && !field.isHref) {
                 if(formattedValue.indexOf(',') !== -1) {
                     if(field.showLabel) {
                         htmlified += '<b>' + field.name + '</b>:';
@@ -93,6 +96,8 @@
                 } else {
                     htmlified += (field.showLabel? '<b>' + field.name + '</b>: ':'' ) + '<a href="javascript:;" ng-click="applyFilter(\'' + field.raw + '\',\'' + field.value + '\')">' + $('<p>' + field.formattedValue + '</p>').text() + '</a><br>';
                 }
+            } else if (field.isHref) {
+            	htmlified += (field.showLabel? '<b>' + field.name + '</b>: ':'' ) + '<a href="' + field.value + '">' + $('<p>' + field.formattedValue + '</p>').text() + '</a><br>';
             } else {
                 htmlified += (field.showLabel? '<b>' + field.name + '</b>: ':'' ) + $('<p>' + field.formattedValue + '</p>').text() + '<br>';
             }
