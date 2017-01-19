@@ -33,14 +33,14 @@ angular.module('voyager.details').
     }
 
     function _buildRelationshipRequest(id, shard, type, direction, displayFields) {
-        var service = config.root + 'solr/v0/select?links.' + direction + '=' + id + ':' + type;
+        var service = config.root + 'api/rest/index/links/' + id + '?dir=' + direction + '&rel=' + type;
         var fields = '&fl=id,name:[name],fullpath:[absolute],content:[contentURL],thumb:[thumbURL],preview:[previewURL],download:[downloadURL],bbox, format, hasMetadata, root, tree, tag_tags, links, hasMissingData, shard:[shard]';
         fields += displayFields;
         var shards = '';
         if (!_.isEmpty(shard)) {
-            shards = '&shards.info=true&shards.tolerant=true&shards=' + shard;
+            shards = '&shards=' + shard;
         }
-        return service + fields + shards + _type + '&r=' + Math.random();
+        return service + fields + shards + '&r=' + Math.random();
     }
 
     function _fetchTranslation() {
@@ -63,10 +63,10 @@ angular.module('voyager.details').
     function _fetchRelationship(id, shard, type, direction, fields) {
         var deferred = $q.defer();
         var request = _buildRelationshipRequest(id, shard, type, direction, fields);
-        $http.jsonp(request).then(function(res) {
-            var docs = res.data.response.docs;
+        $http.get(request).then(function(res) {
+            var docs = res.data.docs;
             if(angular.isDefined(docs) && docs.length > 0) {
-                deferred.resolve(res.data.response);
+                deferred.resolve(res.data);
             } else {
                 deferred.reject(id + ' not found');
             }
