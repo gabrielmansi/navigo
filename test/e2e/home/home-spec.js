@@ -257,7 +257,7 @@ describe('Home Page', function() {
                                 "query":"",
                                 "count":815,
                                 "categories":["testCategoryName"],
-                                "query":"facet=true&facet.field=%7B!ex=format_category%7Dformat_category&facet.field=format&facet.field=format_type&facet.field=format_keyword&facet.field=geometry_type&facet.field=keywords&facet.field=properties&facet.field=author&facet.field=srs&facet.field=fileExtension&facet.field=%7B!ex=location%7Dlocation&facet.mincount=1&extent.bbox=true&place=Michigan,%20United%20States&place.op=Within&"
+                                "query":"facet=true&q=test"
                             };
 
                             response.data.response.docs.push(mockQuickLink);
@@ -276,7 +276,7 @@ describe('Home Page', function() {
             Util.patientClick(quickLink, 3, 100);
         });
 
-        expect(browser.getCurrentUrl()).toContain('/search?place=Michigan');
+        expect(browser.getCurrentUrl()).toContain('/search?q=test');
     });
 
     //insert test for quicklinks without category here once VG-4941 is resolved. 
