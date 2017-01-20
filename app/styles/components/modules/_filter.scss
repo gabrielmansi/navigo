@@ -209,6 +209,20 @@
 			font-size: $smallerSize;
 		}
 
+		.input-group{
+			input.form-control {
+				width: 85px;
+				padding: 6px;
+			}
+			select.form-control {
+				width: 50px;
+				padding-right: 0px;
+				padding-left: 0px;
+				background-color: $blueGray;
+				color: $white;
+			}
+		}
+
 		.dash {
 			display: inline-block;
 			width: 10px;
@@ -218,6 +232,10 @@
 			height: 1px;
 			background-color: #a5b1c7;
 			margin: 0 15px;
+
+			&.thin-dash {
+				margin: 0 10px;
+			}
 		}
 
 		button.btn-primary {

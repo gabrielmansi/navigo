@@ -140,7 +140,13 @@ angular.module('voyager.filters')
 
         $scope.addRangeFilter = function (facet) {
             //facet.isSelected = true;
+
             var range = facet.model;
+            if(facet.units) {
+              //assume that the 0th unit is the base unit that's used in the index
+              range[0] = facet.convertValue(range[0], facet.selectedUnit, facet.units[0], facet);
+              range[1] = facet.convertValue(range[1], facet.selectedUnit, facet.units[0], facet);
+            }
             facet.humanized = facet.display + ': [' + range[0] + ' TO ' + range[1] + ']';
             _addFilter(facet);
         };

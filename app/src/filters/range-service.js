@@ -1,10 +1,28 @@
-'use strict';
+ 'use strict';
 
 angular.module('voyager.filters').
-    factory('rangeService', function (config, $http, configService, translateService, $q) {
+    factory('rangeService', function (config, $http, $timeout, configService, translateService, $q) {
 
         var _rangeLimits = {};
         var _statsFields = {};
+        var _rangeUnitMap = {
+          fileSize: {
+            options: ['B', 'KB', 'MB', 'GB', 'TB'],
+            convertValue: function(value, unitFrom, unitTo, facet) {
+              var unitFrom_Index = facet.units.indexOf(unitFrom);
+              var unitTo_Index = facet.units.indexOf(unitTo);
+
+              var converted = value;
+              if (unitFrom_Index > unitTo_Index) {
+                converted = value * Math.pow(1000, (unitFrom_Index - unitTo_Index));
+              } else {
+                converted = value / Math.pow(1000, (unitTo_Index - unitFrom_Index));
+              }
+
+              return converted;
+            }
+          }
+        };
 
         function _getRangeParams() {
             var configFilters = configService.getFilters(), facetParams = '';
@@ -57,6 +75,7 @@ angular.module('voyager.filters').
             }
             return ret;
         }
+
         //public methods - client interface
         return {
             fetchAllRangeLimits: function() {
@@ -81,6 +100,18 @@ angular.module('voyager.filters').
                 range.stddev = _parseInt(_rangeLimits[filter.field].stddev);
                 range.sum = _parseInt(_rangeLimits[filter.field].sum);
                 range.mean = _parseInt(_rangeLimits[filter.field].mean);
+                if(filter.unit && filter.unit !== 'none')
+                {
+                  range.units = _rangeUnitMap[filter.unit].options;
+                  range.selectedUnit = range.units[0];
+                  range.storedUnit = range.selectedUnit;
+                  range.convertValue = _rangeUnitMap[filter.unit].convertValue;
+                  range.convert = function (unitTo, rangeFacet) {
+                    rangeFacet.min = rangeFacet.convertValue(rangeFacet.min, rangeFacet.storedUnit, unitTo, rangeFacet);
+                    rangeFacet.max = rangeFacet.convertValue(rangeFacet.max, rangeFacet.storedUnit, unitTo, rangeFacet);
+                    rangeFacet.storedUnit = rangeFacet.selectedUnit;
+                  };
+                }
                 //range.humanized = filter.value + ': [' + range.min + ' TO ' + range.max + ']';
                 return range;
             },
