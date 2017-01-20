@@ -29,7 +29,7 @@ angular.module('voyager.filters')
     nounitslider += slider;
 
     var unitslider = '<div class="slider_wrap"><form class="form-inline" role="form"><div class="form-group">';
-    unitslider += '<input class="form-control input-xs semi" type="text" style="width:85px; padding:6px;" ng-model="facet.model[0]" ng-init="facet.model[0] = (facet.model[0] == undefined) ? facet.min : facet.model[0]">';
+    unitslider += '<input class="form-control input-xs semi" type="text" style="width:84px; padding:6px;" ng-model="facet.model[0]" ng-init="facet.model[0] = (facet.model[0] == undefined) ? facet.min : facet.model[0]">';
     unitslider += '<span class="dash thin-dash"></span>';
     unitslider += '<div class="input-group">';
     unitslider += '<input class="form-control input-xs semi" type="text" ng-model="facet.model[1]" ng-init="facet.model[1] = (facet.model[1] == undefined) ? facet.max : facet.model[1]">';
