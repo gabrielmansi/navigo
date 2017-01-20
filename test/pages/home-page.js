@@ -104,6 +104,7 @@ var homePage = (function () {
             return element.all(by.css('.btn.btn-primary'));
         },
 
+
           
     };
 })();
