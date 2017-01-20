@@ -34,7 +34,7 @@ angular.module('voyager.filters')
     unitslider += '<div class="input-group">';
     unitslider += '<input class="form-control input-xs semi" type="text" ng-model="facet.model[1]" ng-init="facet.model[1] = (facet.model[1] == undefined) ? facet.max : facet.model[1]">';
     unitslider += '<span class="input-group-addon" style="width:0px; padding-left:0px; padding-right:0px; border:none;"></span>';
-    unitslider += '<select class="form-control" ng-model="facet.selectedUnit" ng-change="facet.convert(facet.selectedUnit, facet)" ng-options="unit for unit in facet.units"></select>';
+    unitslider += '<select class="form-control" ng-model="facet.selectedUnit" ng-change="facet.convert(facet)" ng-options="unit for unit in facet.units"></select>';
     unitslider += '</div>';
     unitslider += slider;
 
@@ -79,7 +79,7 @@ angular.module('voyager.filters')
           template = nounitslider;
         }
       } else if(scope.facet.style ==='STATS') {
-        template = slider + stats;
+        template = nounitslider + stats;
       } else if(scope.facet.filter === 'folder_hier') {
         template = tree;
       } else {
