@@ -294,7 +294,6 @@ describe('Home Page', function() {
                                 "owner":"admin",
                                 "path":"/place=Michigan,United States/place.op=within/disp=ace4bb77/",
                                 "labels":["Featured"],
-                                "query":"",
                                 "count":815,
                                 "categories":["testCategoryName"],
                                 "query":"facet=true&q=test"
@@ -341,7 +340,6 @@ describe('Home Page', function() {
                                 "owner":"admin",
                                 "path":"/place=Michigan,United States/place.op=within/disp=ace4bb77/",
                                 "labels":["Featured"],
-                                "query":"",
                                 "count":815,
                                 "query":"facet=true&q=test"
                             };
