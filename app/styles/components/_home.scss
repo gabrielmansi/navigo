@@ -345,4 +345,80 @@
 	}
 }
 
+.showcase-header {
+	width: calc(100% - 20px);
+	max-width: 1170px;
+	text-align: center;
+}
 
+.showcase-container {
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+	margin-top: -50px;
+
+	> .row {
+		margin: 0px;
+	}
+
+	.showcase-element {
+		position: static;
+		background-color: $backgroundColor;
+		background-size: cover;
+		background-position: center top;
+		background-repeat: no-repeat;
+		padding-bottom: 50px;
+		border-bottom: 1px solid $blueGray;
+
+		color: $white;
+		text-align: center;
+
+		.showcase-element-inner {
+			position: relative;
+			width: calc(100% - 20px);
+			max-width: 1170px;
+			height: 100%;
+			margin: 0 auto;
+
+			.showcase-textbox {
+				width: 50%;
+				height: 100%;
+
+				.btn {
+					position: absolute;
+					bottom: 0;
+				}
+			}
+
+			.showcase-textbox-right {
+				position: absolute;
+				right: 0;
+			}
+
+			.showcase-textbox-center {
+				position: absolute;
+				top: 0;
+				margin: 0 calc(25% - 10px);
+			}
+
+			.showcase-textbox-left {
+				position: absolute;
+				left: 0;
+			}
+		}
+	}
+
+	.showcase-about-block {
+		text-align: center;
+		margin: 15px 50px;
+	}
+
+	.showcase-menu {
+		margin: 10px 50px;
+
+		.showcase-menu-column {
+			text-align: center;
+			display: inline-block;
+		}
+	}
+}
+>>>>>>> 35c4a56... ODP-37 - Initial Draft of Alternate Findr Homepage

@@ -21,6 +21,11 @@ angular.module('voyager.home')
             return action();
         }
 
+        function _fetchODPConfig() {
+          var endpoint = config.homepage.odpHomepageConfig;
+          return $http.get(endpoint);
+        }
+
         return {
             fetchCollections: function() {
                 return _fetchSection('collections', _collectionsAction);
@@ -28,10 +33,12 @@ angular.module('voyager.home')
             fetchFeatured: function() {
                 return _fetchSection('featured', _featuredAction);
             },
-
             getFeaturedQuery: function() {
                 return featureQuery.getFeatureQuery();
-            }
+            },
+          getODPConfig: function() {
+              return _fetchODPConfig();
+          }
         };
 
     });

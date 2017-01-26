@@ -23,6 +23,9 @@ angular.module('voyager.home')
 		$scope.searchInputClass = 'col-md-6 col-xs-6';
 		$scope.showSpatialInput = true;
 
+		var vm = this;
+		vm.showODPHomepage = config.homepage.showODPHomepage;
+
 
 		$scope.showAll = function() {
 			var search = homeService.getFeaturedQuery();
@@ -89,6 +92,11 @@ angular.module('voyager.home')
 			homeService.fetchFeatured().then(function(respond) {
 				$scope.featured = respond;
 			});
+
+			homeService.getODPConfig().then(function(response) {
+        vm.odpConfig = response.data;
+        console.log(vm.odpConfig);
+			})
 
 			$scope.$watch('selectedMapType', function(){
 				if ($scope.selectedMapType === 'Map') {

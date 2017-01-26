@@ -1,4 +1,7 @@
-<div class="home" ng-controller="HomeCtrl">
+<div class="home" ng-controller="HomeCtrl as vm">
+	<div ng-if="vm.showODPHomepage" class="container-fluid showcase-header">
+		<span>{{vm.odpConfig.tagline}}</span>
+	</div>
 	<section id="searchContainer" style="{{containerStyle}}">
 		<div id="map" class="search-map" vs-search-map togglestyle="true" resize="false" ng-if="!hideMap" cancel="true" origin="home"></div>
 		<div class="inner {{displayFormat}}" vs-searchform>
@@ -37,7 +40,7 @@
 					</button>
 				</form>
 			</div>
-			<div id="searchHistory" ng-if="!hideMap">
+			<div id="searchHistory" ng-if="!hideMap && !vm.showODPHomepage">
 				<nav class="tab clearfix">
 					<ul>
 						<li ng-class="showRecent ? 'selected' : ''"><a href="javascript:;" ng-click="changeTab('recent')">Recent searches</a></li>
@@ -83,7 +86,7 @@
 		</div>
 	</section>
 
-	<div class="wrapper container-fluid">
+	<div ng-if="!vm.showODPHomepage" class="wrapper container-fluid">
 		<div class="col-md-12 no_padding">
 			<div class="inner">
 				<section class="featured cards no_padding {{collections.length && 'col-md-9 col-sm-8' || 'col-md-12'}} col-xs-12" ng-if="featured.length">
@@ -111,6 +114,38 @@
 			<div class="col-md-12 no_padding">
 				<div class="inner">
 					<a href="javascript:;" ng-click="showAll()">Show All </a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div ng-if="vm.showODPHomepage" class="container-fluid showcase-container">
+		<div class="row showcase-element" ng-repeat="element in vm.odpConfig.showcaseElements" style="background-image: url({{element.imageURL}});">
+			<div class="col-xs-12" style="height: 300px;">
+				<div class="showcase-element-inner">
+				  <div ng-class="{'showcase-textbox-right': (element.textPosition === 'right'), 'showcase-textbox-center': (element.textPosition === 'center'), 'showcase-textbox-left': (element.textPosition === 'left')}" class="showcase-textbox">
+					  <h1>{{element.title}}</h1>
+					  <p>{{element.text}}</p>
+						<a href="{{element.buttonAction}}" class="btn btn-primary">{{element.buttonText}}</a>
+				  </div>
+			  </div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="showcase-about-block">
+			  <p>{{vm.odpConfig.aboutText}}</p>
+			</div>
+		</div>
+		<div class="row showcase-menu">
+			<div ng-repeat="column in vm.odpConfig.menuColumns" class="showcase-menu-column" style="width:{{100/vm.odpConfig.menuColumns.length}}%;">
+				<div class="row">
+					<div class="col-xs-12">
+						<h3>{{column.columnHeader}}</h3>
+					</div>
+				</div>
+				<div class="row" ng-repeat="item in column.columnItems">
+					<div class="col-xs-12">
+						<a href="{{item.itemAction}}">{{item.itemName}}</a>
+					</div>
 				</div>
 			</div>
 		</div>

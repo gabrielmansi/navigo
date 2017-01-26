@@ -1,0 +1,59 @@
+{
+  "tagline": "Your one stop spacial search super source!",
+  "aboutText": "About the application",
+  "showcaseElements": [
+    {
+      "title": "Showcase Element 1 Title",
+      "text": "The text for the first showcase element would be inserted here.",
+      "textPosition": "right",
+      "imageURL": "assets/img/showcase-image-1.jpg",
+      "buttonText": "See More 1",
+      "buttonAction": "http://www.voyagersearch.com"
+    },
+    {
+      "title": "Showcase Element 2 Title",
+      "text": "The text for the second showcase element would be inserted here.",
+      "textPosition": "left",
+      "imageURL": "assets/img/showcase-image-2.jpg",
+      "buttonText": "See More 2",
+      "buttonAction": "http://www.voyagerdemo.com/daily"
+    },
+    {
+      "title": "Showcase Element 3 Title",
+      "text": "The text for the third showcase element would be inserted here.",
+      "textPosition": "center",
+      "imageURL": "assets/img/showcase-image-3.jpg",
+      "buttonText": "See More 3",
+      "buttonAction": "http://www.voyagerdemo.com/198x"
+    }
+  ],
+  "menuColumns": [
+    {
+      "columnHeader": "Column 1",
+      "columnItems": [
+        {
+          "itemName": "Item 1-1",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 1-2",
+          "itemAction": "http://www.google.com"
+        }
+      ]
+    },
+    {
+      "columnHeader": "Column 2",
+      "columnItems": [
+        {
+          "itemName": "Item 2-1",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-2",
+          "itemAction": "http://www.google.com"
+        }
+      ]
+    }
+  ],
+  "copyrightText": "Voyager Findr 2017"
+}
