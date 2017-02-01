@@ -26,6 +26,10 @@ angular.module('voyager.home')
 		var vm = this;
 		vm.showODPHomepage = config.homepage.showODPHomepage;
 
+    if(vm.showODPHomepage) {
+      $scope.containerStyle = 'height: 320px';
+    }
+
 
 		$scope.showAll = function() {
 			var search = homeService.getFeaturedQuery();
@@ -93,10 +97,12 @@ angular.module('voyager.home')
 				$scope.featured = respond;
 			});
 
-			homeService.getODPConfig().then(function(response) {
-        vm.odpConfig = response.data;
-        console.log(vm.odpConfig);
-			})
+			if(vm.showODPHomepage) {
+        homeService.getODPConfig().then(function (data) {
+          vm.odpConfig = data;
+          console.log(vm.odpConfig);
+        });
+      }
 
 			$scope.$watch('selectedMapType', function(){
 				if ($scope.selectedMapType === 'Map') {

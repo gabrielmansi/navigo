@@ -2,7 +2,7 @@
 /* jshint ignore:start */
 var config = {
     //'root': 'http://voyagerdemo.com/daily/',
-    'root': 'http://voyagerdemo.com/198/',
+    'root': 'http://voyagerdemo.com/198x/',
     //'root': 'http://localhost:8888/',
     'explorePath': 'voyager',
     'enableEmail': true,
@@ -63,7 +63,7 @@ var config = {
         "showSidebarLinks": true,
         "sidebarLinksTitle": "Collections",
         "sidebarLinksLabel": "featured",
-        "footerHTML": "&copy; 2015 Voyager Search",
+        "footerHTML": "&copy; 2015 Voyager Search <a link=\"www.url.com\">Legal</a>",
         //"bannerHTML": "<h3 class=\"banner\" style=\"line-height: 40px; background-color: green; color: white; height: 20px; margin: 0px;\">BANNER<\/h3>"
       "showODPHomepage": true,
       "odpHomepageConfig": "assets/config/odp-homepage-config.json"

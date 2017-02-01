@@ -1,6 +1,8 @@
 <div class="home" ng-controller="HomeCtrl as vm">
 	<div ng-if="vm.showODPHomepage" class="container-fluid showcase-header">
-		<span>{{vm.odpConfig.tagline}}</span>
+		<div class="showcase-header-inner">
+			<div class="showcase-header-text">{{vm.odpConfig.tagline}}</div>
+		</div>
 	</div>
 	<section id="searchContainer" style="{{containerStyle}}">
 		<div id="map" class="search-map" vs-search-map togglestyle="true" resize="false" ng-if="!hideMap" cancel="true" origin="home"></div>
@@ -119,27 +121,43 @@
 		</div>
 	</div>
 	<div ng-if="vm.showODPHomepage" class="container-fluid showcase-container">
-		<div class="row showcase-element" ng-repeat="element in vm.odpConfig.showcaseElements" style="background-image: url({{element.imageURL}});">
-			<div class="col-xs-12" style="height: 300px;">
-				<div class="showcase-element-inner">
-				  <div ng-class="{'showcase-textbox-right': (element.textPosition === 'right'), 'showcase-textbox-center': (element.textPosition === 'center'), 'showcase-textbox-left': (element.textPosition === 'left')}" class="showcase-textbox">
-					  <h1>{{element.title}}</h1>
-					  <p>{{element.text}}</p>
-						<a href="{{element.buttonAction}}" class="btn btn-primary">{{element.buttonText}}</a>
-				  </div>
-			  </div>
+		<div class="row showcase-element" ng-repeat="element in vm.odpConfig.showcaseElements">
+			<div class="col-xs-12 showcase-element-inner">
+				<div class="showcase-element-image"
+						 ng-class="{'showcase-element-image-left': (element.imagePosition === 'left'), 'showcase-element-image-right': (element.imagePosition === 'right')}"
+						 style="width: {{element.imageWidth}};background-image: url({{element.imageURL}});">
+					<div class="showcase-element-arrow"
+							 ng-class="{'arrow-left': (element.imagePosition === 'left'), 'arrow-right': (element.imagePosition === 'right')}">
+						<div class="arrow-segment arrow-segment-top"></div>
+						<div class="arrow-segment arrow-segment-bottom"></div>
+					</div>
+				</div>
+				<div class="showcase-element-textbox">
+					<div class="showcase-textbox"
+							 ng-class="{'showcase-textbox-right': (element.imagePosition === 'left'), 'showcase-textbox-left': (element.imagePosition === 'right')}">
+							<div class="showcase-textbox-title">{{element.title}}</div>
+							<p class="showcase-textbox-text" ng-bind-html="element.text"></p>
+							<a href="{{element.buttonAction}}" class="btn btn-light">{{element.buttonText}}</a>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="showcase-about-block">
-			  <p>{{vm.odpConfig.aboutText}}</p>
+				<div class="showcase-about-inner">
+					<div class="showcase-about-title">{{vm.odpConfig.aboutTitle}}</div>
+					<div class="showcase-about-text">
+						<span ng-bind-html="vm.odpConfig.aboutText"></span>
+						<a href="{{vm.odpConfig.aboutLinkAction}}"> {{vm.odpConfig.aboutLinkText}}</a>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row showcase-menu">
 			<div ng-repeat="column in vm.odpConfig.menuColumns" class="showcase-menu-column" style="width:{{100/vm.odpConfig.menuColumns.length}}%;">
 				<div class="row">
 					<div class="col-xs-12">
-						<h3>{{column.columnHeader}}</h3>
+						<div class="showcase-menu-column-title">{{column.columnHeader}}</div>
 					</div>
 				</div>
 				<div class="row" ng-repeat="item in column.columnItems">

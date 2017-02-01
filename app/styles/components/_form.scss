@@ -75,6 +75,16 @@ button, .btn {
 		padding-bottom: 9px;
 	}
 
+	&.btn-light {
+		text-align: center;
+		padding: 9px 30px 7px;
+		//border-top: 2px solid $darkerBlue;
+		//border-bottom: 3px solid $darkerBlue;
+		background-color: $white;
+		font-size: $defaultSize;
+		color: $darkerBlue;
+	}
+
 	&[class*=icon-] {
 		&:before {
 			font-size: $smallestSize;

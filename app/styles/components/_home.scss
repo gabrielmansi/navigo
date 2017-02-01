@@ -346,9 +346,28 @@
 }
 
 .showcase-header {
-	width: calc(100% - 20px);
-	max-width: 1170px;
-	text-align: center;
+	display: table;
+	width: 100%;
+	height: 100px;
+	color: $white;
+	background: $darkerBlue;
+
+	.showcase-header-inner {
+		display: table-cell;
+		vertical-align: middle;
+		height: 100%;
+
+		.showcase-header-text {
+			width: calc(100% - 20px);
+			max-width: 1170px;
+			margin-left: auto;
+			margin-right: auto;
+			font-family: proxima_novalight;
+			font-size: 36px;
+			color: $white;
+			text-align: center;
+		}
+	}
 }
 
 .showcase-container {
@@ -366,59 +385,210 @@
 		background-size: cover;
 		background-position: center top;
 		background-repeat: no-repeat;
-		padding-bottom: 50px;
-		border-bottom: 1px solid $blueGray;
 
 		color: $white;
 		text-align: center;
 
 		.showcase-element-inner {
-			position: relative;
-			width: calc(100% - 20px);
-			max-width: 1170px;
-			height: 100%;
-			margin: 0 auto;
+			min-height: 400px;
+			padding-left: 0px !important;
+			padding-right: 0px !important;
+
+			@media (min-width:320px) { min-height: 700px; }
+			@media (min-width:700px) { min-height: 600px; }
+			@media (min-width:800px) { min-height: 500px; }
+			@media (min-width:1200px) { min-height: 400px; }
+
+			.showcase-element-image {
+				min-height: 400px;
+				//height: 100%;
+				position: relative;
+				background-size: cover;
+
+				@media (min-width:320px) { min-height: 700px; }
+				@media (min-width:700px) { min-height: 600px; }
+				@media (min-width:800px) { min-height: 500px; }
+				@media (min-width:1200px) { min-height: 400px; }
+
+				&.showcase-element-image-left {
+					float: left;
+				}
+
+				&.showcase-element-image-right {
+					float: right;
+				}
+			}
+
+			.showcase-element-arrow {
+				position: absolute;
+				height: 100%;
+				width: 75px;
+
+				&.arrow-right {
+					left: 0;
+
+					.arrow-segment {
+						width: 100%;
+						height: 50%;
+						position: absolute;
+
+						&.arrow-segment-top {
+							top: 0px;
+							background: linear-gradient(to right top, $darkerBlue 50%, transparent 50%);
+						}
+
+						&.arrow-segment-bottom {
+							top: 50%;
+							background: linear-gradient(to right bottom, $darkerBlue 50%, transparent 50%);
+						}
+					}
+				}
+
+				&.arrow-left {
+					right: 0;
+
+					.arrow-segment {
+						width: 100%;
+						height: 50%;
+						position: absolute;
+
+						&.arrow-segment-top {
+							top: 0px;
+							background: linear-gradient(to left top, $darkerBlue 50%, transparent 50%);
+						}
+
+						&.arrow-segment-bottom {
+							top: 50%;
+							background: linear-gradient(to left bottom, $darkerBlue 50%, transparent 50%);
+						}
+					}
+				}
+			}
+
+			.showcase-element-textbox {
+				position: relative;
+				overflow: hidden;
+				min-height: 400px;
+				//height: 100%;
+				background: $darkerBlue;
+
+				@media (min-width:320px) { min-height: 700px; }
+				@media (min-width:700px) { min-height: 600px; }
+				@media (min-width:800px) { min-height: 500px; }
+				@media (min-width:1200px) { min-height: 400px; }
+			}
 
 			.showcase-textbox {
-				width: 50%;
+				position: absolute;
+				top: 0;
 				height: 100%;
+				text-align: left;
+				line-height: 100%;
+
+				@media (min-width: 1191px) {
+					width: 90%;
+				}
+
+				@media (max-width: 1190px) {
+					width: calc(100% - 10px);
+				}
 
 				.btn {
-					position: absolute;
-					bottom: 0;
+					margin-top: 40px;
+					margin-bottom: 70px;
+				}
+
+				.showcase-textbox-title {
+					font-family: proxima_novalight;
+					font-size: 36px;
+					margin-top: 40px;
+					margin-bottom: 30px;
+					line-height: 42px;
+				}
+
+				.showcase-textbox-text {
+					font-family: proxima_novalight;
+					font-size: 18px;
+					line-height: 24px;
 				}
 			}
 
 			.showcase-textbox-right {
-				position: absolute;
-				right: 0;
-			}
-
-			.showcase-textbox-center {
-				position: absolute;
-				top: 0;
-				margin: 0 calc(25% - 10px);
+				left: 0;
+				padding-left: 50px;
 			}
 
 			.showcase-textbox-left {
-				position: absolute;
-				left: 0;
+				right: 0;
+				padding-right: 50px;
 			}
 		}
 	}
 
 	.showcase-about-block {
-		text-align: center;
-		margin: 15px 50px;
+		margin: 40px 10px 20px 10px;
+
+		.showcase-about-inner {
+			width: calc(100% - 20px);
+			max-width: 1170px;
+			margin-left: auto;
+			margin-right: auto;
+			padding-bottom: 90px;
+			border-bottom: 1px solid $lightGrey;
+
+			text-align: center;
+			color: $darkerBlue;
+
+			.showcase-about-title {
+				font-family: proxima_novalight;
+				font-size: 36px;
+				line-height: 42px;
+				margin-bottom: 20px;
+			}
+
+			.showcase-about-text {
+				width: 100%;
+				max-width: 800px;
+				margin-left: auto;
+				margin-right: auto;
+				font-family: proxima_novalight;
+				font-size: 18px;
+				line-spacing: 24px;
+				text-align: justify;
+			}
+		}
 	}
 
 	.showcase-menu {
-		margin: 10px 50px;
+		width: calc(100% - 20px);
+		max-width: 1170px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 20px;
 
 		.showcase-menu-column {
-			text-align: center;
+			text-align: left;
 			display: inline-block;
+			vertical-align: top;
+
+			.showcase-menu-column-title {
+				color: $linkColor;
+				font-family: proxima_nova_rgbold;
+				font-size: 16px;
+				font-weight: bold;
+				margin-bottom: 10px;
+			}
+
+			a {
+				color: $darkerBlue;
+				font-family: proxima_novalight;
+				font-size: 16px;
+				line-height: 20px;
+
+				&:hover {
+					color: $lightBlue;
+				}
+			}
 		}
 	}
 }
->>>>>>> 35c4a56... ODP-37 - Initial Draft of Alternate Findr Homepage

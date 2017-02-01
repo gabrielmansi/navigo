@@ -1,35 +1,80 @@
 {
-  "tagline": "Your one stop spacial search super source!",
-  "aboutText": "About the application",
+  "tagline": "Consumer-level speed & productivity in enterprise geo-spacial search.",
+
   "showcaseElements": [
     {
-      "title": "Showcase Element 1 Title",
-      "text": "The text for the first showcase element would be inserted here.",
-      "textPosition": "right",
-      "imageURL": "assets/img/showcase-image-1.jpg",
-      "buttonText": "See More 1",
-      "buttonAction": "http://www.voyagersearch.com"
+      "title": "Landsat from AWS S3",
+      "text": "Landsat 8 data is available for anyone to use via [Amazon S3]. We simply pointed Voyager Labs to the <b>S3 bucket</b> and now the Landsat 8 repository directly from Amazon can be searched using Voyager. All Landsat 8 scenes from 2015 are available along with a selection of cloud-free scenes from 2013 and 2014. New Landsat 8 scenes are made available using Voyager’s built-in scheduler which allows for automated indexing of data to ensure any changes to the data or metadata are reflected in the web accessible search.",
+      "imagePosition": "right",
+      "imageURL": "assets/img/Landsat_capture_of_B5_for_smaller_filesize_and_scale_for_layout.png",
+      "imageWidth": "45%",
+      "buttonText": "See More",
+      "buttonAction": "http://voyagerdemo.com/web-staging/navigo/#/search?f.format_category.facet.sort=index&f.format_keyword.facet.sort=index&f.properties.facet.sort=index&f.location.facet.sort=index&fq=%7B!tag%3Dlocation%7Dlocation:(1e1383f27e5565d250fdc1e740a663644efcce12%20)&disp=D15981D38828&view=card"
     },
     {
-      "title": "Showcase Element 2 Title",
+      "title": "USGS NAIP Plus Base Ma",
       "text": "The text for the second showcase element would be inserted here.",
-      "textPosition": "left",
-      "imageURL": "assets/img/showcase-image-2.jpg",
+      "imagePosition": "left",
+      "imageURL": "assets/img/USGS_NAIP_Plus_Base_Map_Grand_Canyon.png",
+      "imageWidth": "60%",
       "buttonText": "See More 2",
       "buttonAction": "http://www.voyagerdemo.com/daily"
     },
     {
-      "title": "Showcase Element 3 Title",
+      "title": "USGS TNM Elevation",
       "text": "The text for the third showcase element would be inserted here.",
-      "textPosition": "center",
-      "imageURL": "assets/img/showcase-image-3.jpg",
+      "imagePosition": "right",
+      "imageURL": "assets/img/USGS_TNM_Elevation_–_Contours_Center_Hill_Lake_TN.png",
+      "imageWidth": "500px",
       "buttonText": "See More 3",
       "buttonAction": "http://www.voyagerdemo.com/198x"
+    },
+    {
+      "title": "USGS TNM Elevation - Contours Sierra Nevada CA",
+      "text": "The text for the third showcase element would be inserted here.",
+      "imagePosition": "left",
+      "imageURL": "assets/img/USGS_TNM_Elevation_-_Contours_Sierra_Nevada_CA.png",
+      "imageWidth": "45%",
+      "buttonText": "See More 4",
+      "buttonAction": "http://www.voyagerdemo.com/daily"
+    },
+    {
+      "title": "USGS TNM Hydrography (NHD)",
+      "text": "The text for the third showcase element would be inserted here.",
+      "imagePosition": "right",
+      "imageURL": "assets/img/USGS_TNM_Hydrography_NHD_Center_Hill_Lake_TN.png",
+      "imageWidth": "45%",
+      "buttonText": "See More 5",
+      "buttonAction": "http://www.voyagerdemo.com/daily"
+    },
+    {
+      "title": "USGS TNM Hydrography (NHD) Mt Hood",
+      "text": "The text for the third showcase element would be inserted here.",
+      "imagePosition": "left",
+      "imageURL": "assets/img/USGS_TNM_Hydrography_NHD_Mt_Hood.png",
+      "imageWidth": "45%",
+      "buttonText": "See More 6",
+      "buttonAction": "http://www.voyagerdemo.com/daily"
+    },
+    {
+      "title": "USGS Topo TN",
+      "text": "The text for the third showcase element would be inserted here.",
+      "imagePosition": "right",
+      "imageURL": "assets/img/USGS_Topo_TN.png",
+      "imageWidth": "45%",
+      "buttonText": "See More 7",
+      "buttonAction": "http://www.voyagerdemo.com/daily"
     }
   ],
+
+  "aboutTitle": "About Description",
+  "aboutText": "In this location you will find some very long text describing the application.  It should continue for several lines in order to <b>demonstrate</b> that appropriate margins and padding are set on the page.  When you are done reading this text you should have a basic understanding of the purpose and origins of this application and should know where to go in order to find out more in regards to the specific uses for the application in your specific business environment.<br/><br/>",
+  "aboutLinkText": "Read More...",
+  "aboutLinkAction": "http://www.voyagersearch.com/",
+
   "menuColumns": [
     {
-      "columnHeader": "Column 1",
+      "columnHeader": "Column 1 title",
       "columnItems": [
         {
           "itemName": "Item 1-1",
@@ -38,11 +83,31 @@
         {
           "itemName": "Item 1-2",
           "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 1-3",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 1-4",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 1-5",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 1-6",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 1-7",
+          "itemAction": "http://www.google.com"
         }
       ]
     },
     {
-      "columnHeader": "Column 2",
+      "columnHeader": "Column 2 title",
       "columnItems": [
         {
           "itemName": "Item 2-1",
@@ -51,9 +116,118 @@
         {
           "itemName": "Item 2-2",
           "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-3",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-4",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-5",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-6",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-7",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-8",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-9",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 2-10",
+          "itemAction": "http://www.google.com"
+        }
+      ]
+    },
+    {
+      "columnHeader": "Column 3 title",
+      "columnItems": [
+        {
+          "itemName": "Item 3-1",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 3-2",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 3-3",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 3-4",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 3-5",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 3-6",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 3-7",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 3-8",
+          "itemAction": "http://www.google.com"
+        }
+      ]
+    },
+    {
+      "columnHeader": "Column 4 title",
+      "columnItems": [
+        {
+          "itemName": "Item 4-1",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-2",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-3",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-4",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-5",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-6",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-7",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-8",
+          "itemAction": "http://www.google.com"
+        },
+        {
+          "itemName": "Item 4-9",
+          "itemAction": "http://www.google.com"
         }
       ]
     }
-  ],
-  "copyrightText": "Voyager Findr 2017"
+  ]
 }
