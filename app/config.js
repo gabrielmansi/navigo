@@ -63,10 +63,8 @@ var config = {
         "showSidebarLinks": true,
         "sidebarLinksTitle": "Collections",
         "sidebarLinksLabel": "featured",
-        "footerHTML": "&copy; 2015 Voyager Search <a link=\"www.url.com\">Legal</a>",
+        "footerHTML": "&copy; 2015 Voyager Search <a link=\"www.url.com\">Legal</a>"
         //"bannerHTML": "<h3 class=\"banner\" style=\"line-height: 40px; background-color: green; color: white; height: 20px; margin: 0px;\">BANNER<\/h3>"
-      "showODPHomepage": true,
-      "odpHomepageConfig": "assets/config/odp-homepage-config.json"
     },
     defaultTask:'',
     ecobar: false,

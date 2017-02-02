@@ -24,7 +24,7 @@ angular.module('voyager.home')
 		$scope.showSpatialInput = true;
 
 		var vm = this;
-		vm.showODPHomepage = config.homepage.showODPHomepage;
+    vm.showODPHomepage = !!$location.search().odp;
 
     if(vm.showODPHomepage) {
       $scope.containerStyle = 'height: 320px';
@@ -100,7 +100,6 @@ angular.module('voyager.home')
 			if(vm.showODPHomepage) {
         homeService.getODPConfig().then(function (data) {
           vm.odpConfig = data;
-          console.log(vm.odpConfig);
         });
       }
 
