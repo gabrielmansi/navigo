@@ -22,7 +22,7 @@ angular.module('voyager.home')
         }
 
         function _fetchODPConfig() {
-          var endpoint = "assets/config/odp-homepage-config.json";
+          var endpoint = 'assets/config/odp-homepage-config.json';
           return $http.get(endpoint).then(function(response){
             if(response.data) {
               if(response.data.showcaseElements) {
