@@ -43,17 +43,17 @@ angular.module('voyager.home')
         }
 
         return {
-            fetchCollections: function() {
-                return _fetchSection('collections', _collectionsAction);
-            },
-            fetchFeatured: function() {
-                return _fetchSection('featured', _featuredAction);
-            },
-            getFeaturedQuery: function() {
-                return featureQuery.getFeatureQuery();
-            },
+          fetchCollections: function() {
+            return _fetchSection('collections', _collectionsAction);
+          },
+          fetchFeatured: function() {
+            return _fetchSection('featured', _featuredAction);
+          },
+          getFeaturedQuery: function() {
+            return featureQuery.getFeatureQuery();
+          },
           getODPConfig: function() {
-              return _fetchODPConfig();
+            return _fetchODPConfig();
           }
         };
 
