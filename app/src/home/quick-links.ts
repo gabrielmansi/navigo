@@ -11,7 +11,6 @@ namespace VoyagerHome {
       list: '<'
     };
     controller = Controller;
-    controllerAs = 'vm';
   }
 
   class Controller {
