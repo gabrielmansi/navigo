@@ -162,6 +162,14 @@ angular.module('voyager.search')
 			});
 		}
 
+		function _formatErrorReason(error) {
+			var reason = 'Search failed.';
+			if (error && (error.msg || '').toLowerCase().indexOf('undefined field') > -1) {
+				reason += ' One or more fields do not exist for this saved search.';
+			}
+			return reason;
+		}
+
 		function _handleSearchError(res) {
 			searchScroll.setPosition(0);
 			$scope.eof = false;
@@ -172,6 +180,7 @@ angular.module('voyager.search')
 			_searching = false;
 			_initializing = false;
 			$scope.searchError = true;
+			$scope.searchErrorReason = _formatErrorReason((res.data||{}).error);
 			res.data = {response:{docs:[]}};
 			$scope.$emit('searchComplete', res.data); //so table view updates
 			_setPageClass();
@@ -413,14 +422,14 @@ angular.module('voyager.search')
         $scope.exportResultsList = function() {
             searchModalService.exportResultsList($scope);
         };
-        
+
         //Handle search result with error
         $scope.hideResultErrorMessage = function($event) {
             $event.preventDefault();
             $scope.resultError = false;
             _setPageClass();
         };
-        
+
 		$scope.showResultErrorTrace = function() {
 			searchModalService.showResultErrorTrace($scope.resultStackTrace);
 		};
@@ -465,7 +474,7 @@ angular.module('voyager.search')
             $scope.searchError = false;
             _setPageClass();
         };
-        
+
 		function _setPageClass() {
 			var _pageClass = searchViewService.getPageClass($scope.filterVisible, $scope.view, $scope.pageFramework.showMap, $scope.searchError, $scope.resultError);
 			$scope.mapWrapperClass = _pageClass.mapWrapperClass;

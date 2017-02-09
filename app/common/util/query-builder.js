@@ -109,7 +109,7 @@ angular.module('voyager.util').
             return queryString;
         }
 
-        function build2(solrParams, page, itemsPerPage, sortDirection, sortField) {
+        function build2(solrParams, page, itemsPerPage, sortDirection, sortField, disableJSONP) {
             var placeFilter = '';
             if(solrParams) {
                 delete solrParams.fq; //filter service will apply filter params below
@@ -143,7 +143,11 @@ angular.module('voyager.util').
                 queryString += '&sort=' + sortField + ' ' + sortDirection;
             }
             queryString += '&rand=' + Math.random(); // avoid browser caching?
-            queryString += '&wt=json&json.wrf=JSON_CALLBACK';
+            queryString += '&wt=json';
+
+            if (!disableJSONP) {
+                queryString += '&json.wrf=JSON_CALLBACK';
+            }
 
             return queryString;
         }
@@ -195,8 +199,8 @@ angular.module('voyager.util').
 
         return {
 
-            doBuild2: function (params, page, itemsPerPage, sortDirection, sortField) {
-                return build2(params, page, itemsPerPage, sortDirection, sortField);
+            doBuild2: function (params, page, itemsPerPage, sortDirection, sortField, disableJSONP) {
+                return build2(params, page, itemsPerPage, sortDirection, sortField, disableJSONP);
             },
 
             doByIds: function (ids) {

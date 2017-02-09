@@ -69,12 +69,12 @@ angular.module('voyager.search').
         return {
             doSearch2: function (params, append) {
                 _setParams(params);
-                var service = queryBuilder.doBuild2(_searchParams, _page, _itemsPerPage, _sortDirection, _sortField);
+                var service = queryBuilder.doBuild2(_searchParams, _page, _itemsPerPage, _sortDirection, _sortField, true);
                 _solrService = service;
                 var solrPage = service.substring(service.indexOf('solr')-1);
                 urlUtil.buildSearchUrl2(_searchParams, _page, getMapView(params.vw), params.view, _sortField); //keeps the url in sync
                 var startTime = Date.now();
-                return $http.jsonp(service).success(function (data) {
+                return $http.get(service).success(function (data) {
                     var endTime = Date.now() - startTime;
                     _lastResult = data;
                     if(!append) {

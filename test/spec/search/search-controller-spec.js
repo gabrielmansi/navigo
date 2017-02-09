@@ -50,7 +50,7 @@ describe('SearchCtrl', function () {
 
         //$http.expectGET(new RegExp('auth')).respond(authResponse); //auth info call
         if (search) {
-            $http.expectJSONP(new RegExp('solr\/v0')).respond(response);  //search call
+            $http.expectGET(new RegExp('solr\/v0')).respond(response);  //search call
             $http.flush();
         }
         scope.$apply();
@@ -61,7 +61,7 @@ describe('SearchCtrl', function () {
     describe('Load', function () {
 
         it('should load with empty results', function () {
-            
+
             scope.pageFramework = { showHeaderInfo: false };
 
             location.search({pg:2, disp:'disp', sort:'field asc'});
@@ -87,7 +87,7 @@ describe('SearchCtrl', function () {
             controllerService('SearchCtrl', {$scope: scope});
 
             //$http.expectGET(new RegExp('auth')).respond({}); //auth info call
-            $http.expectJSONP(new RegExp('solr\/v0')).respond(500,'');  //search call
+            $http.expectGET(new RegExp('solr\/v0')).respond(500,'');  //search call
 
             scope.$apply();
             $http.flush();
@@ -297,7 +297,7 @@ describe('SearchCtrl', function () {
 
             initCtrl({response: response}, true);
 
-            $http.expectJSONP(new RegExp('solr\/v0')).respond({response:response});  //search call next chunk (page)
+            $http.expectGET(new RegExp('solr\/v0')).respond({response:response});  //search call next chunk (page)
 
             $($window).trigger('scroll');
 
@@ -338,7 +338,7 @@ describe('SearchCtrl', function () {
 
             expect(scope.bigMap).toBeFalsy();
         });
-        
+
         it('should change map size to small', function () {
 
             var response = {docs:[], numFound:0}, sort = {key:'key', value:'value'};

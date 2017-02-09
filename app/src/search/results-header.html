@@ -1,7 +1,7 @@
 <!-- header: results count and sort and filters -->
 <div class="alert alert-warning warning alert-dismissible" role="alert" ng-show="searchError">
     <a href="#" class="icon-x close" data-dismiss="alert" ng-click="hideSearchError($event)"><span class="sr-only">Close</span></a>
-    <span class="icon-error"></span> Search Failed
+    <span class="icon-error"></span>{{searchErrorReason}}
 </div>
 
 <div class="alert alert-warning warning alert-dismissible" role="alert" ng-if="resultError">
