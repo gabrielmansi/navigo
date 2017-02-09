@@ -90,9 +90,21 @@ var homePage = (function () {
 
         getQuickLinkInCategory: function(){
             return element(by.css('.text'));
-        }
+        },
 
-    
+        getQuickLinkNoCategory: function(){
+            return element(by.css('.icon-collection'));
+        },
+
+        getFeaturedItemThumbnail: function(){
+            return element(by.css('.img'));
+        },
+
+        getSearchButton: function(){
+            return element.all(by.css('.btn.btn-primary'));
+        },
+
+
           
     };
 })();

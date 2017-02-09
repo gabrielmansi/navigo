@@ -41,12 +41,12 @@ angular.module('cart').
                         oper = ' AND ';
                     }
 
-                    // TODO - Jason - why does having constraints do this? (not include the q filter)
-                    //if (_.has(queryCriteria, 'constraints')) {
-                    //    queryCriteria.params.q = itemsStr + sep + filters;
-                    //} else {
-                    queryCriteria.params.q = itemsStr + sep + '(' + q + oper + filters + ')';
-                    //}
+                    if (_.has(queryCriteria, 'constraints')){
+                        queryCriteria.params.q = itemsStr + ' AND ' + q + oper + filters;
+                    }
+                    else {
+                        queryCriteria.params.q = itemsStr + sep + '(' + q + oper + filters + ')';
+                    }
                 } else {
                     if (angular.isDefined(queryCriteria.params.place)) {
                         q = '(' + converter.toPlaceFilter(queryCriteria.params) + ')';

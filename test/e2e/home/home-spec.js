@@ -37,6 +37,36 @@ describe('Home Page', function() {
 
     });
 
+    it('should execute a search via enter key', function() {
+
+        browser.get(server + '/home');
+        Util.waitForSpinner();
+
+        var searchInput = homePage.getSearchInput();
+        
+        searchInput.sendKeys('');
+        Util.sendEnter();
+
+        Util.waitForSpinner();   
+        expect(browser.getCurrentUrl()).toContain('/search');
+
+    });
+
+    it('should execute a search via the search button', function() {
+
+        browser.get(server + '/home');
+        Util.waitForSpinner();
+
+        var searchButton = homePage.getSearchButton();
+        searchButton.each(function(button){
+            Util.patientClick(button, 3, 100);
+        });
+
+        Util.waitForSpinner();   
+        expect(browser.getCurrentUrl()).toContain('/search');
+
+    });
+
     it('should switch to Saved searches', function() {
         browser.get(server + '/home');
         Util.waitForSpinner();
@@ -106,7 +136,7 @@ describe('Home Page', function() {
 
     });
 
-    it('should open details of a featured item', function() {
+    it('should open details of a featured item via the items title', function() {
 
         browser.get(server + '/home');
         Util.waitForSpinner();
@@ -115,6 +145,21 @@ describe('Home Page', function() {
 
         Util.waitForSpinner();     
         Util.patientClick(firstFeaturedItem, 3, 100);
+
+        Util.waitForSpinner();   
+        expect(browser.getCurrentUrl()).toContain('show?id=');
+    
+    });
+
+    it('should open details of a featured item via the items thumbnail', function() {
+
+        browser.get(server + '/home');
+        Util.waitForSpinner();
+
+        var firstFeaturedItemThumbnail = homePage.getFeaturedItemThumbnail();   
+
+        Util.waitForSpinner();     
+        Util.patientClick(firstFeaturedItemThumbnail, 3, 100);
 
         Util.waitForSpinner();   
         expect(browser.getCurrentUrl()).toContain('show?id=');
@@ -138,9 +183,6 @@ describe('Home Page', function() {
 
     });
 
-
-    
-
     it('should select a suggestion in the Placefinder bar', function() {
 
         browser.get(server + '/home');
@@ -156,8 +198,6 @@ describe('Home Page', function() {
         expect(browser.getCurrentUrl()).toContain('place=Australia');
 
     });
-
-    
 
     it('should switch the search type from within to intersects', function() {
 
@@ -254,7 +294,6 @@ describe('Home Page', function() {
                                 "owner":"admin",
                                 "path":"/place=Michigan,United States/place.op=within/disp=ace4bb77/",
                                 "labels":["Featured"],
-                                "query":"",
                                 "count":815,
                                 "categories":["testCategoryName"],
                                 "query":"facet=true&q=test"
@@ -279,7 +318,50 @@ describe('Home Page', function() {
         expect(browser.getCurrentUrl()).toContain('/search?q=test');
     });
 
-    //insert test for quicklinks without category here once VG-4941 is resolved. 
-    //(copy above test, remove categories attribute in mock, may need new selector)
+    it('should click a quick links option within a category',function() {
+
+        browser.get(server + '/home');
+        Util.waitForSpinner();
+
+        var mock = function() {
+            config.showSidebarLinks = true;
+        };
+        browser.addMockModule('portalApp', mock);
+
+        var e2eInterceptors = function() {
+            return angular.module('e2eInterceptors', []).factory('quickLinksInterceptor', function() {
+                return {
+                    response: function(response) {
+                        var requestedUrl = response.config.url;
+                        if (requestedUrl.indexOf('labels') > -1) { 
+                            var mockQuickLink = {
+                                'id':"S159228992CD",
+                                'title':"testCategoryTitle",
+                                "owner":"admin",
+                                "path":"/place=Michigan,United States/place.op=within/disp=ace4bb77/",
+                                "labels":["Featured"],
+                                "count":815,
+                                "query":"facet=true&q=test"
+                            };
+
+                            response.data.response.docs.push(mockQuickLink);
+                        }
+                        return response;
+                    }
+                };
+            }).config(function($httpProvider) {
+                return $httpProvider.interceptors.push('quickLinksInterceptor');
+            });
+        };
+        browser.addMockModule('e2eInterceptors',e2eInterceptors);
+
+        Util.waitForSpinner().then(function() {
+            var quickLink = homePage.getQuickLinkNoCategory();
+            Util.patientClick(quickLink, 3, 100);
+        });
+
+        expect(browser.getCurrentUrl()).toContain('/search?q=test');
+    });
+
 
 });
