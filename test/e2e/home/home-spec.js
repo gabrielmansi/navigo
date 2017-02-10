@@ -315,10 +315,10 @@ describe('Home Page', function() {
             Util.patientClick(quickLink, 3, 100);
         });
 
-        expect(browser.getCurrentUrl()).toContain('/search?q=test');
+        expect(browser.getCurrentUrl()).toContain('/search?');
     });
 
-    it('should click a quick links option within a category',function() {
+    it('should click a quick links option without a category',function() {
 
         browser.get(server + '/home');
         Util.waitForSpinner();
@@ -360,8 +360,7 @@ describe('Home Page', function() {
             Util.patientClick(quickLink, 3, 100);
         });
 
-        expect(browser.getCurrentUrl()).toContain('/search?q=test');
+        expect(browser.getCurrentUrl()).toContain('/search?');
     });
-
 
 });
