@@ -9,7 +9,7 @@ describe('Queue', function() {
     function _showTasks() {
         var selectTaskButton = element.all(by.css('a[href="tasks"].btn'));
         Util.waitForSpinner();
-        selectTaskButton.click();
+        Util.patientClick(selectTaskButton, 3, 100);
     }
 
     //need to add an item to the queue first
@@ -17,7 +17,7 @@ describe('Queue', function() {
         browser.get(server + '/search?debug=true');
         Util.waitForSpinner();
         var addToQueueAnchor = element(by.css('[ng-click="default.do()"]'));
-        addToQueueAnchor.click();
+        Util.patientClick(addToQueueAnchor, 3, 100);
     });
 
     it('should load queue page', function() {
