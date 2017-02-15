@@ -11,7 +11,7 @@ angular.module('taskRunner')
             },
             template: '<input type="hidden" ui-select2="permissionOptions" ng-model="param.value" style="width: 100%;">',
             controller: function ($scope, $element, $attrs) {
-
+                var canAdmin = false;
                 var _shareGroups = [];
                 var _coreRoles = [{id:'_EVERYONE',text:'EVERYONE'},{id:'_LOGGEDIN',text:'LOGGEDIN'},{id:'_ANONYMOUS',text:'ANONYMOUS'}];
 
@@ -26,9 +26,17 @@ angular.module('taskRunner')
                     }
                 };
 
-                authService.fetchGroups().then(function(groups) {
-                    $.merge(_shareGroups, groups);
-                    $.merge(_shareGroups, _coreRoles);
+                authService.getPrivileges().then(function() {
+                    canAdmin = authService.hasPermission('manage');
+                    if (canAdmin) {
+                        $.merge(_shareGroups, _coreRoles);
+                    }
+                    else {
+                        authService.fetchGroups().then(function(groups) {
+                            $.merge(_shareGroups, groups);
+                        });
+                    }
+
                 });
             }
         };
