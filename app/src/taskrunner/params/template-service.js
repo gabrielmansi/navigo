@@ -17,6 +17,9 @@ angular.module('taskRunner').
         var field = '<input vs-field-param param="param" multi="false">';
         var fieldTpl = '<div ng-hide="param.advanced && !show">' + labelTpl + field + errorTpl + '</div>';
 
+        var permissions ='<input vs-permissions-param param="param">';
+        var permissionsTpl = '<div ng-hide="param.advanced && !show">' + labelTpl + permissions + errorTpl + '</div>';
+
         var projection = '<div ng-hide="param.advanced && !show" class="process-control">' + labelTpl + projectionSelect + errorTpl + '</div>';
         var stringChoice = '<div ng-hide="param.advanced && !show" class="process-control">' + labelTpl + selectTpl + errorTpl + '</div>';
         var textArea = '<div ng-hide="param.advanced && !show" class="process-control">' + labelTpl + '<textarea ng-model="param.value" style="width: 96%"></textarea>' + errorTpl + '</div>';
@@ -62,6 +65,7 @@ angular.module('taskRunner').
             'Password':pwdTpl,
             'FieldList':fieldListTpl,
             'Field':fieldTpl,
+            'Permissions': permissionsTpl,
             'IndexItem':searchTpl,
             'QueryIndex':searchTpl,
             'Date':dateTpl,
@@ -81,6 +85,7 @@ angular.module('taskRunner').
             'Integer-readOnly':readOnlyTpl,
             'Password-readOnly':pwdReadOnlyTpl,
             'FieldList-readOnly':readOnlyListTpl,
+            'Permissions-readOnly':readOnlyListTpl,
             'Field-readOnly':readOnlyTpl,
             'QueryIndex-readOnly':readOnlyTpl
         };
