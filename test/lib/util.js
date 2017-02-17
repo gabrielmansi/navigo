@@ -69,6 +69,17 @@ var Util = (function () {
             enter.perform();
         },
 
+        sendEscape: function() {
+            //wait for the block-ui overlay to go away
+            var enter = browser.actions().sendKeys(protractor.Key.ESCAPE);
+            enter.perform();
+        },
+
+        sendKeys: function(keys){
+                var send = browser.actions().sendKeys(keys);
+                send.perform();
+        },
+
         getParent: function(object) {
             //wait for the block-ui overlay to go away
            return object.element(by.xpath('..'));
