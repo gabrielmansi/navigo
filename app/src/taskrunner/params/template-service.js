@@ -17,7 +17,7 @@ angular.module('taskRunner').
         var field = '<input vs-field-param param="param" multi="false">';
         var fieldTpl = '<div ng-hide="param.advanced && !show">' + labelTpl + field + errorTpl + '</div>';
 
-        var permissions ='<input vs-permissions-param param="param">';
+        var permissions ='<input vs-list-param param="param" list="permissions">';
         var permissionsTpl = '<div ng-hide="param.advanced && !show">' + labelTpl + permissions + errorTpl + '</div>';
 
         var projection = '<div ng-hide="param.advanced && !show" class="process-control">' + labelTpl + projectionSelect + errorTpl + '</div>';
