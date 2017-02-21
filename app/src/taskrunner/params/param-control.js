@@ -45,7 +45,12 @@ angular.module('taskRunner')
 
         function _link(scope, element, attrs) {
             if(!scope.param.hidden) { //don't render hidden
-                var template = templateService.get(scope.param.type, scope.param.readOnly);
+                var type = scope.param.type;
+                var name = scope.param.name;
+                if (type === 'List' && name === 'groups'){
+                    type = 'Permissions';
+                }
+                var template = templateService.get(type, scope.param.readOnly);
                 //scope.param.label = scope.param.name;
                 element.html(template).show();
                 $compile(element.contents())(scope);
