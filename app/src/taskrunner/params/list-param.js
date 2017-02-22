@@ -10,7 +10,7 @@ angular.module('taskRunner')
                 show: '=',
                 list: '@list'
             },
-            template: '<input type="hidden" ui-select2="listOptions" ng-model="param.value" style="width: 100%;">',
+            template: '<input type="hidden" ui-select2="listOptions" ng-model="param.value" data-placeholder="Private" style="width: 100%;">',
             controller: function ($scope, $element, $attrs) {
                 var _options = [];
                 var _coreRoles = [{id:'_EVERYONE',text:'EVERYONE'},{id:'_LOGGEDIN',text:'LOGGEDIN'},{id:'_ANONYMOUS',text:'ANONYMOUS'}];
