@@ -94,71 +94,34 @@ var detailsPage = (function () {
         },
         addFlag: function(flag) {
             var flagButton = this.getFlagToolButton();
-            Util.patientClick(flagButton, 3, 100);
+            flagButton.click();
             Util.waitForSpinner();
 
-            var flagInput = element(by.xpath('//*[@id="flagText"]'));
+            var flagInput = element(by.id('flagText'));
             flagInput.sendKeys(flag);
-            var save = element(by.css('[ng-click="save()"]'));
-            Util.patientClick(save,3,100);
+            element(by.css('[ng-click="save()"]')).click();
             Util.waitForSpinner();
         },
         removeFlag: function() {
             var removeFlagButton = this.getRemoveFlagToolButton();
-            Util.patientClick(removeFlagButton);
+            removeFlagButton.click();
             Util.waitForSpinner();
         },
         gotoPreviousResult: function() {
             var previousLink = element(by.css('a[ng-click*=Previous]'));
-            Util.patientClick(previousLink, 3, 100);
+            previousLink.click();
             Util.waitForSpinner();
         },
         gotoNextResult: function() {
             var nextLink = element(by.css('a[ng-click*=Next]'));
-            Util.patientClick(nextLink, 3, 100);
+            nextLink.click();
             Util.waitForSpinner();
         },
         gotoRecentlyViewed: function(index) {
             var firstRecentlyViewedElement = element.all(by.repeater('doc in recent')).get(index).element(by.binding('doc.name'));
-            Util.patientClick(firstRecentlyViewedElement, 3, 100);
+            firstRecentlyViewedElement.click();
             Util.waitForSpinner();
-        },
-        getReturnToSearchButton: function(){
-            return element(by.xpath('//*[@id="detailTopStickyContent"]/ul/li[2]/a'));
-        },
-        getFormatSubtitle: function(){
-            return element(by.css('[ng-class="formatClass"]'));
-        },
-        getCancelButton: function(){
-            return element(by.css('[ng-click="cancel()"]'));
-        },
-        getFlagDialog: function(){
-            return element(by.css('.modal-dialog'));
-        },
-        getAddTagButton: function(){
-            return element(by.css('[ng-show="!labels.length"]'));
-        },
-        getTagInputField: function(){
-            return element(by.css('.select2-search-field'));
-        },
-        getTags: function(){
-            return element.all(by.css('.select2-search-choice'));
-        },
-        getTagHiddenState: function(){
-            return element(by.css('[ng-show="showEditTag"]'));
-        },
-        getTagSuggestions: function(){
-            return element.all(by.css('.select2-results-dept-0.select2-result.select2-result-selectable'));
-        },
-        getTagEditButton: function(){
-            return element(by.css('[ng-show="labels.length"]'));
-        },
-        getPreviousButton: function(){
-            return element(by.css('[ng-click="getPrevious()"]'));
-        },
-        getTagsFinished: function(){
-            return element(by.css('[ng-click="searchTag(label)"]'));
-        },
+        }
     };
 })();  // jshint ignore:line
 module.exports = detailsPage;
