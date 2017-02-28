@@ -13,7 +13,7 @@ describe('Zip Files Task', function() {
 
     it('should load zip_files task', function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
-        browser.get(server + '/queue?disp=default&task=zip_files');
+        browser.get(server + '/task?type=zip_files');
         browser.sleep(1000);
         Util.waitForSpinner();
 

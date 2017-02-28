@@ -11,7 +11,7 @@ describe('Run Create Layer Files Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:test_polygon_102100');
-        browser.get(server + '/queue?disp=default&task=create_layer_files');
+        browser.get(server + '/task?type=create_layer_files');
         Util.waitForSpinner();
     });
 

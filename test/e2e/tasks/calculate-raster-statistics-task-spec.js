@@ -11,7 +11,7 @@ describe('Run Calculate Raster Statistics Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:L71146040_04020101105_B10');
-        browser.get(server + '/queue?disp=default&task=calculate_raster_statistics');
+        browser.get(server + '/task?type=calculate_raster_statistics');
         Util.waitForSpinner();
     });
 

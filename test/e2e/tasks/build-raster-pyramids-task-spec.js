@@ -11,7 +11,7 @@ describe('Run Build Raster Pyramids Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:L71146040_04020101105_B10');
-        browser.get(server + '/queue?disp=default&task=build_raster_pyramids');
+        browser.get(server + '/task?type=build_raster_pyramids');
         Util.waitForSpinner();
     });
 

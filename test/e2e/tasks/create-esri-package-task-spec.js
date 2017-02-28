@@ -12,7 +12,7 @@ describe('Run Create Esri Map or Layer Package Task', function() {
     beforeEach(function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
         // Open Clip Data by Features task UI
-        browser.get(server + '/queue?disp=default&task=create_esri_package');
+        browser.get(server + '/task?type=create_esri_package');
         Util.waitForSpinner();
     });
 

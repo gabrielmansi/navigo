@@ -12,7 +12,7 @@ describe('Run Clip Data by Polygon Task', function() {
     beforeEach(function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
         // Open Clip Data by Polygon task UI
-        browser.get(server + '/queue?disp=default&task=clip_data');
+        browser.get(server + '/task?type=clip_data');
         Util.waitForSpinner();
     });
 

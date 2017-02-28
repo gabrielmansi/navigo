@@ -11,7 +11,7 @@ describe('Open Publish to Portal for ArcGIS task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:Hydrography_Lines and format:application/vnd.esri.shapefile');
-        browser.get(server + '/queue?disp=default&task=publish_to_agol');
+        browser.get(server + '/task?type=publish_to_agol');
         Util.waitForSpinner();
     });
 

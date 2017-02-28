@@ -11,7 +11,7 @@ describe('Run Mosaic Task', function() {
 
     beforeEach(function() {
         searchPage.addAllToQueue('title:n39w105f2dem and fileExtension:img');
-        browser.get(server + '/queue?disp=default&task=mosaic');
+        browser.get(server + '/task?type=mosaic');
         Util.waitForSpinner();
     });
 
