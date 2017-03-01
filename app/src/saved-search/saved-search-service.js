@@ -74,6 +74,35 @@ angular.module('voyager.search').
             });
         }
 
+        function _mergeOrFilters(params) {
+            var filters = params.fq;
+            if (filters && filters.length > 1) {
+                var orIndex = filters.findIndex(function(filter) {
+                    return filter.indexOf('(') !== -1;
+                });
+                if (orIndex !== -1) {
+                    var orParam = filters[orIndex];
+                    var facetValues = orParam.split(':');
+                    var facet = facetValues[0];
+                    var values = facetValues[1];
+                    values = values.replace(/\(|\)/g,'');
+                    values = values.split(' ');
+                    var nameValue;
+                    var fq = [];
+                    for (var i=0; i<filters.length; i++) {
+                        nameValue = filters[i].split(':');
+                        if (nameValue[0] === facet && i !== orIndex) {
+                            values.push(nameValue[1]);
+                        } else if (i !== orIndex) {
+                            fq.push(filters[i]);
+                        }
+                    }
+                    fq.push(facet + ':' + values.join(' '));
+                    params.fq = fq;
+                }
+            }
+        }
+
         //public methods - client interface
         return {
             getSavedSearches: function() {
@@ -153,6 +182,7 @@ angular.module('voyager.search').
                 // TODO - remove - .query is derived from path
                 //var solrParams = solrGrunt.getSolrParams(params);
                 //savedSearch.query = $.param(solrParams, true);
+                _mergeOrFilters(params);
                 savedSearch.path = converter.toClassicParams(params, true);
                 return _doSave(savedSearch);
             },
