@@ -316,6 +316,7 @@ describe('Home Page', function() {
         });
 
         expect(browser.getCurrentUrl()).toContain('/search?');
+
     });
 
     it('should click a quick links option without a category',function() {

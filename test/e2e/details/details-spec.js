@@ -100,6 +100,7 @@ describe('Details', function() {
 
             detailsPage.gotoPreviousResult();
 
+            Util.waitForSpinner();
             expect(detailsPage.getDocName().getInnerHtml()).toEqual(name);
         });
     });
@@ -164,7 +165,7 @@ describe('Details', function() {
 
         expect(metadataButton_Selected.isPresent()).toBeFalsy();
         expect(metadataTable.isDisplayed()).toBeFalsy();
-        metadataButton.click();
+        Util.patientClick(metadataButton, 3, 100);
         expect(metadataButton_Selected.isPresent()).toBeTruthy();
         expect(metadataTable.isDisplayed()).toBeTruthy();
 
@@ -176,7 +177,7 @@ describe('Details', function() {
         var detailsTable = detailsPage.getDetailsTable();
         expect(detailsTable.isDisplayed()).toBeFalsy();
 
-        detailsButton.click();
+        Util.patientClick(detailsButton, 3, 100);
         expect(metadataButton_Selected.isPresent()).toBeFalsy();
         expect(metadataTable.isDisplayed()).toBeFalsy();
         expect(detailsButton_Selected.isPresent()).toBeTruthy();
@@ -217,7 +218,7 @@ describe('Details', function() {
         }, true);
         expect(relationshipTableData_Displayed).toBeFalsy();
 
-        relationshipButton.click();
+        Util.patientClick(relationshipButton, 3, 100);
 
         expect(relationshipButton_Selected.isPresent()).toBeTruthy();
         relationshipTableData_Displayed = relationshipTableData.reduce(function(acc, relationshipTable) {
@@ -231,7 +232,7 @@ describe('Details', function() {
         expect(detailsButton_Selected.isPresent()).toBeFalsy();
         expect(detailsTable.isDisplayed()).toBeFalsy();
 
-        detailsButton.click();
+        Util.patientClick(detailsButton, 3, 100);
 
         expect(relationshipButton_Selected.isPresent()).toBeFalsy();
         relationshipTableData_Displayed = relationshipTableData.reduce(function(acc, relationshipTable) {
@@ -266,7 +267,8 @@ describe('Details', function() {
 
         expect(schemaButton_Selected.isPresent()).toBeFalsy();
         expect(schemaTable.isDisplayed()).toBeFalsy();
-        schemaButton.click();
+        Util.patientClick(schemaButton, 3, 100);
+
         expect(schemaButton_Selected.isPresent()).toBeTruthy();
         expect(schemaTable.isDisplayed()).toBeTruthy();
 
@@ -278,7 +280,7 @@ describe('Details', function() {
         var detailsTable = detailsPage.getDetailsTable();
         expect(detailsTable.isDisplayed()).toBeFalsy();
 
-        detailsButton.click();
+        Util.patientClick(detailsButton, 3, 100);
         expect(schemaButton_Selected.isPresent()).toBeFalsy();
         expect(schemaTable.isDisplayed()).toBeFalsy();
         expect(detailsButton_Selected.isPresent()).toBeTruthy();
@@ -301,13 +303,13 @@ describe('Details', function() {
         var addToCartButton = detailsPage.getAddToCartButton();
         detailsPage.getCartTotal().then(function(data){
             var originalCartTotal = data;
-            addToCartButton.click();
+            Util.patientClick(addToCartButton, 3, 100);
 
             detailsPage.getCartTotal().then(function(data) {
                 expect(parseInt(originalCartTotal) + 1).toEqual(parseInt(data));
 
                 var removeFromCartButton = detailsPage.getRemoveFromCartButton();
-                removeFromCartButton.click();
+                Util.patientClick(removeFromCartButton, 3, 100);
 
                 detailsPage.getCartTotal().then(function(data) {
                    expect(data).toEqual(originalCartTotal) ;
@@ -346,7 +348,7 @@ describe('Details', function() {
                 }).then(function() {
                     browser.switchTo().window(handles[0]).then(function () {
                         expect(browser.getWindowHandle()).toBe(handles[0]);
-                    })
+                    });
                 });
 
             });
@@ -376,18 +378,111 @@ describe('Details', function() {
         expect(flag.isPresent()).toBe(false);
 
         var flagButton = detailsPage.getFlagToolButton();
-        $('a.flyout_trigger span.icon-tools').click();
+        Util.patientClick($('a.flyout_trigger span.icon-tools'),3,100);
         browser.wait(protractor.ExpectedConditions.elementToBeClickable(flagButton), 10000);
         detailsPage.addFlag('protractor');
 
         expect(flag.isPresent()).toBe(true);
 
         var removeFlagButton = detailsPage.getRemoveFlagToolButton();
-        $('a.flyout_trigger span.icon-tools').click();
+        Util.patientClick($('a.flyout_trigger span.icon-tools'),3,100);
         browser.wait(protractor.ExpectedConditions.elementToBeClickable(removeFlagButton), 10000);
         detailsPage.removeFlag();
 
         expect(flag.isPresent()).toBe(false);
+    });
+
+    it('should attempt to put a flag greater than 25 characters', function() {
+        browser.get(server + '/search?fq=format:application%2Fvnd.esri.service.layer.record&view=card&disp=default');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+
+        var totalAnchor = searchPage.getTotalLink();
+
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var toolsButton = detailsPage.getToolsButton();
+        Util.waitForElement(toolsButton);
+
+        var flag = detailsPage.getFlag('protractor');
+        expect(flag.isPresent()).toBe(false);
+
+        var flagButton = detailsPage.getFlagToolButton();
+        Util.patientClick($('a.flyout_trigger span.icon-tools'), 3, 100);
+
+        Util.patientClick(flagButton, 3, 100);
+        Util.waitForSpinner();
+
+        var flagInput = element(by.id('flagText'));
+        flagInput.sendKeys('123456789111315171921232527');
+
+        expect(flagInput.getAttribute('value')).toBe('1234567891113151719212325');
+    });
+
+    it('should attempt to put a flag then cancel the process via the cancel button', function() {
+        browser.get(server + '/search?fq=format:application%2Fvnd.esri.service.layer.record&view=card&disp=default');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+
+        var totalAnchor = searchPage.getTotalLink();
+
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var toolsButton = detailsPage.getToolsButton();
+        Util.waitForElement(toolsButton);
+
+        var flagButton = detailsPage.getFlagToolButton();
+        Util.patientClick($('a.flyout_trigger span.icon-tools'), 3, 100);
+
+        Util.patientClick(flagButton, 3, 100);
+        Util.waitForSpinner();
+
+        var cancelFlag = detailsPage.getCancelButton();
+        Util.patientClick(cancelFlag, 3, 100);
+
+        var flagDialog = detailsPage.getFlagDialog();
+
+        expect(browser.isElementPresent(flagDialog)).toBeFalsy();
+    });
+
+    it('should attempt to put a flag then cancel the process via the esc key', function() {
+        browser.get(server + '/search?fq=format:application%2Fvnd.esri.service.layer.record&view=card&disp=default');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+
+        var totalAnchor = searchPage.getTotalLink();
+
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var toolsButton = detailsPage.getToolsButton();
+        Util.waitForElement(toolsButton);
+
+        var flagButton = detailsPage.getFlagToolButton();
+        Util.patientClick($('a.flyout_trigger span.icon-tools'), 3, 100);
+
+        Util.patientClick(flagButton, 3, 100);
+        Util.waitForSpinner();
+
+        Util.sendEscape();
+
+        var flagDialog = detailsPage.getFlagDialog();
+
+        expect(browser.isElementPresent(flagDialog)).toBeFalsy();
     });
 
     it('should edit fields', function() {
@@ -433,4 +528,238 @@ describe('Details', function() {
             });
         });
     });
+
+    it('should go to the first search result then go back to all search results', function() {
+
+        var mock = function() {
+            config.editAll = true;
+        };
+        browser.addMockModule('portalApp', mock);
+
+        browser.get(server + '/search?view=card&disp=default');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+
+        var totalAnchor = searchPage.getTotalLink();
+
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var returnToSearch = detailsPage.getReturnToSearchButton();
+        Util.patientClick(returnToSearch, 3, 100);
+
+        expect(browser.getCurrentUrl()).toContain('/search');
+    });
+
+    it('should click the format in the subtitle', function() {
+
+        var mock = function() {
+            config.editAll = true;
+        };
+        browser.addMockModule('portalApp', mock);
+
+        browser.get(server + '/search?view=card&disp=default&fq=format:application%2Fvnd.esri.shapefile');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+
+        var totalAnchor = searchPage.getTotalLink();
+
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var formatSubtitle = detailsPage.getFormatSubtitle();
+        
+        Util.patientClick(formatSubtitle, 3, 100);
+
+        expect(browser.getCurrentUrl()).toContain('shapefile');
+    });
+
+    it('should add a tag to the item then remove it', function() {
+        browser.get(server + '/search');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var toggleTagButton = detailsPage.getAddTagButton();
+        Util.waitForElement(toggleTagButton);
+        Util.patientClick(toggleTagButton, 3, 100);
+
+        var tagInput = detailsPage.getTagInputField();
+        Util.patientClick(tagInput, 3, 100);
+        Util.sendKeys('TestTag');
+        Util.sendEnter();
+
+        
+        var tags = detailsPage.getTags();
+        expect(tags.count()).toBeGreaterThan(0);
+
+        tags.each(function(tag){
+            var close = tag.element(by.css('.select2-search-choice-close'));
+            Util.patientClick(close, 3, 100);
+        });
+        
+        expect(tags.count()).toBe(0);
+
+        Util.patientClick(toggleTagButton, 3, 100);
+        var fieldHiddenState = detailsPage.getTagHiddenState();
+        expect(fieldHiddenState.getAttribute('aria-hidden')).toBeTruthy();
+    });
+
+    it('should add multiple tags to the item then remove it', function() {
+        browser.get(server + '/search');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var toggleTagButton = detailsPage.getAddTagButton();
+        Util.waitForElement(toggleTagButton);
+        Util.patientClick(toggleTagButton, 3, 100);
+
+        var tagInput = detailsPage.getTagInputField();
+        Util.patientClick(tagInput, 3, 100);
+        Util.sendKeys('First');
+        Util.sendEnter();
+        Util.waitForSpinner();
+        Util.sendKeys('Second');
+        Util.sendEnter();
+
+        
+        var tags = detailsPage.getTags();
+        expect(tags.count()).toBeGreaterThan(0);
+
+        var removeSecond = tags.get(1).element(by.css('.select2-search-choice-close'));
+        var removeFirst = tags.get(0).element(by.css('.select2-search-choice-close'));
+
+        Util.waitForSpinner();
+        Util.patientClick(removeSecond, 3, 500);
+        Util.patientClick(removeFirst, 3, 500);
+        Util.waitForSpinner();
+        
+        expect(tags.count()).toBe(0);
+
+        Util.patientClick(toggleTagButton, 3, 100);
+        var fieldHiddenState = detailsPage.getTagHiddenState();
+        expect(fieldHiddenState.getAttribute('aria-hidden')).toBeTruthy();
+    });
+
+
+    it('should add a tag to the item then search by clicking it', function() {
+        browser.get(server + '/search');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var firstURL = browser.getCurrentUrl();
+
+        var toggleTagButton = detailsPage.getAddTagButton();
+        Util.waitForElement(toggleTagButton);
+        Util.patientClick(toggleTagButton, 3, 100);
+
+        var tagInput = detailsPage.getTagInputField();
+        Util.patientClick(tagInput, 3, 100);
+        Util.sendKeys('SearchByTag');
+        Util.sendEnter();
+        
+        var tags = detailsPage.getTags();
+        expect(tags.count()).toBeGreaterThan(0);
+
+        browser.driver.navigate().refresh();
+        Util.waitForSpinner();
+
+        var label = detailsPage.getTagsFinished();
+        Util.patientClick(label, 3, 100);
+
+        expect(browser.getCurrentUrl()).toContain('/search');
+
+        var firstResult2 = resultList.first();
+        searchPage.clickResult(firstResult2);
+
+        expect(browser.getCurrentUrl()).toContain(firstURL);
+
+        var editTag = detailsPage.getTagEditButton();
+        Util.patientClick(editTag, 3, 100);
+
+        tags.each(function(tag){
+            var close = tag.element(by.css('.select2-search-choice-close'));
+            Util.patientClick(close, 3, 100);
+        });
+        expect(tags.count()).toBe(0);
+    });
+
+
+    it('should test autocompleting tags and editing existing tags', function() {
+        browser.get(server + '/search');
+        Util.waitForSpinner();
+
+        Util.loginToVoyager('admin', 'admin');
+        expect(searchPage.getTotalValue()).toBeGreaterThan(0);
+
+        var resultList = searchPage.getResults();
+        var firstResult = resultList.first();
+        searchPage.clickResult(firstResult);
+
+        var toggleTagButton = detailsPage.getAddTagButton();
+        Util.waitForElement(toggleTagButton);
+        Util.patientClick(toggleTagButton, 3, 100);
+
+        var tagInput = detailsPage.getTagInputField();
+        Util.patientClick(tagInput, 3, 100);
+        Util.sendKeys('Test1');
+        Util.sendEnter();
+        
+        var tags = detailsPage.getTags();
+        expect(tags.count()).toBeGreaterThan(0);
+
+        detailsPage.gotoNextResult();
+
+        var toggleTagButton2 = detailsPage.getAddTagButton();
+        Util.waitForElement(toggleTagButton2);
+        Util.patientClick(toggleTagButton2, 3, 100);
+
+        var tagInput2 = detailsPage.getTagInputField();
+        Util.patientClick(tagInput2, 3, 100);
+        Util.sendKeys('T');
+
+        var suggestion = detailsPage.getTagSuggestions().get(0);
+        expect(browser.isElementPresent(suggestion)).toBeTruthy();
+
+        Util.sendEscape();
+        var previous = detailsPage.getPreviousButton();
+        Util.patientClick(previous, 3, 100);
+
+        var editTag = detailsPage.getTagEditButton();
+        Util.patientClick(editTag, 3, 100);
+
+        tags.each(function(tag){
+            var close = tag.element(by.css('.select2-search-choice-close'));
+            Util.patientClick(close, 3, 100);
+        });
+        expect(tags.count()).toBe(0);
+    }); 
+
+    
+
 });
