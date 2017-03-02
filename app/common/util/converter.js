@@ -159,7 +159,7 @@ angular.module('voyager.util').
             },
 
             toSolrParams: function(filters) {
-                var filterString = '', orFilters = {}, name;
+                var fq = [], orFilters = {}, name;
                 $.each(filters, function (index, facet) {
                     if (facet.filter !== '') {
                         name = _solrReady(facet.name);
@@ -174,26 +174,26 @@ angular.module('voyager.util').
                         }
                     } else if (facet.style === 'RANGE' || facet.style === 'STATS' || facet.style === 'DATE') {
                         if (facet.filter !== facet.name) {
-                            filterString += '&fq=' + facet.filter + ':' + _solrReady(facet.name);
+                            fq.push(facet.filter + ':' + _solrReady(facet.name));
                         } else if (facet.model) {  //TODO figure out why this is happening (filter field and name are same)
-                            filterString += '&fq=' + facet.filter + ':[' + facet.model[0] + ' TO ' + facet.model[1] + ']';
+                            fq.push(facet.filter + ':[' + facet.model[0] + ' TO ' + facet.model[1] + ']');
                         } else {  //last ditch effort/hack (should not happen)
                             var filterValue = facet.humanized.substring(facet.humanized.indexOf(':')+1);
-                            filterString += '&fq=' + facet.filter + ':' + filterValue;
+                            fq.push(facet.filter + ':' + _solrReady(filterValue));
                         }
                     } else {
                         //filter is optional (but typical, currently can only be blank from saved search)
                         if(facet.filter === '') {
-                            filterString += '&fq=' + name;
+                            fq.push(name);
                         } else {
-                            filterString += '&fq=' + facet.filter + ":" + name;
+                            fq.push(facet.filter + ":" + _solrReady(name));
                         }
                     }
                 });
                 $.each(orFilters, function (name, orFilter) { //apply OR filters
-                    filterString += '&fq={!tag=' + name + '}' + name + ":(" + orFilter.join(" ") + ")";
+                    fq.push('{!tag=' + name + '}' + name + ":(" + orFilter.join(" ") + ")");
                 });
-                return filterString;
+                return "&" + sugar.toQueryStringEncoded({ fq: fq });
             },
 
             //TODO above call calls this then does a join with &fq=
