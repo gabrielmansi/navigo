@@ -81,6 +81,9 @@ angular.module('taskRunner')
         }
 
         function _validate(params) {
+            if ($scope.task.name === 'export_result_list' && params[2].value.length === 0) {
+                delete params[2].value;
+            }
             var request = {'task': $scope.task.name, 'params': params};
             return taskService.validate(request);
         }
