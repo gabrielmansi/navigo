@@ -129,6 +129,26 @@ describe('TaskCtrl', function () {
             expect(scope.errorMessage).toBe('error message');
         });
 
+        it('should fail validation - no query', function () {
+            //cartService.addQuery({fq:'field:facet',params:{bbox:'',bboxt:''}, solrFilters:[], bounds:'&fq=bbox:0000'});
+            cartService.clear();
+            cartService.addItem({id:'1'});
+
+            initCtrl();
+            var inputItemsWithoutQuery = {name:'input_items', ids:[], type:'VoyagerResults', response:{docs:[]}};
+            httpMock.expectPOST(new RegExp('validate=true')).respond(500,{params:[inputItemsWithoutQuery], errors:['error']});  // validate
+
+            scope.execTask();
+
+            httpMock.flush();
+
+            expect(scope.errors).toEqual(['error']);
+
+            scope.setError('error message');
+
+            expect(scope.errorMessage).toBe('error message');
+        });
+
         it('should select task', function () {
             cartService.addQuery({fq:'field:facet',params:{bbox:'',bboxt:''}});
             cartService.addItem({id:'1'});
